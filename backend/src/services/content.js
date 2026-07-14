@@ -8,14 +8,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BATCHES_DIR = path.join(__dirname, '..', '..', 'data', 'batches')
 const IMAGES_DIR = path.join(__dirname, '..', '..', 'data', 'images')
 
-/** 各 DELE 等级目标词量 — 由西语同学分批填满 */
+/** 当前上线词库：严格对齐 senses_table 义项包（A1） */
 export const LEVEL_TARGETS = {
-  A1: 800,
-  A2: 1000,
-  B1: 1200,
-  B2: 1200,
-  C1: 400,
-  C2: 400,
+  A1: 79,
+  A2: 0,
+  B1: 0,
+  B2: 0,
+  C1: 0,
+  C2: 0,
 }
 
 export function getContentStatus() {
@@ -92,10 +92,9 @@ export function seedConfusablePairs() {
   const count = db.prepare('SELECT COUNT(*) AS c FROM confusable_pairs').get().c
   if (count > 0) return 0
 
+  // 仅使用义项表中存在的词
   const pairs = [
     ['ser', 'estar'],
-    ['por', 'para'],
-    ['mucho', 'poco'],
     ['bueno', 'malo'],
   ]
 

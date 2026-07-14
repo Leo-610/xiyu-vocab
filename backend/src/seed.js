@@ -8,7 +8,8 @@ runMigrations(db)
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..', '..')
-const DEFAULT_CSV = path.join(ROOT, 'data', 'sample_50.csv')
+/** 严格以同学义项表为准 */
+const DEFAULT_CSV = path.join(ROOT, 'data', 'batches', 'A1', 'words_senses_team.csv')
 const IMAGES_ROOT = path.join(ROOT, 'data', 'images')
 
 function resolveImageUrl(imageFile, level) {

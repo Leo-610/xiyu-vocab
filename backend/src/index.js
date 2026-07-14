@@ -48,9 +48,9 @@ runMigrations(db)
 seedConfusablePairs()
 
 if (wordCount() === 0) {
-  console.log('[db] 词库为空，正在从 CSV 导入...')
+  console.log('[db] 词库为空，正在从义项表 CSV 导入...')
   const n = seedWords()
-  console.log(`[db] 已导入 ${n} 个单词`)
+  console.log(`[db] 已导入 ${n} 个义项`)
 }
 
 function readBody(req) {

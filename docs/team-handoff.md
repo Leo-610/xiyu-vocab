@@ -14,21 +14,21 @@
 
 详细说明：[`data/vocabulary_5000_README.md`](../data/vocabulary_5000_README.md)
 
-## 已接入 · 义项包（同学最新交付）
+## 线上词库 · 仅义项表（严格）
 
-`senses_table.xlsx` 已导入 App（**79 义项 + 79 张配图**），含多义词分义项（如 casa=房子/家）。
+App **只使用** `senses_table.xlsx`（**79 义项 / 71 词条 / 79 配图**）。库中多余词已删除。
 
 | 路径 | 说明 |
 |------|------|
 | 原始表 | [`data/content/senses_table.xlsx`](../data/content/senses_table.xlsx) |
 | CSV | [`data/batches/A1/words_senses_team.csv`](../data/batches/A1/words_senses_team.csv) |
-| 配图 | `data/images/A1/` |
+| 配图 | `data/images/A1/*.jpg` |
 
-后续若更新 Excel，执行：
+更新 Excel 后请执行：
 
 ```bash
 python3 scripts/import_senses_xlsx.py
-node backend/src/seed.js data/batches/A1/words_senses_team.csv
+node scripts/reset-to-senses.mjs   # 清空多余词并重导
 ```
 
 ## 同学 A — 词库与语言内容
