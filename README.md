@@ -33,6 +33,18 @@ cd frontend && npm run dev:h5
 
 详细说明见 [docs/local-dev.md](docs/local-dev.md)。
 
+## 推送到 GitHub + 部署 Vercel
+
+本地已初始化 Git（`main` 分支，含义项包与 Vercel 配置）。因当前环境无法完成浏览器 OAuth，请你在**本机终端**执行：
+
+```bash
+cd "/Users/liuyiming/Documents/西语"
+source scripts/env.sh
+bash scripts/push-github-deploy-vercel.sh
+```
+
+会引导登录 GitHub → 创建公开仓库 `xiyu-vocab` 并推送 → `vercel --prod` 部署。说明见 [docs/deploy-vercel.md](docs/deploy-vercel.md)。
+
 ## 项目结构
 
 ```
