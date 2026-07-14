@@ -1,0 +1,19 @@
+{
+  "$schema": "动词变位 JSON 格式 — 由西语同学 A 填写",
+  "lemma": "hablar",
+  "tenses": [
+    {
+      "name": "presente de indicativo",
+      "name_zh": "现在时",
+      "forms": [
+        { "person": "yo", "form": "hablo" },
+        { "person": "tú", "form": "hablas" },
+        { "person": "él/ella/usted", "form": "habla" },
+        { "person": "nosotros", "form": "hablamos" },
+        { "person": "vosotros", "form": "habláis" },
+        { "person": "ellos/ustedes", "form": "hablan" }
+      ]
+    }
+  ],
+  "_note": "导入时写入 words.conjugation_json 字段；未填写时 App 显示「待补充」占位"
+}

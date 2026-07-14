@@ -1,0 +1,100 @@
+{
+  "generatedAt": "2026-07-12T11:20:17.796Z",
+  "period": {
+    "from": "all",
+    "to": "2026-07-12"
+  },
+  "users": {
+    "total": 9,
+    "wechat": 9,
+    "demo": 0,
+    "activeLast7Days": 0,
+    "activeLast30Days": 0,
+    "pilotTarget": 30,
+    "pilotProgress": "0/30"
+  },
+  "learning": {
+    "sessions": 13,
+    "finishedSessions": 0,
+    "wordsAnswered": 13,
+    "accuracyPercent": 31,
+    "checkins": 0,
+    "avgStreakDays": 0,
+    "wordsLearned": 11,
+    "mistakesOpen": 8,
+    "dueReview": 11
+  },
+  "levelLearned": [
+    {
+      "level": "A1",
+      "learned": 11
+    }
+  ],
+  "dailyActive": [],
+  "topMistakes": [
+    {
+      "lemma": "malo",
+      "meaning_zh": "坏的",
+      "level": "A1",
+      "times": 2
+    },
+    {
+      "lemma": "ciudad",
+      "meaning_zh": "城市",
+      "level": "A1",
+      "times": 1
+    },
+    {
+      "lemma": "trabajo",
+      "meaning_zh": "工作",
+      "level": "A1",
+      "times": 1
+    },
+    {
+      "lemma": "amiga",
+      "meaning_zh": "朋友（女）",
+      "level": "A1",
+      "times": 1
+    },
+    {
+      "lemma": "amigo",
+      "meaning_zh": "朋友（男）",
+      "level": "A1",
+      "times": 1
+    },
+    {
+      "lemma": "nosotros",
+      "meaning_zh": "我们",
+      "level": "A1",
+      "times": 1
+    },
+    {
+      "lemma": "él",
+      "meaning_zh": "他",
+      "level": "A1",
+      "times": 1
+    },
+    {
+      "lemma": "yo",
+      "meaning_zh": "我",
+      "level": "A1",
+      "times": 1
+    }
+  ],
+  "content": {
+    "wordsTotal": 5008,
+    "targetTotal": 5000,
+    "gaps": {
+      "words": -8,
+      "images": 5000,
+      "conjugations": 938,
+      "audio": 5008,
+      "confusableNotes": 4
+    }
+  },
+  "notes": [
+    "本报告用于大创中期附件，截图请包含生成时间与用户数。",
+    "试用达标建议：30 日内活跃 ≥30 人，人均答题 ≥50 词。",
+    "问卷分析见 docs/survey/analysis.md（由西语同学 B 填写）。"
+  ]
+}

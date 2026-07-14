@@ -1,0 +1,17 @@
+node_modules/
+dist/
+unpackage/
+.DS_Store
+*.log
+.env
+.env.local
+backend/.env
+frontend/.env.production.local
+backend/data/*.db
+backend/data/*.db-*
+!backend/data/*.seed.db
+backend/data/avatars/*
+!backend/data/avatars/.gitkeep
+data/content/xlsx_media/
+.vercel
+*.seed.db-journal

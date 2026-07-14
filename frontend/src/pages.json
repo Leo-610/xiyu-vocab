@@ -1,0 +1,144 @@
+{
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^App(.*)": "@/components/App$1.vue",
+      "^DeleBadge": "@/components/DeleBadge.vue",
+      "^ProgressRing": "@/components/ProgressRing.vue",
+      "^LearnProgressBar": "@/components/LearnProgressBar.vue",
+      "^ConjugationCard": "@/components/ConjugationCard.vue",
+      "^CheckinHeatmap": "@/components/CheckinHeatmap.vue",
+      "^ContentTeamBanner": "@/components/ContentTeamBanner.vue",
+      "^UserAvatar": "@/components/UserAvatar.vue",
+      "^WechatProfileForm": "@/components/WechatProfileForm.vue",
+      "^SectionHeader": "@/components/SectionHeader.vue",
+      "^SettingSwitch": "@/components/SettingSwitch.vue"
+    }
+  },
+  "pages": [
+    {
+      "path": "pages/auth/profile",
+      "style": {
+        "navigationBarTitleText": "编辑资料",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "西语背单词",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/learn/learn",
+      "style": {
+        "navigationBarTitleText": "今日学习",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/review/review",
+      "style": {
+        "navigationBarTitleText": "错题本",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/stats/stats",
+      "style": {
+        "navigationBarTitleText": "学习统计",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/confusable/confusable",
+      "style": {
+        "navigationBarTitleText": "易混词",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/review-session/review-session",
+      "style": {
+        "navigationBarTitleText": "错题复习",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/dictation/dictation",
+      "style": {
+        "navigationBarTitleText": "听写练习",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/legal/consent",
+      "style": {
+        "navigationBarTitleText": "隐私保护提示",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/legal/privacy",
+      "style": { "navigationBarTitleText": "隐私政策" }
+    },
+    {
+      "path": "pages/legal/terms",
+      "style": { "navigationBarTitleText": "用户协议" }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "西语背单词",
+    "navigationBarBackgroundColor": "#9b0f18",
+    "backgroundColor": "#faf7f5"
+  },
+  "tabBar": {
+    "color": "#9ca3af",
+    "selectedColor": "#c1121f",
+    "backgroundColor": "#fffdfb",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tab/home.png",
+        "selectedIconPath": "static/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/learn/learn",
+        "text": "学习",
+        "iconPath": "static/tab/learn.png",
+        "selectedIconPath": "static/tab/learn-active.png"
+      },
+      {
+        "pagePath": "pages/review/review",
+        "text": "错题本",
+        "iconPath": "static/tab/review.png",
+        "selectedIconPath": "static/tab/review-active.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计",
+        "iconPath": "static/tab/stats.png",
+        "selectedIconPath": "static/tab/stats-active.png"
+      }
+    ]
+  }
+}

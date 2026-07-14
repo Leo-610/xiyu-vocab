@@ -1,0 +1,120 @@
+// 西语背单词 — Design System（个人开发者版）
+// 灵感：西班牙红 + 暖金 + 瓷砖纹样（Azulejo）
+
+// ── Brand ──
+$primary: #c1121f;
+$primary-light: #e63946;
+$primary-dark: #9b0f18;
+$accent: #f4a261;
+$accent-light: #ffe8d6;
+$gold: #d4a574;
+
+// ── Semantic ──
+$success: #2a9d8f;
+$success-bg: #e8f5f3;
+$error: #e76f51;
+$error-bg: #fdecea;
+$warning: #f4a261;
+$info: #457b9d;
+
+// ── Surface ──
+$bg-page: #faf7f5;
+$bg-card: #ffffff;
+$bg-muted: #f3f0ed;
+$bg-elevated: #fffdfb;
+$text-primary: #1a1a2e;
+$text-secondary: #4b5563;
+$text-muted: #6b7280;
+$border-light: rgba(26, 26, 46, 0.06);
+$border-focus: rgba(193, 18, 31, 0.35);
+
+// ── Typography scale ──
+$font-xs: 22rpx;
+$font-sm: 24rpx;
+$font-md: 28rpx;
+$font-lg: 32rpx;
+$font-xl: 40rpx;
+$font-2xl: 52rpx;
+$font-lemma: 56rpx;
+
+// ── Spacing scale ──
+$space-xs: 8rpx;
+$space-sm: 16rpx;
+$space-md: 24rpx;
+$space-lg: 32rpx;
+$space-xl: 48rpx;
+
+// ── Radius ──
+$radius-sm: 12rpx;
+$radius-md: 20rpx;
+$radius-lg: 28rpx;
+$radius-xl: 36rpx;
+$radius-full: 999rpx;
+
+// ── Shadow ──
+$shadow-sm: 0 4rpx 16rpx rgba(193, 18, 31, 0.06);
+$shadow-md: 0 8rpx 32rpx rgba(193, 18, 31, 0.1);
+$shadow-lg: 0 16rpx 48rpx rgba(193, 18, 31, 0.14);
+$shadow-btn: 0 8rpx 24rpx rgba(193, 18, 31, 0.28);
+
+// ── DELE level colors ──
+$level-a1: #2a9d8f;
+$level-a2: #43aa8b;
+$level-b1: #f4a261;
+$level-b2: #e76f51;
+$level-c1: #9b5de5;
+$level-c2: #c1121f;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card-base {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+@mixin text-lemma {
+  font-size: $font-lemma;
+  font-weight: 700;
+  color: $text-primary;
+  letter-spacing: 1rpx;
+}
+
+@mixin section-title {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $text-primary;
+  display: block;
+  margin-bottom: $space-md;
+}
+
+// 西班牙瓷砖 subtle 背景（用于 Hero / 登录页）
+@mixin azulejo-pattern($opacity: 0.06) {
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, $opacity) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, $opacity) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, $opacity) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, $opacity) 75%);
+  background-size: 40rpx 40rpx;
+  background-position: 0 0, 0 20rpx, 20rpx -20rpx, -20rpx 0;
+}
+
+@mixin glass-on-primary {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+@function level-color($level) {
+  @if $level == 'A1' { @return $level-a1; }
+  @if $level == 'A2' { @return $level-a2; }
+  @if $level == 'B1' { @return $level-b1; }
+  @if $level == 'B2' { @return $level-b2; }
+  @if $level == 'C1' { @return $level-c1; }
+  @if $level == 'C2' { @return $level-c2; }
+  @return $primary;
+}

@@ -1,0 +1,52 @@
+lemma,pos,gender,level,ipa,meaning_zh,meaning_en,example_es,example_zh,image_file,tags,exam_tags,distractor_1,distractor_2,distractor_3,copyright_note
+hola,int,n/a,A1,ˈola,你好,hello,¡Hola! ¿Cómo estás?,你好！你怎么样？,hola.jpg,日常|问候,,再见,谢谢,对不起,demo_placeholder
+adiós,int,n/a,A1,aˈðjos,再见,goodbye,¡Adiós! Hasta mañana.,再见！明天见。,adios.jpg,日常|问候,,你好,请,欢迎,demo_placeholder
+gracias,int,n/a,A1,ˈɡɾaθjas,谢谢,thank you,Muchas gracias por tu ayuda.,非常感谢你的帮助。,gracias.jpg,日常|礼貌,,对不起,请,没关系,demo_placeholder
+por favor,int,n/a,A1,por faˈβoɾ,请,please,Un café, por favor.,请给我一杯咖啡。,por_favor.jpg,日常|礼貌,,谢谢,再见,你好,demo_placeholder
+sí,adv,n/a,A1,si,是；对,yes,Sí, estoy de acuerdo.,是的，我同意。,si.jpg,日常,,不是,也许,从不,demo_placeholder
+no,adv,n/a,A1,no,不；没有,no,No entiendo.,我不明白。,no.jpg,日常,,是,有,全部,demo_placeholder
+yo,pron,n/a,A1,jo,我,I,Yo soy estudiante.,我是学生。,yo.jpg,日常|代词,,你,他,我们,demo_placeholder
+tú,pron,n/a,A1,tu,你,you,Tú hablas muy bien.,你说得很好。,tu.jpg,日常|代词,,我,他,她,demo_placeholder
+él,pron,n/a,A1,el,他,he,Él es mi amigo.,他是我的朋友。,el.jpg,日常|代词,,她,我,你,demo_placeholder
+ella,pron,n/a,A1,ˈeʎa,她,she,Ella vive en Madrid.,她住在马德里。,ella.jpg,日常|代词,,他,我们,他们,demo_placeholder
+nosotros,pron,n/a,A1,noˈsotɾos,我们,we,Nosotros estudiamos español.,我们学习西班牙语。,nosotros.jpg,日常|代词,,你们,他们,我,demo_placeholder
+ser,v,n/a,A1,seɾ,是（本质）,to be,Soy de China.,我来自中国。,ser.jpg,日常|变位|易混,专四, estar, tener, haber,demo_placeholder
+estar,v,n/a,A1,esˈtaɾ,在；处于（状态）,to be,Estoy cansado.,我很累。,estar.jpg,日常|变位|易混,专四, ser, ir, hacer,demo_placeholder
+tener,v,n/a,A1,teˈneɾ,有,to have,Tengo un libro.,我有一本书。,tener.jpg,日常|变位,专四, ser, ir, ver,demo_placeholder
+ir,v,n/a,A1,iɾ,去,to go,Voy a la escuela.,我去学校。,ir.jpg,日常|变位,, venir, estar, ser,demo_placeholder
+hablar,v,n/a,A1,aˈβlaɾ,说话；讲,to speak,Hablo español.,我说西班牙语。,hablar.jpg,日常|变位,专四, comer, vivir, escribir,demo_placeholder
+comer,v,n/a,A1,koˈmeɾ,吃,to eat,Como fruta cada día.,我每天吃水果。,comer.jpg,日常|变位,, beber, dormir, cocinar,demo_placeholder
+beber,v,n/a,A1,beˈβeɾ,喝,to drink,Bebo agua.,我喝水。,beber.jpg,日常|变位,, comer, cocinar, leer,demo_placeholder
+vivir,v,n/a,A1,biˈβiɾ,生活；居住,to live,Vivo en Beijing.,我住在北京。,vivir.jpg,日常|变位,, morir, trabajar, estudiar,demo_placeholder
+casa,n,f,A1,ˈkasa,房子；家,house,Vivo en una casa pequeña.,我住在一所小房子里。,casa.jpg,日常|名词,,学校,汽车,办公室,demo_placeholder
+escuela,n,f,A1,esˈkwela,学校,school,La escuela está cerca.,学校很近。,escuela.jpg,日常|名词,专四,医院,商店,公园,demo_placeholder
+libro,n,m,A1,ˈliβɾo,书,book,Leo un libro interesante.,我在读一本有趣的书。,libro.jpg,日常|名词,,笔,桌子,电脑,demo_placeholder
+agua,n,f,A1,ˈaɣwa,水,water,El agua es importante.,水很重要。,agua.jpg,日常|名词,,牛奶,果汁,咖啡,demo_placeholder
+comida,n,f,A1,koˈmiða,食物；饭,food,La comida está deliciosa.,食物很美味。,comida.jpg,日常|名词,,饮料,水果,面包,demo_placeholder
+amigo,n,m,A1,aˈmiɣo,朋友（男）,friend (m),Mi amigo es simpático.,我的朋友很友好。,amigo.jpg,日常|名词,,敌人,老师,陌生人,demo_placeholder
+amiga,n,f,A1,aˈmiɣa,朋友（女）,friend (f),Mi amiga estudia conmigo.,我的女朋友和我一起学习。,amiga.jpg,日常|名词,,同事,邻居,同学,demo_placeholder
+familia,n,f,A1,famiˈlja,家庭,family,Mi familia es grande.,我的家庭很大。,familia.jpg,日常|名词,专四,朋友,公司,国家,demo_placeholder
+trabajo,n,m,A1,tɾaˈβaxo,工作,work,Tengo mucho trabajo.,我有很多工作。,trabajo.jpg,日常|名词,专四,休息,游戏,旅行,demo_placeholder
+tiempo,n,m,A1,ˈtjempo,时间；天气,time/weather,No tengo tiempo.,我没有时间。,tiempo.jpg,日常|名词,专八,空间,金钱,机会,demo_placeholder
+día,n,m,A1,ˈdia,白天；天,day,Hoy es un buen día.,今天是美好的一天。,dia.jpg,日常|名词,, night, week, month,demo_placeholder
+noche,n,f,A1,ˈnotʃe,夜晚,night,Buenas noches.,晚安。,noche.jpg,日常|名词,, 早晨, 下午, 中午,demo_placeholder
+bueno,adj,n/a,A1,ˈbweno,好的,good,Es un buen idea.,是个好主意。,bueno.jpg,日常|形容词,,坏的,难的,贵的,demo_placeholder
+malo,adj,n/a,A1,ˈmalo,坏的,bad,Es una película mala.,是一部烂片。,malo.jpg,日常|形容词,,好的,新的,大的,demo_placeholder
+grande,adj,n/a,A1,ˈɡɾande,大的,big,Mi casa es grande.,我的房子很大。,grande.jpg,日常|形容词,,小的,短的,矮的,demo_placeholder
+pequeño,adj,n/a,A1,peˈkeɲo,小的,small,Es un perro pequeño.,是一只小狗。,pequeno.jpg,日常|形容词,,大的,长的,高的,demo_placeholder
+nuevo,adj,n/a,A1,ˈnweβo,新的,new,Compro un coche nuevo.,我买了一辆新车。,nuevo.jpg,日常|形容词,,旧的,破的,脏的,demo_placeholder
+viejo,adj,n/a,A1,ˈbjexo,旧的；老的,old,Mi abuelo es viejo.,我爷爷年纪大了。,viejo.jpg,日常|形容词,,新的,年轻的,小的,demo_placeholder
+mucho,adv,n/a,A1,ˈmutʃo,很多,much/a lot,Tengo mucho trabajo.,我有很多工作。,mucho.jpg,日常|副词,,很少,一点,没有,demo_placeholder
+poco,adv,n/a,A1,ˈpoko,很少,little/few,Hablas un poco de español.,你会说一点西语。,poco.jpg,日常|副词,,很多,全部,永远,demo_placeholder
+aquí,adv,n/a,A1,aˈki,这里,here,Estoy aquí.,我在这里。,aqui.jpg,日常|副词,,那里,哪里,到处,demo_placeholder
+allí,adv,n/a,A1,aˈʎi,那里,there,El libro está allí.,书在那里。,alli.jpg,日常|副词,,这里,上面,里面,demo_placeholder
+ahora,adv,n/a,A1,aˈoɾa,现在,now,Ahora estudio.,我现在在学习。,ahora.jpg,日常|副词,,以前,以后,从不,demo_placeholder
+siempre,adv,n/a,A1,ˈsjempɾe,总是,always,Siempre desayuno a las siete.,我总是七点吃早餐。,siempre.jpg,日常|副词,专八,从不,有时, rarely,demo_placeholder
+nunca,adv,n/a,A1,ˈnuŋka,从不,never,Nunca como carne.,我从不吃肉。,nunca.jpg,日常|副词,专八,总是,经常,有时,demo_placeholder
+por,prep,n/a,A2,poɾ,为了；因为,for/because,Estudio por el examen.,我为考试而学习。,por.jpg,语法|易混,专四|专八, para, con, sin,demo_placeholder
+para,prep,n/a,A2,ˈpaɾa,为了（目的）,for (purpose),Trabajo para vivir.,我工作是为了生活。,para.jpg,语法|易混,专四|专八, por, sobre, bajo,demo_placeholder
+con,prep,n/a,A1,kon,和；用,with,Voy con mi amigo.,我和朋友一起去。,con.jpg,语法,, sin, sobre, contra,demo_placeholder
+sin,prep,n/a,A1,sin,没有,without,Café sin azúcar.,不加糖的咖啡。,sin.jpg,语法,, con, para, por,demo_placeholder
+ciudad,n,f,A2,θjuˈðað,城市,city,Madrid es una ciudad grande.,马德里是一座大城市。,ciudad.jpg,日常|名词,专四|专八,村庄,国家,河流,demo_placeholder
+país,n,m,A2,paˈis,国家,country,España es un país bonito.,西班牙是一个美丽的国家。,pais.jpg,日常|名词,专四|专八,城市,大陆,岛屿,demo_placeholder
+español,n,m,A2,espaˈɲol,西班牙语；西班牙人,Spanish,Estudio español en la universidad.,我在大学学西班牙语。,espanol.jpg,学习|名词,专四|专八,法语,英语,德语,demo_placeholder

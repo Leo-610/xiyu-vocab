@@ -1,0 +1,97 @@
+<template>
+  <button
+    type="button"
+    class="app-btn"
+    :class="[variant, size, { block, disabled: disabled || loading }]"
+    :disabled="disabled || loading"
+    @click="onClick"
+  >
+    <text v-if="loading" class="btn-loading">···</text>
+    <slot v-else />
+  </button>
+</template>
+
+<script setup>
+defineProps({
+  variant: { type: String, default: 'primary' },
+  size: { type: String, default: 'md' },
+  block: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+})
+const emit = defineEmits(['click'])
+
+function onClick(e) {
+  if (e?.preventDefault) e.preventDefault()
+  emit('click', e)
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../styles/theme.scss';
+
+.app-btn {
+  border: none;
+  font-weight: 600;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  line-height: 1.4;
+
+  &::after {
+    border: none;
+  }
+
+  &:active:not([disabled]) {
+    transform: scale(0.98);
+  }
+
+  &.block {
+    width: 100%;
+  }
+
+  &.md {
+    font-size: 32rpx;
+    padding: 28rpx 48rpx;
+    border-radius: $radius-full;
+  }
+
+  &.sm {
+    font-size: 26rpx;
+    padding: 16rpx 32rpx;
+    border-radius: $radius-full;
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, $primary-light, $primary);
+    color: #fff;
+    box-shadow: 0 8rpx 24rpx rgba($primary, 0.35);
+  }
+
+  &.outline {
+    background: $bg-card;
+    color: $primary;
+    border: 2rpx solid rgba($primary, 0.35) !important;
+    box-shadow: none;
+  }
+
+  &.ghost {
+    background: rgba($primary, 0.08);
+    color: $primary;
+    box-shadow: none;
+  }
+
+  &.success {
+    background: linear-gradient(135deg, #3db5a8, $success);
+    color: #fff;
+    box-shadow: 0 8rpx 24rpx rgba($success, 0.3);
+  }
+
+  &[disabled], &.disabled {
+    opacity: 0.45;
+    box-shadow: none;
+  }
+}
+
+.btn-loading {
+  letter-spacing: 4rpx;
+}
+</style>

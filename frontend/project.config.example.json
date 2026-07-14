@@ -1,0 +1,13 @@
+{
+  "description": "复制为 project.config.json 并填入正式 AppID（勿提交含真实 AppID 的文件到公开仓库）",
+  "appid": "wx________________",
+  "projectname": "西语背单词",
+  "miniprogramRoot": "dist/build/mp-weixin/",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "minified": true,
+    "postcss": true
+  },
+  "compileType": "miniprogram"
+}

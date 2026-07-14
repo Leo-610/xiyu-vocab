@@ -1,0 +1,1839 @@
+{
+  "version": 1,
+  "total": 51,
+  "words": [
+    {
+      "id": 1,
+      "lemma": "hola",
+      "pos": "int",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈola",
+      "meaning_zh": "你好",
+      "meaning_en": "hello",
+      "example_es": "¡Hola! ¿Cómo estás?",
+      "example_zh": "你好！你怎么样？",
+      "image_url": "/static/images/hola.jpg",
+      "tags": [
+        "日常",
+        "问候"
+      ],
+      "options": [
+        {
+          "text": "你好",
+          "correct": true
+        },
+        {
+          "text": "再见",
+          "correct": false
+        },
+        {
+          "text": "谢谢",
+          "correct": false
+        },
+        {
+          "text": "对不起",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 2,
+      "lemma": "adiós",
+      "pos": "int",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "aˈðjos",
+      "meaning_zh": "再见",
+      "meaning_en": "goodbye",
+      "example_es": "¡Adiós! Hasta mañana.",
+      "example_zh": "再见！明天见。",
+      "image_url": "/static/images/adios.jpg",
+      "tags": [
+        "日常",
+        "问候"
+      ],
+      "options": [
+        {
+          "text": "再见",
+          "correct": true
+        },
+        {
+          "text": "你好",
+          "correct": false
+        },
+        {
+          "text": "请",
+          "correct": false
+        },
+        {
+          "text": "欢迎",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 3,
+      "lemma": "gracias",
+      "pos": "int",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈɡɾaθjas",
+      "meaning_zh": "谢谢",
+      "meaning_en": "thank you",
+      "example_es": "Muchas gracias por tu ayuda.",
+      "example_zh": "非常感谢你的帮助。",
+      "image_url": "/static/images/gracias.jpg",
+      "tags": [
+        "日常",
+        "礼貌"
+      ],
+      "options": [
+        {
+          "text": "谢谢",
+          "correct": true
+        },
+        {
+          "text": "对不起",
+          "correct": false
+        },
+        {
+          "text": "请",
+          "correct": false
+        },
+        {
+          "text": "没关系",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 4,
+      "lemma": "por favor",
+      "pos": "int",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "por faˈβoɾ",
+      "meaning_zh": "请",
+      "meaning_en": "please",
+      "example_es": "Un café",
+      "example_zh": "por favor.",
+      "image_url": "/static/images/请给我一杯咖啡。",
+      "tags": [
+        "por_favor.jpg"
+      ],
+      "options": [
+        {
+          "text": "请",
+          "correct": true
+        },
+        {
+          "text": "日常|礼貌",
+          "correct": false
+        },
+        {
+          "text": "谢谢",
+          "correct": false
+        },
+        {
+          "text": "再见",
+          "correct": false
+        }
+      ],
+      "copyright_note": "你好"
+    },
+    {
+      "id": 5,
+      "lemma": "sí",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "si",
+      "meaning_zh": "是；对",
+      "meaning_en": "yes",
+      "example_es": "Sí",
+      "example_zh": "estoy de acuerdo.",
+      "image_url": "/static/images/是的，我同意。",
+      "tags": [
+        "si.jpg"
+      ],
+      "options": [
+        {
+          "text": "是；对",
+          "correct": true
+        },
+        {
+          "text": "日常",
+          "correct": false
+        },
+        {
+          "text": "不是",
+          "correct": false
+        },
+        {
+          "text": "也许",
+          "correct": false
+        }
+      ],
+      "copyright_note": "从不"
+    },
+    {
+      "id": 6,
+      "lemma": "no",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "no",
+      "meaning_zh": "不；没有",
+      "meaning_en": "no",
+      "example_es": "No entiendo.",
+      "example_zh": "我不明白。",
+      "image_url": "/static/images/no.jpg",
+      "tags": [
+        "日常"
+      ],
+      "options": [
+        {
+          "text": "不；没有",
+          "correct": true
+        },
+        {
+          "text": "是",
+          "correct": false
+        },
+        {
+          "text": "有",
+          "correct": false
+        },
+        {
+          "text": "全部",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 7,
+      "lemma": "yo",
+      "pos": "pron",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "jo",
+      "meaning_zh": "我",
+      "meaning_en": "I",
+      "example_es": "Yo soy estudiante.",
+      "example_zh": "我是学生。",
+      "image_url": "/static/images/yo.jpg",
+      "tags": [
+        "日常",
+        "代词"
+      ],
+      "options": [
+        {
+          "text": "我",
+          "correct": true
+        },
+        {
+          "text": "你",
+          "correct": false
+        },
+        {
+          "text": "他",
+          "correct": false
+        },
+        {
+          "text": "我们",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 8,
+      "lemma": "tú",
+      "pos": "pron",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "tu",
+      "meaning_zh": "你",
+      "meaning_en": "you",
+      "example_es": "Tú hablas muy bien.",
+      "example_zh": "你说得很好。",
+      "image_url": "/static/images/tu.jpg",
+      "tags": [
+        "日常",
+        "代词"
+      ],
+      "options": [
+        {
+          "text": "你",
+          "correct": true
+        },
+        {
+          "text": "我",
+          "correct": false
+        },
+        {
+          "text": "他",
+          "correct": false
+        },
+        {
+          "text": "她",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 9,
+      "lemma": "él",
+      "pos": "pron",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "el",
+      "meaning_zh": "他",
+      "meaning_en": "he",
+      "example_es": "Él es mi amigo.",
+      "example_zh": "他是我的朋友。",
+      "image_url": "/static/images/el.jpg",
+      "tags": [
+        "日常",
+        "代词"
+      ],
+      "options": [
+        {
+          "text": "他",
+          "correct": true
+        },
+        {
+          "text": "她",
+          "correct": false
+        },
+        {
+          "text": "我",
+          "correct": false
+        },
+        {
+          "text": "你",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 10,
+      "lemma": "ella",
+      "pos": "pron",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈeʎa",
+      "meaning_zh": "她",
+      "meaning_en": "she",
+      "example_es": "Ella vive en Madrid.",
+      "example_zh": "她住在马德里。",
+      "image_url": "/static/images/ella.jpg",
+      "tags": [
+        "日常",
+        "代词"
+      ],
+      "options": [
+        {
+          "text": "她",
+          "correct": true
+        },
+        {
+          "text": "他",
+          "correct": false
+        },
+        {
+          "text": "我们",
+          "correct": false
+        },
+        {
+          "text": "他们",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 11,
+      "lemma": "nosotros",
+      "pos": "pron",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "noˈsotɾos",
+      "meaning_zh": "我们",
+      "meaning_en": "we",
+      "example_es": "Nosotros estudiamos español.",
+      "example_zh": "我们学习西班牙语。",
+      "image_url": "/static/images/nosotros.jpg",
+      "tags": [
+        "日常",
+        "代词"
+      ],
+      "options": [
+        {
+          "text": "我们",
+          "correct": true
+        },
+        {
+          "text": "你们",
+          "correct": false
+        },
+        {
+          "text": "他们",
+          "correct": false
+        },
+        {
+          "text": "我",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 12,
+      "lemma": "ser",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "seɾ",
+      "meaning_zh": "是（本质）",
+      "meaning_en": "to be",
+      "example_es": "Soy de China.",
+      "example_zh": "我来自中国。",
+      "image_url": "/static/images/ser.jpg",
+      "tags": [
+        "日常",
+        "变位",
+        "易混"
+      ],
+      "options": [
+        {
+          "text": "是（本质）",
+          "correct": true
+        },
+        {
+          "text": "estar",
+          "correct": false
+        },
+        {
+          "text": "tener",
+          "correct": false
+        },
+        {
+          "text": "haber",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 13,
+      "lemma": "estar",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "esˈtaɾ",
+      "meaning_zh": "在；处于（状态）",
+      "meaning_en": "to be",
+      "example_es": "Estoy cansado.",
+      "example_zh": "我很累。",
+      "image_url": "/static/images/estar.jpg",
+      "tags": [
+        "日常",
+        "变位",
+        "易混"
+      ],
+      "options": [
+        {
+          "text": "在；处于（状态）",
+          "correct": true
+        },
+        {
+          "text": "ser",
+          "correct": false
+        },
+        {
+          "text": "ir",
+          "correct": false
+        },
+        {
+          "text": "hacer",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 14,
+      "lemma": "tener",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "teˈneɾ",
+      "meaning_zh": "有",
+      "meaning_en": "to have",
+      "example_es": "Tengo un libro.",
+      "example_zh": "我有一本书。",
+      "image_url": "/static/images/tener.jpg",
+      "tags": [
+        "日常",
+        "变位"
+      ],
+      "options": [
+        {
+          "text": "有",
+          "correct": true
+        },
+        {
+          "text": "ser",
+          "correct": false
+        },
+        {
+          "text": "ir",
+          "correct": false
+        },
+        {
+          "text": "ver",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 15,
+      "lemma": "ir",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "iɾ",
+      "meaning_zh": "去",
+      "meaning_en": "to go",
+      "example_es": "Voy a la escuela.",
+      "example_zh": "我去学校。",
+      "image_url": "/static/images/ir.jpg",
+      "tags": [
+        "日常",
+        "变位"
+      ],
+      "options": [
+        {
+          "text": "去",
+          "correct": true
+        },
+        {
+          "text": "venir",
+          "correct": false
+        },
+        {
+          "text": "estar",
+          "correct": false
+        },
+        {
+          "text": "ser",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 16,
+      "lemma": "hablar",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "aˈβlaɾ",
+      "meaning_zh": "说话；讲",
+      "meaning_en": "to speak",
+      "example_es": "Hablo español.",
+      "example_zh": "我说西班牙语。",
+      "image_url": "/static/images/hablar.jpg",
+      "tags": [
+        "日常",
+        "变位"
+      ],
+      "options": [
+        {
+          "text": "说话；讲",
+          "correct": true
+        },
+        {
+          "text": "comer",
+          "correct": false
+        },
+        {
+          "text": "vivir",
+          "correct": false
+        },
+        {
+          "text": "escribir",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 17,
+      "lemma": "comer",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "koˈmeɾ",
+      "meaning_zh": "吃",
+      "meaning_en": "to eat",
+      "example_es": "Como fruta cada día.",
+      "example_zh": "我每天吃水果。",
+      "image_url": "/static/images/comer.jpg",
+      "tags": [
+        "日常",
+        "变位"
+      ],
+      "options": [
+        {
+          "text": "吃",
+          "correct": true
+        },
+        {
+          "text": "beber",
+          "correct": false
+        },
+        {
+          "text": "dormir",
+          "correct": false
+        },
+        {
+          "text": "cocinar",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 18,
+      "lemma": "beber",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "beˈβeɾ",
+      "meaning_zh": "喝",
+      "meaning_en": "to drink",
+      "example_es": "Bebo agua.",
+      "example_zh": "我喝水。",
+      "image_url": "/static/images/beber.jpg",
+      "tags": [
+        "日常",
+        "变位"
+      ],
+      "options": [
+        {
+          "text": "喝",
+          "correct": true
+        },
+        {
+          "text": "comer",
+          "correct": false
+        },
+        {
+          "text": "cocinar",
+          "correct": false
+        },
+        {
+          "text": "leer",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 19,
+      "lemma": "vivir",
+      "pos": "v",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "biˈβiɾ",
+      "meaning_zh": "生活；居住",
+      "meaning_en": "to live",
+      "example_es": "Vivo en Beijing.",
+      "example_zh": "我住在北京。",
+      "image_url": "/static/images/vivir.jpg",
+      "tags": [
+        "日常",
+        "变位"
+      ],
+      "options": [
+        {
+          "text": "生活；居住",
+          "correct": true
+        },
+        {
+          "text": "morir",
+          "correct": false
+        },
+        {
+          "text": "trabajar",
+          "correct": false
+        },
+        {
+          "text": "estudiar",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 20,
+      "lemma": "casa",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "ˈkasa",
+      "meaning_zh": "房子；家",
+      "meaning_en": "house",
+      "example_es": "Vivo en una casa pequeña.",
+      "example_zh": "我住在一所小房子里。",
+      "image_url": "/static/images/casa.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "房子；家",
+          "correct": true
+        },
+        {
+          "text": "学校",
+          "correct": false
+        },
+        {
+          "text": "汽车",
+          "correct": false
+        },
+        {
+          "text": "办公室",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 21,
+      "lemma": "escuela",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "esˈkwela",
+      "meaning_zh": "学校",
+      "meaning_en": "school",
+      "example_es": "La escuela está cerca.",
+      "example_zh": "学校很近。",
+      "image_url": "/static/images/escuela.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "学校",
+          "correct": true
+        },
+        {
+          "text": "医院",
+          "correct": false
+        },
+        {
+          "text": "商店",
+          "correct": false
+        },
+        {
+          "text": "公园",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 22,
+      "lemma": "libro",
+      "pos": "n",
+      "gender": "m",
+      "level": "A1",
+      "ipa": "ˈliβɾo",
+      "meaning_zh": "书",
+      "meaning_en": "book",
+      "example_es": "Leo un libro interesante.",
+      "example_zh": "我在读一本有趣的书。",
+      "image_url": "/static/images/libro.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "书",
+          "correct": true
+        },
+        {
+          "text": "笔",
+          "correct": false
+        },
+        {
+          "text": "桌子",
+          "correct": false
+        },
+        {
+          "text": "电脑",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 23,
+      "lemma": "agua",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "ˈaɣwa",
+      "meaning_zh": "水",
+      "meaning_en": "water",
+      "example_es": "El agua es importante.",
+      "example_zh": "水很重要。",
+      "image_url": "/static/images/agua.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "水",
+          "correct": true
+        },
+        {
+          "text": "牛奶",
+          "correct": false
+        },
+        {
+          "text": "果汁",
+          "correct": false
+        },
+        {
+          "text": "咖啡",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 24,
+      "lemma": "comida",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "koˈmiða",
+      "meaning_zh": "食物；饭",
+      "meaning_en": "food",
+      "example_es": "La comida está deliciosa.",
+      "example_zh": "食物很美味。",
+      "image_url": "/static/images/comida.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "食物；饭",
+          "correct": true
+        },
+        {
+          "text": "饮料",
+          "correct": false
+        },
+        {
+          "text": "水果",
+          "correct": false
+        },
+        {
+          "text": "面包",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 25,
+      "lemma": "amigo",
+      "pos": "n",
+      "gender": "m",
+      "level": "A1",
+      "ipa": "aˈmiɣo",
+      "meaning_zh": "朋友（男）",
+      "meaning_en": "friend (m)",
+      "example_es": "Mi amigo es simpático.",
+      "example_zh": "我的朋友很友好。",
+      "image_url": "/static/images/amigo.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "朋友（男）",
+          "correct": true
+        },
+        {
+          "text": "敌人",
+          "correct": false
+        },
+        {
+          "text": "老师",
+          "correct": false
+        },
+        {
+          "text": "陌生人",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 26,
+      "lemma": "amiga",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "aˈmiɣa",
+      "meaning_zh": "朋友（女）",
+      "meaning_en": "friend (f)",
+      "example_es": "Mi amiga estudia conmigo.",
+      "example_zh": "我的女朋友和我一起学习。",
+      "image_url": "/static/images/amiga.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "朋友（女）",
+          "correct": true
+        },
+        {
+          "text": "同事",
+          "correct": false
+        },
+        {
+          "text": "邻居",
+          "correct": false
+        },
+        {
+          "text": "同学",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 27,
+      "lemma": "familia",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "famiˈlja",
+      "meaning_zh": "家庭",
+      "meaning_en": "family",
+      "example_es": "Mi familia es grande.",
+      "example_zh": "我的家庭很大。",
+      "image_url": "/static/images/familia.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "家庭",
+          "correct": true
+        },
+        {
+          "text": "朋友",
+          "correct": false
+        },
+        {
+          "text": "公司",
+          "correct": false
+        },
+        {
+          "text": "国家",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 28,
+      "lemma": "trabajo",
+      "pos": "n",
+      "gender": "m",
+      "level": "A1",
+      "ipa": "tɾaˈβaxo",
+      "meaning_zh": "工作",
+      "meaning_en": "work",
+      "example_es": "Tengo mucho trabajo.",
+      "example_zh": "我有很多工作。",
+      "image_url": "/static/images/trabajo.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "工作",
+          "correct": true
+        },
+        {
+          "text": "休息",
+          "correct": false
+        },
+        {
+          "text": "游戏",
+          "correct": false
+        },
+        {
+          "text": "旅行",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 29,
+      "lemma": "tiempo",
+      "pos": "n",
+      "gender": "m",
+      "level": "A1",
+      "ipa": "ˈtjempo",
+      "meaning_zh": "时间；天气",
+      "meaning_en": "time/weather",
+      "example_es": "No tengo tiempo.",
+      "example_zh": "我没有时间。",
+      "image_url": "/static/images/tiempo.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "时间；天气",
+          "correct": true
+        },
+        {
+          "text": "空间",
+          "correct": false
+        },
+        {
+          "text": "金钱",
+          "correct": false
+        },
+        {
+          "text": "机会",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 30,
+      "lemma": "día",
+      "pos": "n",
+      "gender": "m",
+      "level": "A1",
+      "ipa": "ˈdia",
+      "meaning_zh": "白天；天",
+      "meaning_en": "day",
+      "example_es": "Hoy es un buen día.",
+      "example_zh": "今天是美好的一天。",
+      "image_url": "/static/images/dia.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "白天；天",
+          "correct": true
+        },
+        {
+          "text": "night",
+          "correct": false
+        },
+        {
+          "text": "week",
+          "correct": false
+        },
+        {
+          "text": "month",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 31,
+      "lemma": "noche",
+      "pos": "n",
+      "gender": "f",
+      "level": "A1",
+      "ipa": "ˈnotʃe",
+      "meaning_zh": "夜晚",
+      "meaning_en": "night",
+      "example_es": "Buenas noches.",
+      "example_zh": "晚安。",
+      "image_url": "/static/images/noche.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "夜晚",
+          "correct": true
+        },
+        {
+          "text": "早晨",
+          "correct": false
+        },
+        {
+          "text": "下午",
+          "correct": false
+        },
+        {
+          "text": "中午",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 32,
+      "lemma": "bueno",
+      "pos": "adj",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈbweno",
+      "meaning_zh": "好的",
+      "meaning_en": "good",
+      "example_es": "Es un buen idea.",
+      "example_zh": "是个好主意。",
+      "image_url": "/static/images/bueno.jpg",
+      "tags": [
+        "日常",
+        "形容词"
+      ],
+      "options": [
+        {
+          "text": "好的",
+          "correct": true
+        },
+        {
+          "text": "坏的",
+          "correct": false
+        },
+        {
+          "text": "难的",
+          "correct": false
+        },
+        {
+          "text": "贵的",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 33,
+      "lemma": "malo",
+      "pos": "adj",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈmalo",
+      "meaning_zh": "坏的",
+      "meaning_en": "bad",
+      "example_es": "Es una película mala.",
+      "example_zh": "是一部烂片。",
+      "image_url": "/static/images/malo.jpg",
+      "tags": [
+        "日常",
+        "形容词"
+      ],
+      "options": [
+        {
+          "text": "坏的",
+          "correct": true
+        },
+        {
+          "text": "好的",
+          "correct": false
+        },
+        {
+          "text": "新的",
+          "correct": false
+        },
+        {
+          "text": "大的",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 34,
+      "lemma": "grande",
+      "pos": "adj",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈɡɾande",
+      "meaning_zh": "大的",
+      "meaning_en": "big",
+      "example_es": "Mi casa es grande.",
+      "example_zh": "我的房子很大。",
+      "image_url": "/static/images/grande.jpg",
+      "tags": [
+        "日常",
+        "形容词"
+      ],
+      "options": [
+        {
+          "text": "大的",
+          "correct": true
+        },
+        {
+          "text": "小的",
+          "correct": false
+        },
+        {
+          "text": "短的",
+          "correct": false
+        },
+        {
+          "text": "矮的",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 35,
+      "lemma": "pequeño",
+      "pos": "adj",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "peˈkeɲo",
+      "meaning_zh": "小的",
+      "meaning_en": "small",
+      "example_es": "Es un perro pequeño.",
+      "example_zh": "是一只小狗。",
+      "image_url": "/static/images/pequeno.jpg",
+      "tags": [
+        "日常",
+        "形容词"
+      ],
+      "options": [
+        {
+          "text": "小的",
+          "correct": true
+        },
+        {
+          "text": "大的",
+          "correct": false
+        },
+        {
+          "text": "长的",
+          "correct": false
+        },
+        {
+          "text": "高的",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 36,
+      "lemma": "nuevo",
+      "pos": "adj",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈnweβo",
+      "meaning_zh": "新的",
+      "meaning_en": "new",
+      "example_es": "Compro un coche nuevo.",
+      "example_zh": "我买了一辆新车。",
+      "image_url": "/static/images/nuevo.jpg",
+      "tags": [
+        "日常",
+        "形容词"
+      ],
+      "options": [
+        {
+          "text": "新的",
+          "correct": true
+        },
+        {
+          "text": "旧的",
+          "correct": false
+        },
+        {
+          "text": "破的",
+          "correct": false
+        },
+        {
+          "text": "脏的",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 37,
+      "lemma": "viejo",
+      "pos": "adj",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈbjexo",
+      "meaning_zh": "旧的；老的",
+      "meaning_en": "old",
+      "example_es": "Mi abuelo es viejo.",
+      "example_zh": "我爷爷年纪大了。",
+      "image_url": "/static/images/viejo.jpg",
+      "tags": [
+        "日常",
+        "形容词"
+      ],
+      "options": [
+        {
+          "text": "旧的；老的",
+          "correct": true
+        },
+        {
+          "text": "新的",
+          "correct": false
+        },
+        {
+          "text": "年轻的",
+          "correct": false
+        },
+        {
+          "text": "小的",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 38,
+      "lemma": "mucho",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈmutʃo",
+      "meaning_zh": "很多",
+      "meaning_en": "much/a lot",
+      "example_es": "Tengo mucho trabajo.",
+      "example_zh": "我有很多工作。",
+      "image_url": "/static/images/mucho.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "很多",
+          "correct": true
+        },
+        {
+          "text": "很少",
+          "correct": false
+        },
+        {
+          "text": "一点",
+          "correct": false
+        },
+        {
+          "text": "没有",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 39,
+      "lemma": "poco",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈpoko",
+      "meaning_zh": "很少",
+      "meaning_en": "little/few",
+      "example_es": "Hablas un poco de español.",
+      "example_zh": "你会说一点西语。",
+      "image_url": "/static/images/poco.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "很少",
+          "correct": true
+        },
+        {
+          "text": "很多",
+          "correct": false
+        },
+        {
+          "text": "全部",
+          "correct": false
+        },
+        {
+          "text": "永远",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 40,
+      "lemma": "aquí",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "aˈki",
+      "meaning_zh": "这里",
+      "meaning_en": "here",
+      "example_es": "Estoy aquí.",
+      "example_zh": "我在这里。",
+      "image_url": "/static/images/aqui.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "这里",
+          "correct": true
+        },
+        {
+          "text": "那里",
+          "correct": false
+        },
+        {
+          "text": "哪里",
+          "correct": false
+        },
+        {
+          "text": "到处",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 41,
+      "lemma": "allí",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "aˈʎi",
+      "meaning_zh": "那里",
+      "meaning_en": "there",
+      "example_es": "El libro está allí.",
+      "example_zh": "书在那里。",
+      "image_url": "/static/images/alli.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "那里",
+          "correct": true
+        },
+        {
+          "text": "这里",
+          "correct": false
+        },
+        {
+          "text": "上面",
+          "correct": false
+        },
+        {
+          "text": "里面",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 42,
+      "lemma": "ahora",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "aˈoɾa",
+      "meaning_zh": "现在",
+      "meaning_en": "now",
+      "example_es": "Ahora estudio.",
+      "example_zh": "我现在在学习。",
+      "image_url": "/static/images/ahora.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "现在",
+          "correct": true
+        },
+        {
+          "text": "以前",
+          "correct": false
+        },
+        {
+          "text": "以后",
+          "correct": false
+        },
+        {
+          "text": "never",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 43,
+      "lemma": "siempre",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈsjempɾe",
+      "meaning_zh": "总是",
+      "meaning_en": "always",
+      "example_es": "Siempre desayuno a las siete.",
+      "example_zh": "我总是七点吃早餐。",
+      "image_url": "/static/images/siempre.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "总是",
+          "correct": true
+        },
+        {
+          "text": "从不",
+          "correct": false
+        },
+        {
+          "text": "有时",
+          "correct": false
+        },
+        {
+          "text": "rarely",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 44,
+      "lemma": "nunca",
+      "pos": "adv",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "ˈnuŋka",
+      "meaning_zh": "从不",
+      "meaning_en": "never",
+      "example_es": "Nunca como carne.",
+      "example_zh": "我从不吃肉。",
+      "image_url": "/static/images/nunca.jpg",
+      "tags": [
+        "日常",
+        "副词"
+      ],
+      "options": [
+        {
+          "text": "从不",
+          "correct": true
+        },
+        {
+          "text": "总是",
+          "correct": false
+        },
+        {
+          "text": "经常",
+          "correct": false
+        },
+        {
+          "text": "有时",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 45,
+      "lemma": "por",
+      "pos": "prep",
+      "gender": "n/a",
+      "level": "A2",
+      "ipa": "poɾ",
+      "meaning_zh": "为了；因为",
+      "meaning_en": "for/because",
+      "example_es": "Estudio por el examen.",
+      "example_zh": "我为考试而学习。",
+      "image_url": "/static/images/por.jpg",
+      "tags": [
+        "语法",
+        "易混"
+      ],
+      "options": [
+        {
+          "text": "为了；因为",
+          "correct": true
+        },
+        {
+          "text": "para",
+          "correct": false
+        },
+        {
+          "text": "con",
+          "correct": false
+        },
+        {
+          "text": "sin",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 46,
+      "lemma": "para",
+      "pos": "prep",
+      "gender": "n/a",
+      "level": "A2",
+      "ipa": "ˈpaɾa",
+      "meaning_zh": "为了（目的）",
+      "meaning_en": "for (purpose)",
+      "example_es": "Trabajo para vivir.",
+      "example_zh": "我工作是为了生活。",
+      "image_url": "/static/images/para.jpg",
+      "tags": [
+        "语法",
+        "易混"
+      ],
+      "options": [
+        {
+          "text": "为了（目的）",
+          "correct": true
+        },
+        {
+          "text": "por",
+          "correct": false
+        },
+        {
+          "text": "sobre",
+          "correct": false
+        },
+        {
+          "text": "bajo",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 47,
+      "lemma": "con",
+      "pos": "prep",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "kon",
+      "meaning_zh": "和；用",
+      "meaning_en": "with",
+      "example_es": "Voy con mi amigo.",
+      "example_zh": "我和朋友一起去。",
+      "image_url": "/static/images/con.jpg",
+      "tags": [
+        "语法"
+      ],
+      "options": [
+        {
+          "text": "和；用",
+          "correct": true
+        },
+        {
+          "text": "sin",
+          "correct": false
+        },
+        {
+          "text": "sobre",
+          "correct": false
+        },
+        {
+          "text": "contra",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 48,
+      "lemma": "sin",
+      "pos": "prep",
+      "gender": "n/a",
+      "level": "A1",
+      "ipa": "sin",
+      "meaning_zh": "没有",
+      "meaning_en": "without",
+      "example_es": "Café sin azúcar.",
+      "example_zh": "不加糖的咖啡。",
+      "image_url": "/static/images/sin.jpg",
+      "tags": [
+        "语法"
+      ],
+      "options": [
+        {
+          "text": "没有",
+          "correct": true
+        },
+        {
+          "text": "con",
+          "correct": false
+        },
+        {
+          "text": "para",
+          "correct": false
+        },
+        {
+          "text": "por",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 49,
+      "lemma": "ciudad",
+      "pos": "n",
+      "gender": "f",
+      "level": "A2",
+      "ipa": "θjuˈðað",
+      "meaning_zh": "城市",
+      "meaning_en": "city",
+      "example_es": "Madrid es una ciudad grande.",
+      "example_zh": "马德里是一座大城市。",
+      "image_url": "/static/images/ciudad.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "城市",
+          "correct": true
+        },
+        {
+          "text": "村庄",
+          "correct": false
+        },
+        {
+          "text": "国家",
+          "correct": false
+        },
+        {
+          "text": "河流",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 50,
+      "lemma": "país",
+      "pos": "n",
+      "gender": "m",
+      "level": "A2",
+      "ipa": "paˈis",
+      "meaning_zh": "国家",
+      "meaning_en": "country",
+      "example_es": "España es un país bonito.",
+      "example_zh": "西班牙是一个美丽的国家。",
+      "image_url": "/static/images/pais.jpg",
+      "tags": [
+        "日常",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "国家",
+          "correct": true
+        },
+        {
+          "text": "城市",
+          "correct": false
+        },
+        {
+          "text": "大陆",
+          "correct": false
+        },
+        {
+          "text": "岛屿",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    },
+    {
+      "id": 51,
+      "lemma": "español",
+      "pos": "n",
+      "gender": "m",
+      "level": "A2",
+      "ipa": "espaˈɲol",
+      "meaning_zh": "西班牙语；西班牙人",
+      "meaning_en": "Spanish",
+      "example_es": "Estudio español en la universidad.",
+      "example_zh": "我在大学学西班牙语。",
+      "image_url": "/static/images/espanol.jpg",
+      "tags": [
+        "学习",
+        "名词"
+      ],
+      "options": [
+        {
+          "text": "西班牙语；西班牙人",
+          "correct": true
+        },
+        {
+          "text": "法语",
+          "correct": false
+        },
+        {
+          "text": "英语",
+          "correct": false
+        },
+        {
+          "text": "德语",
+          "correct": false
+        }
+      ],
+      "copyright_note": "demo_placeholder"
+    }
+  ]
+}

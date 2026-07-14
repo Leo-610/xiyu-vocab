@@ -1,0 +1,28 @@
+{
+  "name": "xiyu-vocab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "setup": "npm install --prefix frontend",
+    "seed": "node backend/src/seed.js",
+    "dev:backend": "node --watch backend/src/index.js",
+    "dev:frontend": "npm run dev:h5 --prefix frontend",
+    "dev": "concurrently -n backend,frontend -c red,blue \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start:backend": "node backend/src/index.js",
+    "build:frontend": "npm run build:h5 --prefix frontend",
+    "build:mp-weixin": "npm run build:mp-weixin --prefix frontend",
+    "seed:all": "node scripts/seed-all-levels.mjs",
+    "import:ci": "bash scripts/ci-import-vocabulary.sh",
+    "export:pilot": "node scripts/export-pilot-report.mjs",
+    "deploy:prod": "bash scripts/deploy-production.sh",
+    "prepare:vercel": "node scripts/prepare-vercel.mjs",
+    "vercel-build": "npm run setup && npm run build:frontend && node scripts/prepare-vercel.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

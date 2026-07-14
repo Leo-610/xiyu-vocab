@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "frontend/dist/build/h5",
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" }
+  ],
+  "env": {
+    "ALLOW_DEMO_LOGIN": "true"
+  },
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 60,
+      "includeFiles": "{backend/data/xiyu.seed.db,backend/src/**,data/batches/**/*.csv,data/sample_50.csv}"
+    }
+  }
+}
