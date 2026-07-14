@@ -32,7 +32,7 @@ const props = defineProps({
   pos: { type: String, default: '' },
 })
 
-const expanded = ref(false)
+const expanded = ref(true)
 const visible = computed(() => props.pos === 'v' || props.conjugation || props.conjugationPending)
 const pending = computed(() => props.conjugationPending && !props.conjugation)
 </script>
