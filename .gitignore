@@ -15,3 +15,4 @@ backend/data/avatars/*
 data/content/xlsx_media/
 .vercel
 *.seed.db-journal
+data/content/vercel-deploy*.json
