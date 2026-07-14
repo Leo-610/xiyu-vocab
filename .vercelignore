@@ -1,0 +1,14 @@
+node_modules
+frontend/node_modules
+frontend/dist
+.git
+data/content/senses_table.xlsx
+data/content/xlsx_media
+data/content/vercel-deploy*.json
+data/vocabulary_5000.csv
+data/sources/frequency.csv
+data/sources/es-zh-cache.json
+docs/**/*.docx
+docs/**/*.pdf
+*.log
+.DS_Store
