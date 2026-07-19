@@ -6,14 +6,14 @@ export async function performWechatLogin() {
   return api.loginWechat(code)
 }
 
-/** H5：昵称 + 密码登录 */
-export async function performPasswordLogin(nickname, password) {
-  return api.login(nickname, password)
+/** H5：邮箱/手机号 + 密码登录 */
+export async function performPasswordLogin(account, password) {
+  return api.login({ account, password })
 }
 
-/** H5：昵称 + 密码注册 */
-export async function performPasswordRegister(nickname, password) {
-  return api.register(nickname, password)
+/** H5：邮箱/手机号 + 密码注册（手机号须带 bindEmail） */
+export async function performPasswordRegister({ account, password, email, nickname }) {
+  return api.register({ account, password, email, nickname })
 }
 
 /** H5 演示：昵称登录（须已注册，无密码） */

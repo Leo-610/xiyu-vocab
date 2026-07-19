@@ -128,6 +128,8 @@ export function runMigrations(db) {
     )`,
     `CREATE INDEX IF NOT EXISTS idx_rate_limit_key_time ON rate_limit_events(key, created_at)`,
     `ALTER TABLE users ADD COLUMN password_hash TEXT`,
+    `ALTER TABLE users ADD COLUMN phone TEXT`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone ON users(phone)`,
   ]
 
   for (const sql of MIGRATIONS) {

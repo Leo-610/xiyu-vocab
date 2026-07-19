@@ -110,10 +110,10 @@ function verifyPassword(password, stored) {
   }
 }
 
-function sanitizePassword(password) {
+function requirePasswordPresent(password) {
   const pw = String(password || '')
-  if (pw.length < 6) {
-    const err = new Error('密码至少 6 位')
+  if (!pw) {
+    const err = new Error('请输入密码')
     err.code = 'INVALID_PASSWORD'
     throw err
   }
@@ -125,13 +125,97 @@ function sanitizePassword(password) {
   return pw
 }
 
-function accountOpenid(nickname) {
-  const digest = createHash('sha256').update(nickname).digest('hex').slice(0, 16)
+/** 注册用：须含大小写字母与数字，至少 8 位 */
+function sanitizeStrongPassword(password) {
+  const pw = requirePasswordPresent(password)
+  if (pw.length < 8) {
+    const err = new Error('密码至少 8 位')
+    err.code = 'INVALID_PASSWORD'
+    throw err
+  }
+  if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw)) {
+    const err = new Error('密码须同时包含大写字母、小写字母和数字')
+    err.code = 'WEAK_PASSWORD'
+    throw err
+  }
+  return pw
+}
+
+function normalizePhone(phone) {
+  let raw = String(phone || '').trim().replace(/[\s\-()]/g, '')
+  if (raw.startsWith('+86')) raw = raw.slice(3)
+  if (raw.startsWith('0086')) raw = raw.slice(4)
+  return raw
+}
+
+function isValidPhone(phone) {
+  return /^1[3-9]\d{9}$/.test(phone)
+}
+
+/**
+ * 解析登录/注册账号：邮箱 或 手机号
+ * @returns {{ kind: 'email'|'phone', email: string|null, phone: string|null, accountKey: string }}
+ */
+export function parseAccount(account) {
+  const raw = String(account || '').trim()
+  if (!raw) {
+    const err = new Error('请输入邮箱或手机号')
+    err.code = 'INVALID_ACCOUNT'
+    throw err
+  }
+  if (raw.includes('@')) {
+    const email = normalizeEmail(raw)
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const err = new Error('请输入有效的邮箱地址')
+      err.code = 'INVALID_EMAIL'
+      throw err
+    }
+    return { kind: 'email', email, phone: null, accountKey: email }
+  }
+  const phone = normalizePhone(raw)
+  if (!isValidPhone(phone)) {
+    const err = new Error('请输入有效的手机号（11 位）')
+    err.code = 'INVALID_PHONE'
+    throw err
+  }
+  return { kind: 'phone', email: null, phone, accountKey: phone }
+}
+
+function accountOpenidFromKey(accountKey) {
+  const digest = createHash('sha256').update(String(accountKey)).digest('hex').slice(0, 16)
   return `acct_${digest}`
 }
 
-function findAccountUser(nickname) {
-  const name = sanitizeNickname(nickname)
+/** @deprecated 旧昵称账号 openid */
+function accountOpenid(nickname) {
+  return accountOpenidFromKey(nickname)
+}
+
+function findAccountUserByCredentials(account, nicknameFallback) {
+  if (account) {
+    try {
+      const parsed = parseAccount(account)
+      if (parsed.kind === 'email') {
+        const byEmail = db.prepare(`
+          SELECT * FROM users WHERE email = ? OR openid = ?
+          LIMIT 1
+        `).get(parsed.email, `email_${parsed.email}`)
+        if (byEmail) return byEmail
+        return db.prepare('SELECT * FROM users WHERE openid = ?').get(accountOpenidFromKey(parsed.email))
+      }
+      const byPhone = db.prepare('SELECT * FROM users WHERE phone = ? LIMIT 1').get(parsed.phone)
+      if (byPhone) return byPhone
+      return db.prepare('SELECT * FROM users WHERE openid = ?').get(accountOpenidFromKey(parsed.phone))
+    } catch (err) {
+      if (err.code === 'INVALID_ACCOUNT' || err.code === 'INVALID_EMAIL' || err.code === 'INVALID_PHONE') {
+        throw err
+      }
+    }
+  }
+
+  // 兼容旧版：昵称登录
+  if (!nicknameFallback) return null
+  const name = sanitizeNickname(nicknameFallback)
   const byNick = db.prepare(`
     SELECT * FROM users
     WHERE nickname = ?
@@ -146,42 +230,123 @@ function findAccountUser(nickname) {
   )
 }
 
-/** 正式账号：注册（昵称 + 密码） */
-export function registerPasswordUser(nickname, password) {
-  const name = sanitizeNickname(nickname)
-  if (name.length < 2) {
-    const err = new Error('昵称至少 2 个字符')
-    err.code = 'INVALID_NICKNAME'
+function findAccountUser(nickname) {
+  return findAccountUserByCredentials(null, nickname)
+}
+
+/**
+ * 正式账号注册：账号（邮箱或手机号）+ 密码
+ * 手机号注册须同时绑定邮箱
+ * registerPasswordUser({ account, password, email?, nickname? })
+ * 或兼容旧调用 registerPasswordUser(nickname, password) —— 将昵称当作非法账号时回退不可用，请传 account
+ */
+export function registerPasswordUser(accountOrOpts, passwordMaybe, extras = {}) {
+  let account
+  let nicknameOpt
+  let bindEmail
+  let password = passwordMaybe
+
+  if (accountOrOpts && typeof accountOrOpts === 'object') {
+    account = accountOrOpts.account
+    nicknameOpt = accountOrOpts.nickname
+    bindEmail = accountOrOpts.email
+    password = accountOrOpts.password
+  } else {
+    account = extras.account ?? accountOrOpts
+    nicknameOpt = extras.nickname
+    bindEmail = extras.email
+  }
+
+  const parsed = parseAccount(account)
+  const pw = sanitizeStrongPassword(password)
+
+  let email = parsed.email
+  let phone = parsed.phone
+
+  if (parsed.kind === 'phone') {
+    if (!bindEmail) {
+      const err = new Error('手机号注册须绑定邮箱')
+      err.code = 'EMAIL_REQUIRED'
+      throw err
+    }
+    email = normalizeEmail(bindEmail)
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const err = new Error('请输入有效的绑定邮箱')
+      err.code = 'INVALID_EMAIL'
+      throw err
+    }
+  }
+
+  const emailTaken = db.prepare('SELECT id FROM users WHERE email = ?').get(email)
+  if (emailTaken) {
+    const err = new Error('该邮箱已被注册，请直接登录')
+    err.code = 'EMAIL_TAKEN'
     throw err
   }
-  const pw = sanitizePassword(password)
-  const existing = findAccountUser(name)
-  if (existing) {
-    const err = new Error('该昵称已被注册，请直接登录')
-    err.code = 'NICKNAME_TAKEN'
+  if (phone) {
+    const phoneTaken = db.prepare('SELECT id FROM users WHERE phone = ?').get(phone)
+    if (phoneTaken) {
+      const err = new Error('该手机号已被注册，请直接登录')
+      err.code = 'PHONE_TAKEN'
+      throw err
+    }
+  }
+
+  const openidKey = email
+  const openid = accountOpenidFromKey(openidKey)
+  if (db.prepare('SELECT id FROM users WHERE openid = ?').get(openid)) {
+    const err = new Error('该账号已被注册，请直接登录')
+    err.code = 'ACCOUNT_TAKEN'
     throw err
   }
+
+  let name = nicknameOpt ? String(nicknameOpt).trim() : ''
+  if (!name) {
+    name = parsed.kind === 'email'
+      ? email.split('@')[0].slice(0, 32)
+      : `用户${phone.slice(-4)}`
+  }
+  if (name.length < 2) name = '学习者'
+  if (name.length > 32) name = name.slice(0, 32)
 
   const token = createSessionToken()
   const expires = sessionExpiresAt()
   const loginAt = nowIso()
-  const openid = accountOpenid(name)
   const passwordHash = hashPassword(pw)
   const result = db.prepare(`
     INSERT INTO users (
-      openid, nickname, password_hash, session_token, streak_days,
+      openid, email, phone, nickname, password_hash, session_token, streak_days,
       auth_type, last_login_at, token_expires_at
-    ) VALUES (?, ?, ?, ?, 0, 'password', ?, ?)
-  `).run(openid, name, passwordHash, token, loginAt, expires)
+    ) VALUES (?, ?, ?, ?, ?, ?, 0, 'password', ?, ?)
+  `).run(openid, email, phone, name, passwordHash, token, loginAt, expires)
 
   return db.prepare('SELECT * FROM users WHERE id = ?').get(Number(result.lastInsertRowid))
 }
 
-/** 正式账号：登录（昵称 + 密码） */
-export function loginPasswordUser(nickname, password) {
-  const name = sanitizeNickname(nickname)
-  const pw = sanitizePassword(password)
-  const existing = findAccountUser(name)
+/**
+ * 正式账号登录：邮箱或手机号 + 密码（兼容旧昵称）
+ * loginPasswordUser({ account, password }) 或 loginPasswordUser(nickname, password)
+ */
+export function loginPasswordUser(accountOrOpts, passwordMaybe) {
+  let account = null
+  let nicknameFallback = null
+  let password = passwordMaybe
+
+  if (accountOrOpts && typeof accountOrOpts === 'object') {
+    account = accountOrOpts.account || null
+    nicknameFallback = accountOrOpts.nickname || null
+    password = accountOrOpts.password
+  } else {
+    const raw = String(accountOrOpts || '').trim()
+    if (raw.includes('@') || /^1[3-9]\d{9}$/.test(normalizePhone(raw))) {
+      account = raw
+    } else {
+      nicknameFallback = raw
+    }
+  }
+
+  const pw = requirePasswordPresent(password)
+  const existing = findAccountUserByCredentials(account, nicknameFallback)
 
   if (!existing) {
     const err = new Error('账号不存在，请先注册')
@@ -191,16 +356,17 @@ export function loginPasswordUser(nickname, password) {
 
   if (existing.password_hash) {
     if (!verifyPassword(pw, existing.password_hash)) {
-      const err = new Error('昵称或密码错误')
+      const err = new Error('账号或密码错误')
       err.code = 'INVALID_CREDENTIALS'
       throw err
     }
     return issueSession(existing.id, { auth_type: 'password' })
   }
 
-  // 旧演示账号无密码：首次用密码登录时绑定密码，升级为正式账号
+  // 旧演示账号无密码：首次用密码登录时绑定密码（仍要求强度）
+  const strong = sanitizeStrongPassword(pw)
   return issueSession(existing.id, {
-    password_hash: hashPassword(pw),
+    password_hash: hashPassword(strong),
     auth_type: 'password',
   })
 }

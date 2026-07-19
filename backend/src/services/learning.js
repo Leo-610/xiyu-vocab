@@ -57,6 +57,7 @@ export function buildUserState(db, userId) {
     userId: user.id,
     nickname: user.nickname,
     email: user.email || null,
+    phone: user.phone || null,
     avatarUrl: user.avatar_url || null,
     isWechatUser: resolveAuthType(user) === 'wechat',
     authType: resolveAuthType(user),

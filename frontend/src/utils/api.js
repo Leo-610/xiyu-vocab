@@ -90,14 +90,20 @@ export function getSession() {
   return request('/auth/session')
 }
 
-export function login(nickname = '演示用户', password) {
-  const data = { nickname }
+export function login(nicknameOrOpts = '演示用户', password) {
+  if (nicknameOrOpts && typeof nicknameOrOpts === 'object') {
+    return request('/login', { method: 'POST', data: nicknameOrOpts })
+  }
+  const data = { nickname: nicknameOrOpts }
   if (password !== undefined) data.password = password
   return request('/login', { method: 'POST', data })
 }
 
-export function register(nickname, password) {
-  const data = { nickname }
+export function register(nicknameOrOpts, password) {
+  if (nicknameOrOpts && typeof nicknameOrOpts === 'object') {
+    return request('/register', { method: 'POST', data: nicknameOrOpts })
+  }
+  const data = { nickname: nicknameOrOpts }
   if (password !== undefined) data.password = password
   return request('/register', { method: 'POST', data })
 }

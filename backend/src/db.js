@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
   openid TEXT UNIQUE,
   unionid TEXT,
   email TEXT UNIQUE,
+  phone TEXT UNIQUE,
   nickname TEXT,
   avatar_url TEXT,
   auth_type TEXT DEFAULT 'wechat' CHECK(auth_type IN ('wechat','demo','email','password')),

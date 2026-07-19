@@ -39,9 +39,126 @@
       <!-- #endif -->
 
       <!-- #ifndef MP-WEIXIN -->
-      <template v-if="emailAuthEnabled">
+      <template v-if="passwordAuthEnabled && h5Method === 'password'">
+        <view class="mode-tabs">
+          <view
+            class="mode-tab"
+            :class="{ active: authMode === 'login' }"
+            @click="switchAuthMode('login')"
+          >
+            登录
+          </view>
+          <view
+            class="mode-tab"
+            :class="{ active: authMode === 'register' }"
+            @click="switchAuthMode('register')"
+          >
+            注册
+          </view>
+        </view>
+
+        <text class="panel-title">{{ authMode === 'login' ? '欢迎回来' : '创建账号' }}</text>
+        <text class="panel-desc">
+          {{ authMode === 'login'
+            ? '使用邮箱或手机号 + 密码登录，学习进度保存在云端。'
+            : '账号为邮箱，或手机号并绑定邮箱；密码须含大小写字母与数字。' }}
+        </text>
+
+        <view class="field" :class="{ focused: accountFocused, error: Boolean(error) }">
+          <text class="label">账号</text>
+          <input
+            v-model="account"
+            class="input"
+            type="text"
+            maxlength="64"
+            :placeholder="authMode === 'login' ? '邮箱或手机号' : '邮箱，或 11 位手机号'"
+            confirm-type="next"
+            @focus="accountFocused = true"
+            @blur="accountFocused = false"
+          />
+        </view>
+
+        <view
+          v-if="authMode === 'register' && accountLooksLikePhone"
+          class="field"
+          :class="{ focused: bindEmailFocused, error: Boolean(error) }"
+        >
+          <text class="label">绑定邮箱</text>
+          <input
+            v-model="bindEmail"
+            class="input"
+            type="text"
+            inputmode="email"
+            maxlength="64"
+            placeholder="用于找回与通知"
+            confirm-type="next"
+            @focus="bindEmailFocused = true"
+            @blur="bindEmailFocused = false"
+          />
+        </view>
+
+        <view class="field" :class="{ focused: passFocused, error: Boolean(error) }">
+          <text class="label">密码</text>
+          <input
+            v-model="password"
+            class="input"
+            password
+            maxlength="64"
+            :placeholder="authMode === 'login' ? '输入密码' : '至少 8 位，含大小写与数字'"
+            confirm-type="done"
+            @focus="passFocused = true"
+            @blur="passFocused = false"
+            @confirm="handlePasswordSubmit"
+          />
+        </view>
+
+        <view v-if="authMode === 'register'" class="field" :class="{ focused: pass2Focused, error: Boolean(error) }">
+          <text class="label">确认密码</text>
+          <input
+            v-model="passwordConfirm"
+            class="input"
+            password
+            maxlength="64"
+            placeholder="再次输入密码"
+            confirm-type="done"
+            @focus="pass2Focused = true"
+            @blur="pass2Focused = false"
+            @confirm="handlePasswordSubmit"
+          />
+        </view>
+
+        <text v-if="authMode === 'register'" class="hint-line">密码要求：≥8 位，同时包含大写、小写英文字母和数字</text>
+
+        <view v-if="recentAccount && authMode === 'login'" class="quick-row" @click="useRecentAccount">
+          <text class="quick-label">最近使用</text>
+          <text class="quick-name">{{ recentAccount }}</text>
+        </view>
+
+        <view v-if="error" class="error-msg">{{ error }}</view>
+
+        <AppButton
+          block
+          :loading="loading"
+          :disabled="!apiOnline || !account.trim() || !password"
+          @click="handlePasswordSubmit"
+        >
+          {{ authMode === 'login' ? '登录并进入 →' : '注册并开始 →' }}
+        </AppButton>
+
+        <view class="switch-hint" @click="switchAuthMode(authMode === 'login' ? 'register' : 'login')">
+          <text v-if="authMode === 'login'">还没有账号？</text>
+          <text v-else>已有账号？</text>
+          <text class="switch-link">{{ authMode === 'login' ? '去注册' : '去登录' }}</text>
+        </view>
+
+        <view v-if="emailAuthEnabled" class="switch-hint" @click="h5Method = 'otp'">
+          <text class="switch-link">改用邮箱验证码登录</text>
+        </view>
+      </template>
+
+      <template v-else-if="emailAuthEnabled && h5Method === 'otp'">
         <template v-if="step === 'email'">
-          <text class="panel-title">邮箱登录</text>
+          <text class="panel-title">邮箱验证码登录</text>
           <text class="panel-desc">输入邮箱获取验证码，首次登录将自动创建账号。</text>
 
           <view class="field" :class="{ focused: emailFocused, error: Boolean(error) }">
@@ -75,6 +192,10 @@
           >
             发送验证码
           </AppButton>
+
+          <view v-if="passwordAuthEnabled" class="switch-hint" @click="h5Method = 'password'">
+            <text class="switch-link">改用账号密码登录</text>
+          </view>
         </template>
 
         <template v-else>
@@ -118,98 +239,6 @@
         </template>
       </template>
 
-      <template v-else-if="passwordAuthEnabled">
-        <view class="mode-tabs">
-          <view
-            class="mode-tab"
-            :class="{ active: authMode === 'login' }"
-            @click="switchAuthMode('login')"
-          >
-            登录
-          </view>
-          <view
-            class="mode-tab"
-            :class="{ active: authMode === 'register' }"
-            @click="switchAuthMode('register')"
-          >
-            注册
-          </view>
-        </view>
-
-        <text class="panel-title">{{ authMode === 'login' ? '欢迎回来' : '创建账号' }}</text>
-        <text class="panel-desc">
-          {{ authMode === 'login'
-            ? '使用昵称和密码登录，学习进度将保存在云端。'
-            : '设置昵称与密码完成注册，之后可用同一账号继续学习。' }}
-        </text>
-
-        <view class="field" :class="{ focused: nickFocused, error: Boolean(error) }">
-          <text class="label">昵称</text>
-          <input
-            v-model="nickname"
-            class="input"
-            type="text"
-            maxlength="32"
-            :placeholder="authMode === 'login' ? '已注册的昵称' : '2–32 个字符'"
-            confirm-type="next"
-            @focus="nickFocused = true"
-            @blur="nickFocused = false"
-          />
-        </view>
-
-        <view class="field" :class="{ focused: passFocused, error: Boolean(error) }">
-          <text class="label">密码</text>
-          <input
-            v-model="password"
-            class="input"
-            password
-            maxlength="64"
-            :placeholder="authMode === 'login' ? '输入密码' : '至少 6 位'"
-            confirm-type="done"
-            @focus="passFocused = true"
-            @blur="passFocused = false"
-            @confirm="handlePasswordSubmit"
-          />
-        </view>
-
-        <view v-if="authMode === 'register'" class="field" :class="{ focused: pass2Focused, error: Boolean(error) }">
-          <text class="label">确认密码</text>
-          <input
-            v-model="passwordConfirm"
-            class="input"
-            password
-            maxlength="64"
-            placeholder="再次输入密码"
-            confirm-type="done"
-            @focus="pass2Focused = true"
-            @blur="pass2Focused = false"
-            @confirm="handlePasswordSubmit"
-          />
-        </view>
-
-        <view v-if="recentNickname && authMode === 'login'" class="quick-row" @click="useRecent">
-          <text class="quick-label">最近使用</text>
-          <text class="quick-name">{{ recentNickname }}</text>
-        </view>
-
-        <view v-if="error" class="error-msg">{{ error }}</view>
-
-        <AppButton
-          block
-          :loading="loading"
-          :disabled="!apiOnline || !nickname.trim() || !password"
-          @click="handlePasswordSubmit"
-        >
-          {{ authMode === 'login' ? '登录并进入 →' : '注册并开始 →' }}
-        </AppButton>
-
-        <view class="switch-hint" @click="switchAuthMode(authMode === 'login' ? 'register' : 'login')">
-          <text v-if="authMode === 'login'">还没有账号？</text>
-          <text v-else>已有账号？</text>
-          <text class="switch-link">{{ authMode === 'login' ? '去注册' : '去登录' }}</text>
-        </view>
-      </template>
-
       <template v-else>
         <text class="panel-title">登录暂不可用</text>
         <text class="panel-desc">服务未就绪，请稍后重试或联系管理员。</text>
@@ -237,14 +266,14 @@ import { onShow } from '@dcloudio/uni-app'
 import {
   checkApiOnline,
   getAuthConfig,
+  getLastAccount,
   getLastEmail,
-  getLastNickname,
   getUserState,
   isLoggedIn,
+  loginWithAccount,
   loginWithEmailOtp,
-  loginWithNickname,
   loginWithWechat,
-  registerWithNickname,
+  registerWithAccount,
   sendEmailLoginCode,
   setCachedState,
 } from '../../utils/userService.js'
@@ -253,25 +282,38 @@ const email = ref('')
 const otpCode = ref('')
 const step = ref('email')
 const authMode = ref('login')
-const nickname = ref('')
+const h5Method = ref('password')
+const account = ref('')
+const bindEmail = ref('')
 const password = ref('')
 const passwordConfirm = ref('')
 const recentEmail = ref(getLastEmail())
-const recentNickname = ref(getLastNickname())
+const recentAccount = ref(getLastAccount())
 const loading = ref(false)
 const error = ref('')
 const apiOnline = ref(false)
 const checkedOnline = ref(false)
 const emailFocused = ref(false)
 const codeFocused = ref(false)
-const nickFocused = ref(false)
+const accountFocused = ref(false)
+const bindEmailFocused = ref(false)
 const passFocused = ref(false)
 const pass2Focused = ref(false)
 const wechatStep = ref('login')
 const profileUser = ref({ nickname: '', avatarUrl: '' })
 
 const emailAuthEnabled = computed(() => getAuthConfig().email)
-const passwordAuthEnabled = computed(() => !emailAuthEnabled.value && getAuthConfig().password !== false)
+const passwordAuthEnabled = computed(() => getAuthConfig().password !== false)
+
+const accountLooksLikePhone = computed(() => {
+  const raw = account.value.trim().replace(/[\s\-()]/g, '')
+  const digits = raw.startsWith('+86') ? raw.slice(3) : raw.startsWith('0086') ? raw.slice(4) : raw
+  return /^1[3-9]\d{0,9}$/.test(digits) && !raw.includes('@')
+})
+
+function isStrongPassword(pw) {
+  return pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /[0-9]/.test(pw)
+}
 
 function switchAuthMode(mode) {
   authMode.value = mode
@@ -282,16 +324,21 @@ function switchAuthMode(mode) {
 
 onShow(async () => {
   recentEmail.value = getLastEmail()
-  recentNickname.value = getLastNickname()
+  recentAccount.value = getLastAccount()
   if (!email.value && recentEmail.value) {
     email.value = recentEmail.value
   }
-  if (!nickname.value && recentNickname.value) {
-    nickname.value = recentNickname.value
+  if (!account.value && recentAccount.value) {
+    account.value = recentAccount.value
   }
 
   apiOnline.value = await checkApiOnline()
   checkedOnline.value = true
+  if (passwordAuthEnabled.value) {
+    h5Method.value = 'password'
+  } else if (emailAuthEnabled.value) {
+    h5Method.value = 'otp'
+  }
 
   if (!isLoggedIn()) return
 
@@ -315,8 +362,8 @@ function useRecentEmail() {
   error.value = ''
 }
 
-function useRecent() {
-  nickname.value = recentNickname.value
+function useRecentAccount() {
+  account.value = recentAccount.value
   error.value = ''
 }
 
@@ -419,27 +466,38 @@ async function handleVerifyCode() {
 }
 
 async function handlePasswordSubmit() {
-  const name = nickname.value.trim()
+  const acct = account.value.trim()
   const pw = password.value
-  if (!name) {
-    error.value = '请输入昵称'
-    return
-  }
-  if (name.length < 2) {
-    error.value = '昵称至少 2 个字符'
+  if (!acct) {
+    error.value = '请输入邮箱或手机号'
     return
   }
   if (!pw) {
     error.value = '请输入密码'
     return
   }
-  if (pw.length < 6) {
-    error.value = '密码至少 6 位'
-    return
-  }
   if (authMode.value === 'register') {
+    if (!isStrongPassword(pw)) {
+      error.value = '密码至少 8 位，且须包含大写、小写字母和数字'
+      return
+    }
     if (pw !== passwordConfirm.value) {
       error.value = '两次输入的密码不一致'
+      return
+    }
+    const isPhone = accountLooksLikePhone.value && /^1[3-9]\d{9}$/.test(
+      acct.replace(/[\s\-()]/g, '').replace(/^\+86|^0086/, ''),
+    )
+    if (isPhone && !bindEmail.value.trim()) {
+      error.value = '手机号注册须绑定邮箱'
+      return
+    }
+    if (isPhone && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bindEmail.value.trim())) {
+      error.value = '请输入有效的绑定邮箱'
+      return
+    }
+    if (!isPhone && !acct.includes('@')) {
+      error.value = '请输入有效的邮箱或 11 位手机号'
       return
     }
   }
@@ -451,9 +509,14 @@ async function handlePasswordSubmit() {
   error.value = ''
   try {
     if (authMode.value === 'register') {
-      await registerWithNickname(name, pw)
+      const isPhone = accountLooksLikePhone.value
+      await registerWithAccount({
+        account: acct,
+        password: pw,
+        email: isPhone ? bindEmail.value.trim() : (acct.includes('@') ? acct : bindEmail.value.trim()),
+      })
     } else {
-      await loginWithNickname(name, pw)
+      await loginWithAccount(acct, pw)
     }
     goHome()
   } catch (e) {
@@ -600,6 +663,14 @@ async function handlePasswordSubmit() {
   font-size: 26rpx;
   line-height: 1.65;
   color: $text-secondary;
+}
+
+.hint-line {
+  display: block;
+  margin: -12rpx 0 24rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: $text-muted;
 }
 
 .field {

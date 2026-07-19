@@ -139,17 +139,23 @@ async function handleApi(req, res, pathname, query) {
   if (pathname === '/api/login' && method === 'POST') {
     const body = await readBody(req)
     const password = body.password
-    // 正式：昵称 + 密码
+    // 正式：邮箱/手机号（或旧昵称）+ 密码
     if (password !== undefined && password !== null && String(password).length > 0) {
       try {
-        const user = loginPasswordUser(body.nickname, password)
+        const user = loginPasswordUser({
+          account: body.account || null,
+          nickname: body.nickname || null,
+          password,
+        })
         return sendJson(res, 200, {
           token: user.session_token,
           user: buildUserState(db, user.id),
         })
       } catch (err) {
         const status = err.code === 'USER_NOT_FOUND' || err.code === 'INVALID_CREDENTIALS' ? 401
-          : err.code === 'INVALID_PASSWORD' || err.code === 'INVALID_NICKNAME' ? 400
+          : err.code === 'INVALID_PASSWORD' || err.code === 'WEAK_PASSWORD'
+            || err.code === 'INVALID_ACCOUNT' || err.code === 'INVALID_EMAIL'
+            || err.code === 'INVALID_PHONE' || err.code === 'INVALID_NICKNAME' ? 400
           : 400
         return sendJson(res, status, { error: err.message, code: err.code || 'LOGIN_FAILED' })
       }
@@ -178,13 +184,21 @@ async function handleApi(req, res, pathname, query) {
     const password = body.password
     if (password !== undefined && password !== null && String(password).length > 0) {
       try {
-        const user = registerPasswordUser(body.nickname, password)
+        const account = body.account || body.email || body.phone || body.nickname
+        const user = registerPasswordUser({
+          account,
+          password,
+          email: body.email || (String(account || '').includes('@') ? account : null),
+          nickname: body.nickname || null,
+        })
         return sendJson(res, 200, {
           token: user.session_token,
           user: buildUserState(db, user.id),
         })
       } catch (err) {
-        const status = err.code === 'NICKNAME_TAKEN' ? 409 : 400
+        const status = ['NICKNAME_TAKEN', 'EMAIL_TAKEN', 'PHONE_TAKEN', 'ACCOUNT_TAKEN'].includes(err.code)
+          ? 409
+          : 400
         return sendJson(res, status, { error: err.message, code: err.code || 'REGISTER_FAILED' })
       }
     }

@@ -4,6 +4,7 @@ import { safeReLaunch } from './nav.js'
 
 const LAST_NICKNAME_KEY = 'last_nickname'
 const LAST_EMAIL_KEY = 'last_email'
+const LAST_ACCOUNT_KEY = 'last_account'
 
 const EMOJI_MAP = {
   hola: '👋', adiós: '👋', gracias: '🙏', 'por favor': '🙏',
@@ -84,9 +85,23 @@ export function getLastNickname() {
   }
 }
 
+export function getLastAccount() {
+  try {
+    return uni.getStorageSync(LAST_ACCOUNT_KEY) || getLastEmail() || getLastNickname() || ''
+  } catch {
+    return ''
+  }
+}
+
 function saveLastNickname(nickname) {
   if (nickname) {
     uni.setStorageSync(LAST_NICKNAME_KEY, nickname)
+  }
+}
+
+function saveLastAccount(account) {
+  if (account) {
+    uni.setStorageSync(LAST_ACCOUNT_KEY, account)
   }
 }
 
@@ -98,6 +113,10 @@ function applyAuthResponse(res) {
   }
   if (res.user?.email) {
     saveLastEmail(res.user.email)
+    saveLastAccount(res.user.email)
+  }
+  if (res.user?.phone) {
+    saveLastAccount(res.user.phone)
   }
   return cachedState
 }
@@ -114,19 +133,31 @@ export async function loginWithEmailOtp(email, code) {
   return applyAuthResponse(res)
 }
 
+export async function loginWithAccount(account, password) {
+  const res = await performPasswordLogin(account, password)
+  saveLastAccount(account)
+  return applyAuthResponse(res)
+}
+
+export async function registerWithAccount({ account, password, email, nickname }) {
+  const res = await performPasswordRegister({ account, password, email, nickname })
+  saveLastAccount(account)
+  return applyAuthResponse(res)
+}
+
+/** @deprecated 使用 loginWithAccount */
 export async function loginWithNickname(nickname, password) {
   if (password !== undefined && password !== null && String(password).length > 0) {
-    const res = await performPasswordLogin(nickname, password)
-    return applyAuthResponse(res)
+    return loginWithAccount(nickname, password)
   }
   const res = await performDemoLogin(nickname)
   return applyAuthResponse(res)
 }
 
+/** @deprecated 使用 registerWithAccount */
 export async function registerWithNickname(nickname, password) {
   if (password !== undefined && password !== null && String(password).length > 0) {
-    const res = await performPasswordRegister(nickname, password)
-    return applyAuthResponse(res)
+    return registerWithAccount({ account: nickname, password })
   }
   const res = await api.register(nickname)
   return applyAuthResponse(res)
