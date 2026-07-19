@@ -34,6 +34,22 @@ const staticImages = path.join(H5, 'static', 'images')
 copyDir(IMAGES, staticImages)
 console.log('[prepare-vercel] 已复制配图 →', staticImages)
 
+// favicon：浏览器默认请求 /favicon.ico
+const faviconSrc = path.join(ROOT, 'frontend', 'src', 'static', 'favicon.ico')
+const faviconPng = path.join(ROOT, 'frontend', 'src', 'static', 'favicon.png')
+if (fs.existsSync(faviconSrc)) {
+  fs.copyFileSync(faviconSrc, path.join(H5, 'favicon.ico'))
+  console.log('[prepare-vercel] 已复制 favicon.ico → H5 根目录')
+}
+if (fs.existsSync(faviconPng)) {
+  const staticDir = path.join(H5, 'static')
+  fs.mkdirSync(staticDir, { recursive: true })
+  fs.copyFileSync(faviconPng, path.join(staticDir, 'favicon.png'))
+  if (fs.existsSync(faviconSrc)) {
+    fs.copyFileSync(faviconSrc, path.join(staticDir, 'favicon.ico'))
+  }
+}
+
 // 若无 seed db，用当前库或重新导入义项包
 if (!fs.existsSync(SEED)) {
   if (fs.existsSync(LIVE)) {

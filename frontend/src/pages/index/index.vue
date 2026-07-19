@@ -218,7 +218,9 @@ async function refresh() {
   }
 }
 
-onShow(refresh)
+onShow(() => {
+  refresh().catch(() => {})
+})
 
 async function setLevel(lv) {
   if (!isApiOnline()) return

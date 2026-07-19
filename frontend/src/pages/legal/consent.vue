@@ -29,20 +29,21 @@
 <script setup>
 import { APP_CONFIG } from '../../config/app.js'
 import { setPrivacyAgreed, declinePrivacy } from '../../utils/privacy.js'
+import { safeNavigateTo, safeReLaunch } from '../../utils/nav.js'
 
 const appName = APP_CONFIG.name
 
 function openPrivacy() {
-  uni.navigateTo({ url: '/pages/legal/privacy' })
+  safeNavigateTo('/pages/legal/privacy')
 }
 
 function openTerms() {
-  uni.navigateTo({ url: '/pages/legal/terms' })
+  safeNavigateTo('/pages/legal/terms')
 }
 
 function onAgree() {
   setPrivacyAgreed()
-  uni.reLaunch({ url: '/pages/auth/login' })
+  safeReLaunch('/pages/auth/login')
 }
 
 function onDecline() {

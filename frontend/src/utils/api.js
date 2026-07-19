@@ -25,6 +25,17 @@ function buildUrl(path) {
   return `${API_BASE}${p}`
 }
 
+function toError(payload, fallback) {
+  if (payload instanceof Error) return payload
+  const msg =
+    (typeof payload === 'string' && payload) ||
+    payload?.error ||
+    payload?.errMsg ||
+    payload?.message ||
+    fallback
+  return new Error(String(msg))
+}
+
 function request(path, options = {}) {
   const token = getToken()
   const header = {
@@ -52,14 +63,16 @@ function request(path, options = {}) {
           if (code === 'TOKEN_EXPIRED') {
             uni.showToast({ title: '登录已过期', icon: 'none' })
             setTimeout(() => {
-              uni.reLaunch({ url: '/pages/auth/login' })
+              import('./nav.js').then(({ safeReLaunch }) => {
+                safeReLaunch('/pages/auth/login')
+              })
             }, 600)
           }
         }
-        reject(new Error(res.data?.error || `请求失败 (${res.statusCode})`))
+        reject(toError(res.data, `请求失败 (${res.statusCode})`))
       },
       fail(err) {
-        reject(new Error(err.errMsg || '网络错误'))
+        reject(toError(err, '网络错误'))
       },
     })
   })

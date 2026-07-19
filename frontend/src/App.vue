@@ -2,6 +2,7 @@
 import { checkApiOnline } from './utils/userService.js'
 import { hasPrivacyAgreed } from './utils/privacy.js'
 import { getToken } from './utils/api.js'
+import { safeReLaunch } from './utils/nav.js'
 
 export default {
   onLaunch() {
@@ -15,19 +16,17 @@ export default {
       const pages = getCurrentPages()
       const current = pages[pages.length - 1]
       const route = current?.route || ''
-      const onGatePage = route.includes('legal/consent') || route.includes('auth/login')
-
-      if (!hasPrivacyAgreed() && !route.includes('legal/consent')) {
-        uni.reLaunch({ url: '/pages/legal/consent' })
-        return
-      }
+      const onConsent = route.includes('legal/consent')
+      const onLogin = route.includes('auth/login')
+      const onGatePage = onConsent || onLogin
 
       if (!hasPrivacyAgreed()) {
+        if (!onConsent) safeReLaunch('/pages/legal/consent')
         return
       }
 
-      if (!getToken() && !route.includes('auth/login')) {
-        uni.reLaunch({ url: '/pages/auth/login' })
+      if (!getToken()) {
+        if (!onLogin) safeReLaunch('/pages/auth/login')
         return
       }
 

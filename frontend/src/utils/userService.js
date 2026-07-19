@@ -1,5 +1,6 @@
 import * as api from './api.js'
 import { performDemoLogin, performWechatLogin, performEmailSendOtp, performEmailVerifyOtp } from './authLogin.js'
+import { safeReLaunch } from './nav.js'
 
 const LAST_NICKNAME_KEY = 'last_nickname'
 const LAST_EMAIL_KEY = 'last_email'
@@ -137,7 +138,7 @@ export async function logout() {
   }
   api.clearToken()
   cachedState = null
-  uni.reLaunch({ url: '/pages/auth/login' })
+  safeReLaunch('/pages/auth/login')
 }
 
 export async function requireAuth() {
@@ -145,7 +146,7 @@ export async function requireAuth() {
     throw new Error('OFFLINE')
   }
   if (!api.getToken()) {
-    uni.reLaunch({ url: '/pages/auth/login' })
+    safeReLaunch('/pages/auth/login')
     throw new Error('UNAUTHORIZED')
   }
   try {
@@ -153,7 +154,7 @@ export async function requireAuth() {
   } catch {
     api.clearToken()
     cachedState = null
-    uni.reLaunch({ url: '/pages/auth/login' })
+    safeReLaunch('/pages/auth/login')
     throw new Error('UNAUTHORIZED')
   }
 }
