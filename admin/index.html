@@ -16,26 +16,67 @@
     .bar { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 8px 0; }
     .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #f4a261); }
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    td, th { padding: 8px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+    td, th { padding: 8px; text-align: left; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
     .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; background: #fce4ec; color: var(--primary); }
     .tag.pending { background: #fff3e0; color: #e65100; }
     .slot { font-family: monospace; font-size: 12px; color: var(--muted); }
     a { color: var(--primary); }
+    button { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; margin-right: 6px; }
+    button.secondary { background: #6b7280; }
+    .summary { white-space: pre-wrap; font-size: 13px; line-height: 1.5; max-width: 420px; }
   </style>
 </head>
 <body>
   <h1>西语背单词 · 管理后台</h1>
-  <p class="sub">内容缺口一览 · 西语同学交付进度 · <a href="/api/content/status" target="_blank">JSON API</a></p>
+  <p class="sub">内容缺口 · RAG/LLM 审核 · 对照实验 · <a href="/api/content/status" target="_blank">JSON API</a></p>
   <div id="app">加载中...</div>
   <script>
+    async function reviewItem(id, status) {
+      const res = await fetch('/api/admin/ai-reviews/' + id, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, reviewer: 'admin' }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error || '审核失败')
+        return
+      }
+      await load()
+    }
+
     async function load() {
-      const [res, pilotRes] = await Promise.all([
+      const [res, pilotRes, aiRes] = await Promise.all([
         fetch('/api/content/status'),
         fetch('/api/admin/pilot-report'),
+        fetch('/api/admin/ai-reviews?status=pending'),
       ])
       const d = await res.json()
       const p = await pilotRes.json()
+      const ai = await aiRes.json()
       const el = document.getElementById('app')
+      const expRows = (p.experiment?.last7DaysByArm || []).map(r => `
+        <tr>
+          <td><strong>${r.arm}</strong> ${r.label || ''}</td>
+          <td>${r.users}</td>
+          <td>${r.activeLast7Days}</td>
+          <td>${r.wordsAnswered}</td>
+          <td>${r.accuracyPercent}%</td>
+        </tr>
+      `).join('')
+      const reviews = (ai.reviews || []).map(r => `
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.lemma || '-'}<br/><span class="slot">${r.meaning_zh || ''}</span></td>
+          <td><div class="summary">${(r.output?.summary_zh || '').replace(/</g, '&lt;')}</div></td>
+          <td><span class="tag pending">${r.status}</span><br/><span class="slot">${r.model || ''}</span></td>
+          <td>
+            <button onclick="reviewItem(${r.id}, 'approved')">通过</button>
+            <button class="secondary" onclick="reviewItem(${r.id}, 'rejected')">驳回</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="5">暂无待审项</td></tr>'
+
       el.innerHTML = `
         <div class="grid">
           <div class="card">
@@ -45,10 +86,27 @@
             <p>缺口：<strong>${d.gaps.words}</strong> 词待补充</p>
           </div>
           <div class="card">
-            <h2>多媒体缺口</h2>
+            <h2>多媒体 / RAG</h2>
             <p>配图缺口：${d.gaps.images} · 变位：${d.gaps.conjugations} · 音频：${d.gaps.audio}</p>
-            <p>易混词辨析待填：${d.gaps.confusableNotes} 组</p>
+            <p>语料块：<strong>${d.corpus?.chunks ?? 0}</strong> · 词链：${d.corpus?.linked ?? 0}</p>
+            <p>AI 待审：${d.gaps.aiReviewsPending ?? 0} · 易混词待填：${d.gaps.confusableNotes}</p>
           </div>
+        </div>
+        <div class="card" style="margin-top:24px">
+          <h2>对照实验（近 7 日）</h2>
+          <p class="sub" style="margin:0 0 12px">${p.experiment?.description || ''}</p>
+          <table>
+            <tr><th>臂</th><th>用户</th><th>活跃</th><th>答题</th><th>正确率</th></tr>
+            ${expRows || '<tr><td colspan="5">暂无数据</td></tr>'}
+          </table>
+        </div>
+        <div class="card" style="margin-top:24px">
+          <h2>AI 解析审核队列</h2>
+          <p class="sub" style="margin:0 0 12px">LLM ${ai.llm?.configured ? '已配置 · ' + (ai.llm.model || '') : '未配置（使用模板解析）'} · 待审 ${ai.llm?.pendingReviews ?? 0}</p>
+          <table>
+            <tr><th>ID</th><th>词</th><th>解析</th><th>状态</th><th>操作</th></tr>
+            ${reviews}
+          </table>
         </div>
         <div class="card" style="margin-top:24px">
           <h2>DELE 分级交付槽位（西语同学填写）</h2>
@@ -70,7 +128,7 @@
           <p>活跃 7 日：<strong>${p.users.activeLast7Days}</strong> · 活跃 30 日：<strong>${p.users.activeLast30Days}</strong> / 目标 30</p>
           <p>累计答题：<strong>${p.learning.wordsAnswered}</strong> · 正确率：<strong>${p.learning.accuracyPercent}%</strong> · 打卡：<strong>${p.learning.checkins}</strong></p>
           <p class="sub" style="margin:8px 0 12px">生成时间 ${p.generatedAt}</p>
-          <button id="exportPilot" style="background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer">下载 JSON 报告</button>
+          <button id="exportBtn">下载 JSON 报告</button>
         </div>
         <div class="card" style="margin-top:24px">
           <h2>团队任务板</h2>
@@ -87,7 +145,7 @@
           </table>
         </div>
       `
-      document.getElementById('exportPilot')?.addEventListener('click', () => {
+      document.getElementById('exportBtn')?.addEventListener('click', () => {
         const blob = new Blob([JSON.stringify(p, null, 2)], { type: 'application/json' })
         const a = document.createElement('a')
         a.href = URL.createObjectURL(blob)
@@ -95,7 +153,8 @@
         a.click()
       })
     }
-    load().catch(e => { document.getElementById('app').textContent = '请先启动后端: node backend/src/index.js' })
+    window.reviewItem = reviewItem
+    load().catch(e => { document.getElementById('app').textContent = '请先启动后端: node backend/src/index.js · ' + e.message })
   </script>
 </body>
 </html>

@@ -1,6 +1,12 @@
 import db from '../db.js'
 import { normalizeEmail } from '../services/emailOtp.js'
+import { setExperimentArmForUser } from '../services/experiment.js'
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
+
+function finalizeNewUser(userId) {
+  setExperimentArmForUser(userId)
+  return db.prepare('SELECT * FROM users WHERE id = ?').get(userId)
+}
 
 /** 会话有效期（天），大创试用场景默认 30 天 */
 export const SESSION_TTL_DAYS = 30
@@ -320,7 +326,7 @@ export function registerPasswordUser(accountOrOpts, passwordMaybe, extras = {}) 
     ) VALUES (?, ?, ?, ?, ?, ?, 0, 'password', ?, ?)
   `).run(openid, email, phone, name, passwordHash, token, loginAt, expires)
 
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(Number(result.lastInsertRowid))
+  return finalizeNewUser(Number(result.lastInsertRowid))
 }
 
 /**
@@ -410,7 +416,7 @@ export function registerUser(nickname = '演示用户') {
     VALUES (?, ?, ?, 0, 'demo', ?, ?)
   `).run(demoOpenid(name), name, token, loginAt, expires)
 
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(Number(result.lastInsertRowid))
+  return finalizeNewUser(Number(result.lastInsertRowid))
 }
 
 function sanitizeNickname(nickname) {
@@ -452,7 +458,7 @@ export function loginWechatUser(openid, nickname = '微信用户', unionid = nul
     VALUES (?, ?, ?, ?, 0, 'wechat', ?, ?)
   `).run(openid, unionid, nickname || '微信用户', token, loginAt, expires)
 
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(Number(result.lastInsertRowid))
+  return finalizeNewUser(Number(result.lastInsertRowid))
 }
 
 export function logoutUser(userId) {
@@ -488,7 +494,7 @@ export function loginEmailUser(email) {
     VALUES (?, ?, ?, ?, 0, 'email', ?, ?)
   `).run(openid, normalized, nickname, token, loginAt, expires)
 
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(Number(result.lastInsertRowid))
+  return finalizeNewUser(Number(result.lastInsertRowid))
 }
 
 export function formatAuthMeta(user) {

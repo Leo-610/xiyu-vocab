@@ -88,6 +88,37 @@ export function getPilotReport(db) {
 
   const content = getContentStatus()
 
+  const armUsers = db.prepare(`
+    SELECT COALESCE(experiment_arm, '?') AS arm, COUNT(*) AS users
+    FROM users GROUP BY COALESCE(experiment_arm, '?')
+  `).all()
+
+  const experimentByArm = db.prepare(`
+    SELECT
+      COALESCE(u.experiment_arm, '?') AS arm,
+      COUNT(DISTINCT u.id) AS users,
+      COUNT(DISTINCT ds.user_id) AS activeUsers,
+      COALESCE(SUM(ds.new_count + ds.review_count), 0) AS wordsAnswered,
+      COALESCE(SUM(ds.correct_count), 0) AS correct,
+      COALESCE(SUM(ds.wrong_count), 0) AS wrong,
+      COALESCE(SUM(ds.finished), 0) AS finishedSessions
+    FROM users u
+    LEFT JOIN daily_sessions ds ON ds.user_id = u.id AND ds.session_date >= ?
+    GROUP BY COALESCE(u.experiment_arm, '?')
+    ORDER BY arm
+  `).all(weekAgo).map((row) => {
+    const answered = row.wordsAnswered || 0
+    return {
+      arm: row.arm,
+      label: row.arm === 'A' ? '对照组（无 RAG/LLM）' : row.arm === 'B' ? '实验组（RAG+解析）' : '未分配',
+      users: row.users,
+      activeLast7Days: row.activeUsers,
+      wordsAnswered: answered,
+      accuracyPercent: answered > 0 ? Math.round((row.correct / answered) * 100) : 0,
+      finishedSessions: row.finishedSessions,
+    }
+  })
+
   return {
     generatedAt: new Date().toISOString(),
     period: { from: 'all', to: today },
@@ -99,6 +130,7 @@ export function getPilotReport(db) {
       activeLast30Days: active30d,
       pilotTarget: 30,
       pilotProgress: `${active30d}/30`,
+      byExperimentArm: armUsers,
     },
     learning: {
       sessions: sessionAgg.sessions,
@@ -111,6 +143,10 @@ export function getPilotReport(db) {
       mistakesOpen,
       dueReview,
     },
+    experiment: {
+      description: 'A=对照组（无 RAG/LLM UI）；B=实验组（可溯源例句+错题解析）。按 userId 奇偶分流。',
+      last7DaysByArm: experimentByArm,
+    },
     levelLearned,
     dailyActive,
     topMistakes,
@@ -118,11 +154,12 @@ export function getPilotReport(db) {
       wordsTotal: content.wordsTotal,
       targetTotal: content.targetTotal,
       gaps: content.gaps,
+      corpus: content.corpus,
     },
     notes: [
       '本报告用于大创中期附件，截图请包含生成时间与用户数。',
       '试用达标建议：30 日内活跃 ≥30 人，人均答题 ≥50 词。',
-      '问卷分析见 docs/survey/analysis.md（由西语同学 B 填写）。',
+      '对照实验见 experiment.last7DaysByArm；问卷分析见 docs/survey/analysis.md。',
     ],
   }
 }

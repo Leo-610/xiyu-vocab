@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS users (
   last_login_at TEXT,
   token_expires_at TEXT,
   privacy_agreed_at TEXT,
+  experiment_arm TEXT CHECK(experiment_arm IN ('A','B')),
   settings_json TEXT DEFAULT '{"soundEnabled":true,"vibrationEnabled":true,"showIpa":true}',
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
@@ -181,6 +182,47 @@ CREATE TABLE IF NOT EXISTS rate_limit_events (
   created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_rate_limit_key_time ON rate_limit_events(key, created_at);
+
+CREATE TABLE IF NOT EXISTS corpus_chunks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  source TEXT NOT NULL,
+  level TEXT NOT NULL CHECK(level IN ('A1','A2','B1','B2','C1','C2')),
+  text_es TEXT NOT NULL,
+  text_zh TEXT,
+  lemmas_json TEXT NOT NULL DEFAULT '[]',
+  embedding BLOB,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_corpus_level ON corpus_chunks(level);
+CREATE INDEX IF NOT EXISTS idx_corpus_source ON corpus_chunks(source);
+
+CREATE TABLE IF NOT EXISTS example_cache (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  word_id INTEGER NOT NULL,
+  chunk_id INTEGER NOT NULL,
+  rank INTEGER DEFAULT 0,
+  approved INTEGER DEFAULT 0,
+  note TEXT,
+  UNIQUE(word_id, chunk_id),
+  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE CASCADE,
+  FOREIGN KEY (chunk_id) REFERENCES corpus_chunks(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ai_reviews (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL CHECK(kind IN ('mistake_explain','confusable')),
+  word_id INTEGER,
+  prompt_hash TEXT,
+  model TEXT,
+  input_json TEXT,
+  output_json TEXT NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+  reviewer TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  reviewed_at TEXT,
+  FOREIGN KEY (word_id) REFERENCES words(id) ON DELETE SET NULL
+);
+CREATE INDEX IF NOT EXISTS idx_ai_reviews_status ON ai_reviews(status, created_at);
 `
 
 db.exec(SCHEMA)

@@ -2,6 +2,7 @@ import { needsProfile } from './user.js'
 import { resolveAuthType } from '../middleware/auth.js'
 import { checkSpelling } from '../utils/spanish.js'
 import { logStudyEvent, parseUserSettings, getStudySummary } from './studyEvents.js'
+import { getExperimentArm, ragFeaturesEnabled } from './experiment.js'
 
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
@@ -33,6 +34,7 @@ export function getOrCreateDailySession(db, userId) {
 }
 
 export function buildUserState(db, userId) {
+  const experimentArm = getExperimentArm(userId)
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId)
   const session = getOrCreateDailySession(db, userId)
   const learned = db.prepare(`
@@ -59,6 +61,8 @@ export function buildUserState(db, userId) {
     email: user.email || null,
     phone: user.phone || null,
     avatarUrl: user.avatar_url || null,
+    experimentArm,
+    ragEnabled: ragFeaturesEnabled(userId),
     isWechatUser: resolveAuthType(user) === 'wechat',
     authType: resolveAuthType(user),
     needsProfile: needsProfile(user),

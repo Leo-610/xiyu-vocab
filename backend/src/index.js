@@ -38,6 +38,10 @@ import {
 import { getPilotReport } from './services/analytics.js'
 import { updateUserSettings } from './services/studyEvents.js'
 import { getExamPack, getExamSummaries, EXAM_PACKS } from './services/exam.js'
+import { retrieveExamplesForWord, corpusStats } from './services/rag.js'
+import { explainMistake, listAiReviews, reviewAiItem, llmStatus } from './services/llm.js'
+import { ensureAllUsersHaveArm, ragFeaturesEnabled } from './services/experiment.js'
+import { spawnSync } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..', '..')
@@ -48,6 +52,18 @@ const HOST = appConfig.host
 
 runMigrations(db)
 seedConfusablePairs()
+ensureAllUsersHaveArm()
+if (corpusStats().chunks === 0) {
+  try {
+    spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'import-corpus.mjs'), '--from-words'], {
+      cwd: ROOT,
+      stdio: 'inherit',
+      env: process.env,
+    })
+  } catch (e) {
+    console.warn('[corpus] auto-import skipped:', e.message)
+  }
+}
 
 if (wordCount() === 0) {
   console.log('[db] 词库为空，正在从义项表 CSV 导入...')
@@ -125,6 +141,8 @@ async function handleApi(req, res, pathname, query) {
         demoLogin: appConfig.allowDemoLogin,
         env: appConfig.nodeEnv,
       },
+      rag: corpusStats(),
+      llm: llmStatus(),
     })
   }
 
@@ -134,6 +152,27 @@ async function handleApi(req, res, pathname, query) {
 
   if (pathname === '/api/admin/pilot-report' && method === 'GET') {
     return sendJson(res, 200, getPilotReport(db))
+  }
+
+  if (pathname === '/api/admin/ai-reviews' && method === 'GET') {
+    const status = query.status || 'pending'
+    return sendJson(res, 200, { reviews: listAiReviews({ status, limit: parseInt(query.limit, 10) || 50 }), llm: llmStatus() })
+  }
+
+  if (pathname.match(/^\/api\/admin\/ai-reviews\/\d+$/) && method === 'POST') {
+    const id = parseInt(pathname.split('/').pop(), 10)
+    const body = await readBody(req)
+    try {
+      const item = reviewAiItem(id, { status: body.status, reviewer: body.reviewer })
+      return sendJson(res, 200, { ok: true, review: item })
+    } catch (err) {
+      const status = err.code === 'NOT_FOUND' ? 404 : 400
+      return sendJson(res, status, { error: err.message, code: err.code || 'REVIEW_FAILED' })
+    }
+  }
+
+  if (pathname.startsWith('/api/admin/')) {
+    return sendJson(res, 404, { error: 'Not Found' })
   }
 
   if (pathname === '/api/login' && method === 'POST') {
@@ -306,7 +345,8 @@ async function handleApi(req, res, pathname, query) {
     && pathname !== '/api/register'
     && pathname !== '/api/auth/wechat'
     && pathname !== '/api/auth/email/send'
-    && pathname !== '/api/auth/email/verify') {
+    && pathname !== '/api/auth/email/verify'
+    && !pathname.startsWith('/api/admin/')) {
     return sendJson(res, authResult.status, { error: authResult.error, code: authResult.code })
   }
   const user = authResult.user
@@ -493,6 +533,47 @@ async function handleApi(req, res, pathname, query) {
 
   if (pathname === '/api/words' && method === 'GET') {
     return sendJson(res, 200, { total: wordCount() })
+  }
+
+  const examplesMatch = pathname.match(/^\/api\/words\/(\d+)\/examples$/)
+  if (examplesMatch && method === 'GET') {
+    if (!ragFeaturesEnabled(user.id)) {
+      return sendJson(res, 200, {
+        examples: [],
+        disabled: true,
+        reason: 'control_arm',
+        message: '对照组不展示 RAG 例句',
+      })
+    }
+    const k = query.k || 3
+    const result = retrieveExamplesForWord(parseInt(examplesMatch[1], 10), k)
+    if (!result.word) return sendJson(res, 404, { error: '单词不存在' })
+    return sendJson(res, 200, result)
+  }
+
+  if (pathname === '/api/words/explain' && method === 'POST') {
+    if (!ragFeaturesEnabled(user.id)) {
+      return sendJson(res, 200, {
+        disabled: true,
+        reason: 'control_arm',
+        message: '对照组不生成 LLM 解析',
+      })
+    }
+    const body = await readBody(req)
+    if (!body.wordId) {
+      return sendJson(res, 400, { error: '需要 wordId', code: 'INVALID_BODY' })
+    }
+    try {
+      const result = await explainMistake({
+        wordId: body.wordId,
+        wrongChoice: body.wrongChoice || body.selectedText,
+        selectedText: body.selectedText,
+      })
+      return sendJson(res, 200, result)
+    } catch (err) {
+      const status = err.code === 'NOT_FOUND' ? 404 : 400
+      return sendJson(res, status, { error: err.message, code: err.code || 'EXPLAIN_FAILED' })
+    }
   }
 
   const wordMatch = pathname.match(/^\/api\/words\/(\d+)$/)

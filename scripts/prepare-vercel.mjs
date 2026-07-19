@@ -65,4 +65,14 @@ if (!fs.existsSync(SEED)) {
   }
 }
 
+// 确保 seed 含 RAG 语料
+try {
+  execSync('node scripts/import-corpus.mjs --from-words --seed-db', {
+    cwd: ROOT,
+    stdio: 'inherit',
+  })
+} catch (e) {
+  console.warn('[prepare-vercel] 语料导入跳过:', e.message)
+}
+
 console.log('[prepare-vercel] 完成')

@@ -97,6 +97,17 @@
           <text class="example">{{ currentWord.example_es }}</text>
           <text v-if="currentWord.example_zh" class="example-zh">{{ currentWord.example_zh }}</text>
         </view>
+        <CorpusExamples
+          :word-id="currentWord.id"
+          :enabled="ragEnabled"
+          :show="answered"
+        />
+        <MistakeExplain
+          :word-id="currentWord.id"
+          :wrong-choice="wrongChoiceText"
+          :enabled="ragEnabled"
+          :show="answered && !lastCorrect"
+        />
         <AppButton block :variant="lastCorrect ? 'success' : 'primary'" @click="nextWord">
           {{ currentIndex + 1 >= pack.length ? '完成今日学习' : '下一词 →' }}
         </AppButton>
@@ -120,6 +131,8 @@ import {
   getUserState, shuffleOptions, posLabel, getCachedState,
 } from '../../utils/userService.js'
 import { speakLemma } from '../../utils/tts.js'
+import CorpusExamples from '../../components/CorpusExamples.vue'
+import MistakeExplain from '../../components/MistakeExplain.vue'
 
 const loading = ref(true)
 const examPackId = ref('')
@@ -136,6 +149,12 @@ const imageError = ref(false)
 const shakeOptions = ref(false)
 const sessionStats = ref({ total: 0, correct: 0, wrong: 0 })
 const showIpa = ref(true)
+const ragEnabled = ref(false)
+
+const wrongChoiceText = computed(() => {
+  if (lastCorrect.value || !selectedOpt.value) return ''
+  return selectedOpt.value.text || ''
+})
 
 const isExamMode = computed(() => Boolean(examPackId.value))
 const doneSubtitle = computed(() => {
@@ -166,6 +185,9 @@ onShow(async () => {
     if (!examPackId.value) {
       examPackId.value = uni.getStorageSync('exam_pack') || ''
     }
+    const state = await getUserState(true)
+    showIpa.value = state.settings?.showIpa !== false
+    ragEnabled.value = Boolean(state.ragEnabled) && state.experimentArm !== 'A'
     if (isExamMode.value) {
       const title = examPackId.value === 'tem8' ? '专八高频词包' : '专四冲刺词包'
       uni.setNavigationBarTitle({ title })
@@ -173,8 +195,6 @@ onShow(async () => {
       await initPack()
       return
     }
-    const state = await getUserState(true)
-    showIpa.value = state.settings?.showIpa !== false
     sessionStats.value = { ...state.todaySession }
     if (state.todaySession.finished) {
       finished.value = true

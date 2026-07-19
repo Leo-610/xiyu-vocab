@@ -184,6 +184,37 @@ Authorization: Bearer <token>
 
 响应含更新后的 `state` 与 `word` 详情。
 
+### RAG 可溯源例句（实验组 B）
+
+`GET /api/words/:id/examples?k=3`
+
+```json
+{
+  "word": { "id": 1, "lemma": "querer", "level": "A2" },
+  "examples": [
+    { "chunkId": 2, "text_es": "Quiero un café.", "source": "team-a1-2026", "level": "A1", "score": 5 }
+  ]
+}
+```
+
+对照组（`experiment_arm=A`）返回 `{ "examples": [], "disabled": true }`。
+
+### 错题解析（RAG + LLM，实验组 B）
+
+`POST /api/words/explain`
+
+```json
+{ "wordId": 1, "wrongChoice": "能够" }
+```
+
+无 `AI_GATEWAY_API_KEY` / `OPENAI_API_KEY` 时使用模板解析；结果写入 `ai_reviews` 待审。
+
+### 管理：AI 审核 / 试用报告
+
+- `GET /api/admin/ai-reviews?status=pending`
+- `POST /api/admin/ai-reviews/:id` `{ "status": "approved"|"rejected", "reviewer": "admin" }`
+- `GET /api/admin/pilot-report`（含 `experiment.last7DaysByArm`）
+
 ### 完成今日学习
 
 `POST /api/session/finish`

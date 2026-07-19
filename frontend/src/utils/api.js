@@ -259,6 +259,19 @@ export function getConfusables() {
   return request('/confusables')
 }
 
+/** RAG：可溯源例句 */
+export function getWordExamples(wordId, k = 3) {
+  return request(`/words/${wordId}/examples?k=${k}`)
+}
+
+/** RAG+LLM：错题解析（实验组） */
+export function explainWordMistake(wordId, wrongChoice) {
+  return request('/words/explain', {
+    method: 'POST',
+    data: { wordId, wrongChoice },
+  })
+}
+
 export function getWordDetail(id) {
   return request(`/words/${id}`)
 }

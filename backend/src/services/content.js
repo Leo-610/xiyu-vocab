@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { formatWord } from './learning.js'
+import { corpusStats } from './rag.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BATCHES_DIR = path.join(__dirname, '..', '..', 'data', 'batches')
@@ -66,6 +67,8 @@ export function getContentStatus() {
   `).get().c
 
   const targetTotal = Object.values(LEVEL_TARGETS).reduce((a, b) => a + b, 0)
+  const corpus = corpusStats()
+  const aiPending = db.prepare(`SELECT COUNT(*) AS c FROM ai_reviews WHERE status = 'pending'`).get().c
 
   return {
     targetTotal,
@@ -76,13 +79,18 @@ export function getContentStatus() {
       conjugations: db.prepare(`SELECT COUNT(*) AS c FROM words WHERE pos='v'`).get().c - withConjugation,
       audio: total - withAudio,
       confusableNotes: confusablePending,
+      corpusChunks: Math.max(0, 200 - corpus.chunks),
+      aiReviewsPending: aiPending,
     },
+    corpus,
     levelProgress,
     teamTasks: [
       { owner: '西语同学A', task: '词库 CSV', path: 'data/batches/{A1-C2}/words_*.csv', status: total >= 50 ? '进行中' : '待开始' },
       { owner: '西语同学B', task: '配图', path: 'data/images/{A1-C2}/', status: withImage > 0 ? '进行中' : '待开始' },
       { owner: '西语同学A', task: '动词变位 JSON', path: 'words.conjugation_json 字段', status: withConjugation > 0 ? '进行中' : '待开始' },
       { owner: '西语同学A', task: '易混词辨析文案', path: 'confusable_pairs.note_zh', status: confusablePending > 0 ? '待填写' : '已完成' },
+      { owner: '西语同学A', task: 'RAG 语料 JSONL', path: 'data/corpus/{A1-C2}/', status: corpus.chunks > 0 ? '进行中' : '待开始' },
+      { owner: '西语同学B', task: 'AI 解析审核', path: 'admin · ai_reviews', status: aiPending > 0 ? '待审核' : '空闲' },
       { owner: '西语同学B', task: '用户调研问卷', path: 'docs/survey/questionnaire.md', status: '模板已就绪' },
     ],
   }

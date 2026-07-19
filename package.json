@@ -18,6 +18,7 @@
     "seed:all": "node scripts/seed-all-levels.mjs",
     "import:ci": "bash scripts/ci-import-vocabulary.sh",
     "export:pilot": "node scripts/export-pilot-report.mjs",
+    "import:corpus": "node scripts/import-corpus.mjs --from-words --seed-db",
     "deploy:prod": "bash scripts/deploy-production.sh",
     "prepare:vercel": "node scripts/prepare-vercel.mjs",
     "vercel-build": "npm run setup && npm run build:frontend && node scripts/prepare-vercel.mjs"

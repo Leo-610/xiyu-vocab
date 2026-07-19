@@ -36,6 +36,9 @@ try {
   db.exec('DELETE FROM confusable_pairs')
   db.exec('DELETE FROM daily_sessions')
   db.exec('DELETE FROM checkin_log')
+  db.exec('DELETE FROM example_cache')
+  db.exec('DELETE FROM ai_reviews')
+  db.exec('DELETE FROM corpus_chunks')
   db.exec('DELETE FROM words')
   db.exec('COMMIT')
 } catch (e) {
@@ -65,6 +68,14 @@ const fill = spawnSync(process.execPath, [path.join(__dirname, 'fill-conjugation
 })
 if (fill.status !== 0) {
   console.warn('[reset] 变位补全脚本未成功，请手动运行 node scripts/fill-conjugations.mjs')
+}
+
+const corpus = spawnSync(process.execPath, [path.join(__dirname, 'import-corpus.mjs'), '--from-words', '--seed-db'], {
+  cwd: ROOT,
+  stdio: 'inherit',
+})
+if (corpus.status !== 0) {
+  console.warn('[reset] 语料导入未成功，请手动运行 npm run import:corpus')
 }
 
 const after = wordCount()

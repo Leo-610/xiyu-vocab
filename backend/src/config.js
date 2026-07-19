@@ -36,6 +36,11 @@ export function getConfig() {
     || (nodeEnv !== 'production' && process.env.ALLOW_DEMO_LOGIN !== 'false')
   const resendApiKey = process.env.AUTH_RESEND_KEY || process.env.RESEND_API_KEY || ''
 
+  const aiGatewayKey = process.env.AI_GATEWAY_API_KEY
+    || process.env.OPENAI_API_KEY
+    || process.env.VERCEL_AI_GATEWAY_API_KEY
+    || ''
+
   return {
     nodeEnv,
     port: parseInt(process.env.PORT, 10) || 3000,
@@ -47,5 +52,6 @@ export function getConfig() {
     emailAuthConfigured: Boolean(resendApiKey),
     allowDemoLogin,
     isProduction: nodeEnv === 'production',
+    llmConfigured: Boolean(aiGatewayKey),
   }
 }
