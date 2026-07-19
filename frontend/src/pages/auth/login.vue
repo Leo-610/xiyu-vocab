@@ -118,10 +118,30 @@
         </template>
       </template>
 
-      <template v-else-if="demoAuthEnabled">
-        <view class="dev-badge">开发演示模式</view>
-        <text class="panel-title">昵称登录</text>
-        <text class="panel-desc">邮箱服务未配置时使用。生产环境请配置 Resend 邮箱验证码登录。</text>
+      <template v-else-if="passwordAuthEnabled">
+        <view class="mode-tabs">
+          <view
+            class="mode-tab"
+            :class="{ active: authMode === 'login' }"
+            @click="switchAuthMode('login')"
+          >
+            登录
+          </view>
+          <view
+            class="mode-tab"
+            :class="{ active: authMode === 'register' }"
+            @click="switchAuthMode('register')"
+          >
+            注册
+          </view>
+        </view>
+
+        <text class="panel-title">{{ authMode === 'login' ? '欢迎回来' : '创建账号' }}</text>
+        <text class="panel-desc">
+          {{ authMode === 'login'
+            ? '使用昵称和密码登录，学习进度将保存在云端。'
+            : '设置昵称与密码完成注册，之后可用同一账号继续学习。' }}
+        </text>
 
         <view class="field" :class="{ focused: nickFocused, error: Boolean(error) }">
           <text class="label">昵称</text>
@@ -130,15 +150,44 @@
             class="input"
             type="text"
             maxlength="32"
-            placeholder="输入昵称登录或注册"
-            confirm-type="done"
+            :placeholder="authMode === 'login' ? '已注册的昵称' : '2–32 个字符'"
+            confirm-type="next"
             @focus="nickFocused = true"
             @blur="nickFocused = false"
-            @confirm="handleDemoSubmit"
           />
         </view>
 
-        <view v-if="recentNickname" class="quick-row" @click="useRecent">
+        <view class="field" :class="{ focused: passFocused, error: Boolean(error) }">
+          <text class="label">密码</text>
+          <input
+            v-model="password"
+            class="input"
+            password
+            maxlength="64"
+            :placeholder="authMode === 'login' ? '输入密码' : '至少 6 位'"
+            confirm-type="done"
+            @focus="passFocused = true"
+            @blur="passFocused = false"
+            @confirm="handlePasswordSubmit"
+          />
+        </view>
+
+        <view v-if="authMode === 'register'" class="field" :class="{ focused: pass2Focused, error: Boolean(error) }">
+          <text class="label">确认密码</text>
+          <input
+            v-model="passwordConfirm"
+            class="input"
+            password
+            maxlength="64"
+            placeholder="再次输入密码"
+            confirm-type="done"
+            @focus="pass2Focused = true"
+            @blur="pass2Focused = false"
+            @confirm="handlePasswordSubmit"
+          />
+        </view>
+
+        <view v-if="recentNickname && authMode === 'login'" class="quick-row" @click="useRecent">
           <text class="quick-label">最近使用</text>
           <text class="quick-name">{{ recentNickname }}</text>
         </view>
@@ -148,16 +197,22 @@
         <AppButton
           block
           :loading="loading"
-          :disabled="!apiOnline || !nickname.trim()"
-          @click="handleDemoSubmit"
+          :disabled="!apiOnline || !nickname.trim() || !password"
+          @click="handlePasswordSubmit"
         >
-          进入学习 →
+          {{ authMode === 'login' ? '登录并进入 →' : '注册并开始 →' }}
         </AppButton>
+
+        <view class="switch-hint" @click="switchAuthMode(authMode === 'login' ? 'register' : 'login')">
+          <text v-if="authMode === 'login'">还没有账号？</text>
+          <text v-else>已有账号？</text>
+          <text class="switch-link">{{ authMode === 'login' ? '去注册' : '去登录' }}</text>
+        </view>
       </template>
 
       <template v-else>
         <text class="panel-title">登录暂不可用</text>
-        <text class="panel-desc">请配置邮箱验证码服务（AUTH_RESEND_KEY），或联系管理员开启演示登录。</text>
+        <text class="panel-desc">服务未就绪，请稍后重试或联系管理员。</text>
         <view v-if="error" class="error-msg">{{ error }}</view>
       </template>
       <!-- #endif -->
@@ -197,7 +252,10 @@ import {
 const email = ref('')
 const otpCode = ref('')
 const step = ref('email')
+const authMode = ref('login')
 const nickname = ref('')
+const password = ref('')
+const passwordConfirm = ref('')
 const recentEmail = ref(getLastEmail())
 const recentNickname = ref(getLastNickname())
 const loading = ref(false)
@@ -207,11 +265,20 @@ const checkedOnline = ref(false)
 const emailFocused = ref(false)
 const codeFocused = ref(false)
 const nickFocused = ref(false)
+const passFocused = ref(false)
+const pass2Focused = ref(false)
 const wechatStep = ref('login')
 const profileUser = ref({ nickname: '', avatarUrl: '' })
 
 const emailAuthEnabled = computed(() => getAuthConfig().email)
-const demoAuthEnabled = computed(() => !emailAuthEnabled.value && getAuthConfig().demoLogin)
+const passwordAuthEnabled = computed(() => !emailAuthEnabled.value && getAuthConfig().password !== false)
+
+function switchAuthMode(mode) {
+  authMode.value = mode
+  error.value = ''
+  password.value = ''
+  passwordConfirm.value = ''
+}
 
 onShow(async () => {
   recentEmail.value = getLastEmail()
@@ -351,11 +418,30 @@ async function handleVerifyCode() {
   }
 }
 
-async function handleDemoSubmit() {
+async function handlePasswordSubmit() {
   const name = nickname.value.trim()
+  const pw = password.value
   if (!name) {
     error.value = '请输入昵称'
     return
+  }
+  if (name.length < 2) {
+    error.value = '昵称至少 2 个字符'
+    return
+  }
+  if (!pw) {
+    error.value = '请输入密码'
+    return
+  }
+  if (pw.length < 6) {
+    error.value = '密码至少 6 位'
+    return
+  }
+  if (authMode.value === 'register') {
+    if (pw !== passwordConfirm.value) {
+      error.value = '两次输入的密码不一致'
+      return
+    }
   }
   if (!apiOnline.value) {
     error.value = '请先连接网络服务'
@@ -364,21 +450,14 @@ async function handleDemoSubmit() {
   loading.value = true
   error.value = ''
   try {
-    if (name.length >= 2) {
-      try {
-        await loginWithNickname(name)
-        goHome()
-        return
-      } catch {
-        await registerWithNickname(name)
-        goHome()
-        return
-      }
+    if (authMode.value === 'register') {
+      await registerWithNickname(name, pw)
+    } else {
+      await loginWithNickname(name, pw)
     }
-    await loginWithNickname(name)
     goHome()
   } catch (e) {
-    error.value = e.message || '登录失败'
+    error.value = e.message || (authMode.value === 'register' ? '注册失败' : '登录失败')
   } finally {
     loading.value = false
   }
@@ -584,6 +663,32 @@ async function handleDemoSubmit() {
   font-size: 22rpx;
   line-height: 1.6;
   color: $text-secondary;
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 8rpx;
+  margin-bottom: 28rpx;
+  padding: 6rpx;
+  background: rgba($primary, 0.06);
+  border-radius: $radius-md;
+}
+
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 12rpx;
+  font-size: 28rpx;
+  color: $text-secondary;
+  border-radius: calc(#{$radius-md} - 4rpx);
+  transition: all 0.2s ease;
+
+  &.active {
+    background: #fff;
+    color: $primary-dark;
+    font-weight: 700;
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  }
 }
 
 .quick-row {

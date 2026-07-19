@@ -127,6 +127,7 @@ export function runMigrations(db) {
       created_at TEXT DEFAULT (datetime('now'))
     )`,
     `CREATE INDEX IF NOT EXISTS idx_rate_limit_key_time ON rate_limit_events(key, created_at)`,
+    `ALTER TABLE users ADD COLUMN password_hash TEXT`,
   ]
 
   for (const sql of MIGRATIONS) {

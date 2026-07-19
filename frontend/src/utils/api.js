@@ -90,12 +90,16 @@ export function getSession() {
   return request('/auth/session')
 }
 
-export function login(nickname = '演示用户') {
-  return request('/login', { method: 'POST', data: { nickname } })
+export function login(nickname = '演示用户', password) {
+  const data = { nickname }
+  if (password !== undefined) data.password = password
+  return request('/login', { method: 'POST', data })
 }
 
-export function register(nickname) {
-  return request('/register', { method: 'POST', data: { nickname } })
+export function register(nickname, password) {
+  const data = { nickname }
+  if (password !== undefined) data.password = password
+  return request('/register', { method: 'POST', data })
 }
 
 /** 微信小程序：code 换 session（后端调微信 jscode2session） */

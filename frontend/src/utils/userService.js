@@ -1,5 +1,5 @@
 import * as api from './api.js'
-import { performDemoLogin, performWechatLogin, performEmailSendOtp, performEmailVerifyOtp } from './authLogin.js'
+import { performDemoLogin, performWechatLogin, performEmailSendOtp, performEmailVerifyOtp, performPasswordLogin, performPasswordRegister } from './authLogin.js'
 import { safeReLaunch } from './nav.js'
 
 const LAST_NICKNAME_KEY = 'last_nickname'
@@ -21,7 +21,7 @@ const EMOJI_MAP = {
 
 let cachedState = null
 let apiOnline = null
-let authConfig = { email: false, demoLogin: true }
+let authConfig = { email: false, password: true, demoLogin: true }
 
 export function getAuthConfig() {
   return authConfig
@@ -59,6 +59,7 @@ export async function checkApiOnline() {
     apiOnline = true
     authConfig = {
       email: Boolean(health?.auth?.email),
+      password: health?.auth?.password !== false,
       demoLogin: health?.auth?.demoLogin !== false,
     }
   } catch {
@@ -113,12 +114,20 @@ export async function loginWithEmailOtp(email, code) {
   return applyAuthResponse(res)
 }
 
-export async function loginWithNickname(nickname) {
+export async function loginWithNickname(nickname, password) {
+  if (password !== undefined && password !== null && String(password).length > 0) {
+    const res = await performPasswordLogin(nickname, password)
+    return applyAuthResponse(res)
+  }
   const res = await performDemoLogin(nickname)
   return applyAuthResponse(res)
 }
 
-export async function registerWithNickname(nickname) {
+export async function registerWithNickname(nickname, password) {
+  if (password !== undefined && password !== null && String(password).length > 0) {
+    const res = await performPasswordRegister(nickname, password)
+    return applyAuthResponse(res)
+  }
   const res = await api.register(nickname)
   return applyAuthResponse(res)
 }

@@ -7,7 +7,7 @@ import db, { getDbPath } from './db.js'
 import { getConfig } from './config.js'
 import { runMigrations } from './migrate.js'
 import { seedWords, wordCount } from './seed.js'
-import { authMiddleware, loginUser, registerUser, loginWechatUser, loginEmailUser, logoutUser, formatAuthMeta } from './middleware/auth.js'
+import { authMiddleware, loginUser, registerUser, loginPasswordUser, registerPasswordUser, loginWechatUser, loginEmailUser, logoutUser, formatAuthMeta } from './middleware/auth.js'
 import { code2Session } from './services/wechat.js'
 import { sendEmailLoginOtp, verifyEmailLoginOtp, isValidEmail, normalizeEmail } from './services/emailOtp.js'
 import { checkRateLimit, getClientIp } from './services/rateLimit.js'
@@ -121,6 +121,7 @@ async function handleApi(req, res, pathname, query) {
       auth: {
         wechat: appConfig.wechatConfigured,
         email: appConfig.emailAuthConfigured,
+        password: true,
         demoLogin: appConfig.allowDemoLogin,
         env: appConfig.nodeEnv,
       },
@@ -136,13 +137,30 @@ async function handleApi(req, res, pathname, query) {
   }
 
   if (pathname === '/api/login' && method === 'POST') {
+    const body = await readBody(req)
+    const password = body.password
+    // 正式：昵称 + 密码
+    if (password !== undefined && password !== null && String(password).length > 0) {
+      try {
+        const user = loginPasswordUser(body.nickname, password)
+        return sendJson(res, 200, {
+          token: user.session_token,
+          user: buildUserState(db, user.id),
+        })
+      } catch (err) {
+        const status = err.code === 'USER_NOT_FOUND' || err.code === 'INVALID_CREDENTIALS' ? 401
+          : err.code === 'INVALID_PASSWORD' || err.code === 'INVALID_NICKNAME' ? 400
+          : 400
+        return sendJson(res, status, { error: err.message, code: err.code || 'LOGIN_FAILED' })
+      }
+    }
+    // 兼容：无密码的演示登录
     if (appConfig.isProduction && !appConfig.allowDemoLogin) {
       return sendJson(res, 403, {
-        error: '演示登录已关闭，请使用微信登录',
-        code: 'DEMO_LOGIN_DISABLED',
+        error: '请使用账号密码登录',
+        code: 'PASSWORD_REQUIRED',
       })
     }
-    const body = await readBody(req)
     try {
       const user = loginUser(body.nickname || '演示用户')
       return sendJson(res, 200, {
@@ -150,19 +168,32 @@ async function handleApi(req, res, pathname, query) {
         user: buildUserState(db, user.id),
       })
     } catch (err) {
-      const status = err.code === 'USER_NOT_FOUND' ? 404 : 400
+      const status = err.code === 'USER_NOT_FOUND' || err.code === 'PASSWORD_REQUIRED' ? 404 : 400
       return sendJson(res, status, { error: err.message, code: err.code || 'LOGIN_FAILED' })
     }
   }
 
   if (pathname === '/api/register' && method === 'POST') {
+    const body = await readBody(req)
+    const password = body.password
+    if (password !== undefined && password !== null && String(password).length > 0) {
+      try {
+        const user = registerPasswordUser(body.nickname, password)
+        return sendJson(res, 200, {
+          token: user.session_token,
+          user: buildUserState(db, user.id),
+        })
+      } catch (err) {
+        const status = err.code === 'NICKNAME_TAKEN' ? 409 : 400
+        return sendJson(res, status, { error: err.message, code: err.code || 'REGISTER_FAILED' })
+      }
+    }
     if (appConfig.isProduction && !appConfig.allowDemoLogin) {
       return sendJson(res, 403, {
-        error: '演示注册已关闭，请使用微信登录',
-        code: 'DEMO_LOGIN_DISABLED',
+        error: '请使用账号密码注册',
+        code: 'PASSWORD_REQUIRED',
       })
     }
-    const body = await readBody(req)
     try {
       const user = registerUser(body.nickname)
       return sendJson(res, 200, {

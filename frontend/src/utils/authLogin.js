@@ -6,7 +6,17 @@ export async function performWechatLogin() {
   return api.loginWechat(code)
 }
 
-/** H5 演示：昵称登录（须已注册） */
+/** H5：昵称 + 密码登录 */
+export async function performPasswordLogin(nickname, password) {
+  return api.login(nickname, password)
+}
+
+/** H5：昵称 + 密码注册 */
+export async function performPasswordRegister(nickname, password) {
+  return api.register(nickname, password)
+}
+
+/** H5 演示：昵称登录（须已注册，无密码） */
 export async function performDemoLogin(nickname) {
   return api.login(nickname)
 }
