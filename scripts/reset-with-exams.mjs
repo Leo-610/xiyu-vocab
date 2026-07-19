@@ -5,6 +5,7 @@
  */
 import fs from 'fs'
 import path from 'path'
+import { spawnSync } from 'child_process'
 import { fileURLToPath } from 'url'
 import db from '../backend/src/db.js'
 import { runMigrations } from '../backend/src/migrate.js'
@@ -56,6 +57,15 @@ for (const csv of CSVs) {
 }
 
 seedConfusablePairs()
+
+// 导入 CSV 不含变位，随后补全 presente
+const fill = spawnSync(process.execPath, [path.join(__dirname, 'fill-conjugations.mjs')], {
+  cwd: ROOT,
+  stdio: 'inherit',
+})
+if (fill.status !== 0) {
+  console.warn('[reset] 变位补全脚本未成功，请手动运行 node scripts/fill-conjugations.mjs')
+}
 
 const after = wordCount()
 console.log(`[reset] 合计导入 ${total} 行，库中 ${after} 词`)
