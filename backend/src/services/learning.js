@@ -1,4 +1,5 @@
 import { needsProfile } from './user.js'
+import { resolveAuthType } from '../middleware/auth.js'
 import { checkSpelling } from '../utils/spanish.js'
 import { logStudyEvent, parseUserSettings, getStudySummary } from './studyEvents.js'
 
@@ -55,9 +56,10 @@ export function buildUserState(db, userId) {
   return {
     userId: user.id,
     nickname: user.nickname,
+    email: user.email || null,
     avatarUrl: user.avatar_url || null,
-    isWechatUser: Boolean(user.openid && !String(user.openid).startsWith('demo_')),
-    authType: user.openid && !String(user.openid).startsWith('demo_') ? 'wechat' : 'demo',
+    isWechatUser: resolveAuthType(user) === 'wechat',
+    authType: resolveAuthType(user),
     needsProfile: needsProfile(user),
     sessionExpiresAt: user.token_expires_at || null,
     lastLoginAt: user.last_login_at || null,

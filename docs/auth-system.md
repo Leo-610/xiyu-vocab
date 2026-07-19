@@ -10,11 +10,13 @@
 ```mermaid
 flowchart TB
   subgraph client [客户端]
-    H5[H5_演示环境]
+    H5[H5_Web]
     MP[微信小程序]
   end
 
   subgraph api [后端 API]
+    EmailSend[POST_/api/auth/email/send]
+    EmailVerify[POST_/api/auth/email/verify]
     DemoReg[POST_/api/register]
     DemoLogin[POST_/api/login]
     WxLogin[POST_/api/auth/wechat]
@@ -22,25 +24,27 @@ flowchart TB
     Logout[POST_/api/auth/logout]
   end
 
-  subgraph wx [微信开放平台]
-    Code2Session[jscode2session]
+  subgraph mail [Resend]
+    OTP[6位验证码邮件]
   end
 
-  H5 --> DemoReg
-  H5 --> DemoLogin
+  H5 --> EmailSend
+  EmailSend --> OTP
+  H5 --> EmailVerify
+  H5 -.开发未配邮箱.-> DemoLogin
   MP --> WxLogin
-  WxLogin --> Code2Session
-  DemoReg --> Token[Bearer_Token_30天]
+  EmailVerify --> Token[Bearer_Token_30天]
   DemoLogin --> Token
   WxLogin --> Token
   Token --> Session
   Token --> Logout
 ```
 
-| 环境 | 登录方式 | openid 规则 | 生产环境 |
-|------|----------|-------------|----------|
-| **H5 演示** | 昵称注册 + 登录 | `demo_{昵称}` | 默认关闭（`ALLOW_DEMO_LOGIN=false`） |
-| **微信小程序** | `uni.login` → code → 后端换 openid | 微信真实 openid | **唯一推荐方式** |
+| 环境 | 登录方式 | 身份标识 | 生产环境 |
+|------|----------|----------|----------|
+| **H5 / Web** | 邮箱验证码（与 shiji 相同） | `email_{邮箱}` + `email` 列 | **推荐方式**（需 Resend） |
+| **H5 开发回退** | 昵称登录（自动注册） | `demo_{昵称}` | 仅 `ALLOW_DEMO_LOGIN=true` 且未配邮箱时 |
+| **微信小程序** | `uni.login` → code → 后端换 openid | 微信真实 openid | **小程序唯一方式** |
 
 ---
 
@@ -85,25 +89,48 @@ flowchart TB
 
 ---
 
-## 四、H5 演示登录流程
+## 四、H5 邮箱验证码登录（与 shiji 相同）
 
 ```
 1. 隐私同意 → login.vue
-2. 输入昵称 →「注册新账号」POST /api/register
-3. 或「登录」POST /api/login（须已注册）
-4. token 写入本地 → 进入首页
+2. 输入邮箱 →「发送验证码」POST /api/auth/email/send
+3. 邮件收到 6 位验证码（Resend，10 分钟有效）
+4. 输入验证码 → POST /api/auth/email/verify
+5. 首次登录自动创建账号（无需单独注册页）
+6. token 写入本地 → 进入首页
+```
+
+开发环境若未配置 `AUTH_RESEND_KEY`，登录页回退为昵称演示模式（`ALLOW_DEMO_LOGIN=true`）。
+
+### Resend 配置
+
+```env
+AUTH_RESEND_KEY=re_xxxxxxxx
+AUTH_RESEND_FROM=西语背单词 <notify@yourdomain.com>
+```
+
+---
+
+## 五、H5 演示登录（开发回退）
+
+```
+1. 隐私同意 → login.vue
+2. 输入昵称 → 自动尝试登录，失败则自动注册
+3. token 写入本地 → 进入首页
 ```
 
 生产环境 `NODE_ENV=production` 且未设 `ALLOW_DEMO_LOGIN=true` 时，演示注册/登录返回 `403 DEMO_LOGIN_DISABLED`。
 
 ---
 
-## 五、API 一览
+## 六、API 一览
 
 | 方法 | 路径 | 认证 | 说明 |
 |------|------|:----:|------|
-| POST | `/api/register` | 否 | H5 演示注册 |
-| POST | `/api/login` | 否 | H5 演示登录 |
+| POST | `/api/auth/email/send` | 否 | 发送邮箱登录验证码 |
+| POST | `/api/auth/email/verify` | 否 | 验证码登录（首次自动注册） |
+| POST | `/api/register` | 否 | H5 演示注册（开发回退） |
+| POST | `/api/login` | 否 | H5 演示登录（开发回退） |
 | POST | `/api/auth/wechat` | 否 | 小程序 code 登录 |
 | GET | `/api/auth/session` | 是 | 校验 token 是否有效 |
 | POST | `/api/auth/logout` | 是 | 登出作废 token |

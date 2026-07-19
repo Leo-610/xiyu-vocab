@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   openid TEXT UNIQUE,
   unionid TEXT,
+  email TEXT UNIQUE,
   nickname TEXT,
   avatar_url TEXT,
   auth_type TEXT DEFAULT 'wechat' CHECK(auth_type IN ('wechat','demo')),
@@ -164,6 +165,20 @@ CREATE INDEX IF NOT EXISTS idx_progress_review ON user_word_progress(user_id, ne
 CREATE INDEX IF NOT EXISTS idx_checkin_user ON checkin_log(user_id, checkin_date);
 CREATE INDEX IF NOT EXISTS idx_study_user_time ON study_events(user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_study_word ON study_events(word_id);
+
+CREATE TABLE IF NOT EXISTS verification_tokens (
+  identifier TEXT NOT NULL,
+  token TEXT NOT NULL,
+  expires TEXT NOT NULL,
+  PRIMARY KEY (identifier, token)
+);
+
+CREATE TABLE IF NOT EXISTS rate_limit_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_rate_limit_key_time ON rate_limit_events(key, created_at);
 `
 
 db.exec(SCHEMA)

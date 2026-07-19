@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { resolveAuthType } from '../middleware/auth.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const AVATAR_DIR = path.join(__dirname, '..', '..', 'data', 'avatars')
@@ -18,7 +19,7 @@ function extFromMime(mime) {
 }
 
 export function isWechatUser(user) {
-  return user?.openid && !String(user.openid).startsWith('demo_')
+  return resolveAuthType(user) === 'wechat'
 }
 
 export function needsProfile(user) {

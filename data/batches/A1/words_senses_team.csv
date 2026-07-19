@@ -1,80 +1,80 @@
 ﻿lemma,pos,gender,level,sense,ipa,meaning_zh,meaning_en,example_es,example_zh,image_file,tags,exam_tags,distractor_1,distractor_2,distractor_3,copyright_note
-casa,n,f,A1,1,,房子,,Mi familia y yo vivimos en una casa pequeña pero muy cómoda que está cerca de la escuela y del parque.,我和家人住在一所小而舒适的房子里，离学校和公园都很近。,casa_1.jpg,义项包|A1|n,,想要,能够,听,大创内容组_senses_table
-casa,n,f,A1,2,,家,,"Después de trabajar todo el día, siempre vuelvo a casa para cenar con mis padres y descansar un rato.",工作了一整天之后，我总会回家和父母一起吃晚饭、休息一会儿。,casa_2.jpg,义项包|A1|n,,面包,夜晚,关闭,大创内容组_senses_table
-hablar,v,n/a,A1,1,,讲（某种语言）,,"Hablo español con mis compañeros de clase todos los días, aunque todavía cometo algunos errores pequeños.",我每天都和同学说西班牙语，虽然还会犯一些小错误。,hablar_1.jpg,义项包|A1|v,,住,面包,猫,大创内容组_senses_table
-hablar,v,n/a,A1,2,,交谈,,"Cuando hablamos en grupo, el profesor nos pide usar frases sencillas y escuchar con atención a los demás.",小组讨论时，老师要求我们使用简单的句子，并认真听别人说话。,hablar_2.jpg,义项包|A1|v,,关闭,牛奶,讲（某种语言）,大创内容组_senses_table
-comer,v,n/a,A1,1,,吃,,Por la mañana suelo comer pan con leche en la cocina antes de salir de casa hacia la escuela.,早上我通常在厨房吃面包配牛奶，然后再出门去学校。,comer_1.jpg,义项包|A1|v,,早上,男性朋友,桌子,大创内容组_senses_table
-beber,v,n/a,A1,1,,喝,,Bebo agua durante todo el día porque el médico me dice que es muy importante para la salud.,我一整天都会喝水，因为医生告诉我这对健康很重要。,beber_1.jpg,义项包|A1|v,,你好,读书,在,大创内容组_senses_table
-agua,n,f,A1,1,,水,,"El agua de la nevera está muy fría, así que la dejo unos minutos fuera antes de beberla.",冰箱里的水很冰，所以我喝之前会先拿出来放几分钟。,agua_1.jpg,义项包|A1|n,,天,听,分钟,大创内容组_senses_table
-pan,n,m,A1,1,,面包,,Cada mañana compro pan fresco en la panadería de mi barrio porque huele muy bien y está caliente.,我每天早上都在社区的面包店买新鲜面包，因为很香而且是热的。,pan_1.jpg,义项包|A1|n,,说,需要,我,大创内容组_senses_table
-leche,n,f,A1,1,,牛奶,,"Bebo un vaso de leche en el desayuno casi todos los días, a veces con un poco de pan.",我几乎每天早上早餐都会喝一杯牛奶，有时配一点面包。,leche_1.jpg,义项包|A1|n,,看见,猫,女孩,大创内容组_senses_table
-perro,n,m,A1,1,,狗,,"Mi perro es muy grande y amable, y le encanta correr en el parque con los niños del vecindario.",我的狗又大又友好，最喜欢在公园里和邻居家的孩子一起跑。,perro_1.jpg,义项包|A1|n,,需要,读书,你好,大创内容组_senses_table
-gato,n,m,A1,1,,猫,,Tengo un gato pequeño de color naranja que duerme mucho durante el día y juega por la noche.,我有一只橙色的小猫，白天睡很多觉，晚上才玩耍。,gato_1.jpg,义项包|A1|n,,打开,姐妹,（天气）不好,大创内容组_senses_table
-libro,n,m,A1,1,,书,,"Leo un libro interesante sobre la historia de España antes de dormir, aunque a veces solo unas páginas.",睡前我会读一本关于西班牙历史的有趣的书，虽然有时只能读几页。,libro_1.jpg,义项包|A1|n,,男性朋友,做得好的,猫,大创内容组_senses_table
-escuela,n,f,A1,1,,学校,,Voy a la escuela a las ocho de la mañana y regreso a casa alrededor de las tres de la tarde.,我早上八点去学校，下午三点左右回家。,escuela_1.jpg,义项包|A1|n,,兄弟,叫作,有,大创内容组_senses_table
-amigo,n,m,A1,1,,男性朋友,,Mi amigo vive en Madrid y cada verano viene a visitarme para pasar unos días en mi ciudad.,我的男性朋友住在马德里，每年夏天都会来看我，在我所在的城市待几天。,amigo_1.jpg,义项包|A1|n,,小时,买,来,大创内容组_senses_table
-amigo,n,m,A1,2,,朋友们（统称）,,"Los fines de semana salgo con mis amigos al parque, hablamos mucho y a veces comemos juntos algo sencillo.",周末我和朋友们去公园，聊很多天，有时一起吃些简单的食物。,amigo_2.jpg,义项包|A1|n,,女孩,书,做得好的,大创内容组_senses_table
-familia,n,f,A1,1,,家庭,,"Mi familia es grande porque tengo tres hermanos, y los domingos todos comemos juntos en casa de mis abuelos.",我家庭人口很多，因为我有三个兄弟姐妹，周日我们总会去祖父母家一起吃饭。,familia_1.jpg,义项包|A1|n,,兄弟,有,听,大创内容组_senses_table
-familia,n,f,A1,2,,家人,,"Amo a mi familia y les escribo un mensaje casi todos los días, aunque esté muy ocupado con el trabajo.",我爱我的家人，几乎每天都会给他们发消息，即使工作很忙。,familia_2.jpg,义项包|A1|n,,讲（某种语言）,对不起,关闭,大创内容组_senses_table
-trabajar,v,n/a,A1,1,,工作,,"Trabajo en una oficina pequeña cerca de mi casa, y normalmente empiezo a las nueve de la mañana.",我在家附近的一间小办公室工作，通常早上九点开始。,trabajar_1.jpg,义项包|A1|v,,再见,女老师,买,大创内容组_senses_table
-estudiar,v,n/a,A1,1,,学习,,"Estudio español cada día durante una hora, repaso vocabulario nuevo y practico la pronunciación con audios sencillos.",我每天学一小时西班牙语，复习新词汇，并用简单的音频练习发音。,estudiar_1.jpg,义项包|A1|v,,学校,做得好的,讲（某种语言）,大创内容组_senses_table
-estudiar,v,n/a,A1,2,,读书,,Por la noche estudio el libro de texto en mi habitación y subrayo las palabras nuevas que quiero recordar.,晚上我在房间读课本，划出想记住的新词。,estudiar_2.jpg,义项包|A1|v,,分钟,女人,学习,大创内容组_senses_table
-grande,adj,n/a,A1,1,,大的,,"Mi casa no es muy grande, pero tiene un salón cómodo y una cocina donde toda la familia puede comer juntos.",我的房子不算很大，但有一个舒适的客厅，还有全家能一起吃饭的厨房。,grande_1.jpg,义项包|A1|adj,,牛奶,天,书,大创内容组_senses_table
-pequeño,adj,n/a,A1,1,,小的,,"Tengo un gato pequeño que todavía es joven, pero ya corre por toda la casa con mucha energía.",我有一只小猫，还很年轻，但已经精力充沛地满屋子跑。,pequeno_1.jpg,义项包|A1|adj,,去,小时,来,大创内容组_senses_table
-bueno,adj,n/a,A1,1,,好的（质量）,,Es un buen libro para principiantes porque explica la gramática con ejemplos claros y frases fáciles de entender.,这是一本适合初学者的好书，因为它用清晰的例子和易懂的句子讲解语法。,bueno_1.jpg,义项包|A1|adj,,女孩,房子,交谈,大创内容组_senses_table
-bueno,adj,n/a,A1,2,,做得好的,,"El profesor dice que hicimos un buen trabajo en clase hoy, aunque todavía debemos practicar más la pronunciación.",老师说我们今天课堂表现不错，不过还需要多练习发音。,bueno_2.jpg,义项包|A1|adj,,女儿,星期,再见,大创内容组_senses_table
-malo,adj,n/a,A1,1,,坏的,,Fue una mala idea salir sin paraguas porque empezó a llover de repente y llegamos a la escuela mojados.,不带伞出门是个坏主意，因为突然下起雨，我们到上学时全身都湿了。,malo_1.jpg,义项包|A1|adj,,面包,男性朋友,我们,大创内容组_senses_table
-malo,adj,n/a,A1,2,,（天气）不好,,"Hoy hace mal tiempo, así que preferimos quedarnos en casa, leer un poco y beber algo caliente en la cocina.",今天天气不好，所以我们宁愿待在家里，读点书，在厨房喝点热饮。,malo_2.jpg,义项包|A1|adj,,明天,你,小时,大创内容组_senses_table
-hoy,adv,n/a,A1,1,,今天,,"Hoy es lunes y tenemos clase de español por la mañana, así que preparé mi cuaderno y mi libro anoche.",今天是星期一，上午有西班牙语课，所以我昨晚就准备好了笔记本和书。,hoy_1.jpg,义项包|A1|adv,,听,交谈,房子,大创内容组_senses_table
-mañana,adv,n/a,A1,1,,明天,,Mañana voy a la escuela un poco más temprano porque el profesor quiere hablar conmigo sobre mi trabajo escrito.,明天我会早一点去学校，因为老师想和我谈谈我的书面作业。,manana_1.jpg,义项包|A1|adv,,书,房子,谢谢,大创内容组_senses_table
-mañana,n,f,A1,2,,早上,,"Por la mañana bebo café con leche, como un poco de pan y reviso los mensajes antes de ir al trabajo.",早上我会喝拿铁，吃一点面包，并在上班前查看消息。,manana_2.jpg,义项包|A1|n,,姐妹,小时,面包,大创内容组_senses_table
-hola,int,n/a,A1,1,,你好,,"Hola, soy Ana y estudio español por la mañana con mis nuevos compañeros de clase.",你好，我是安娜，早上和新同学一起学西语。,hola_1.jpg,义项包|A1|int,,早上,工作,女儿,大创内容组_senses_table
-adiós,int,n/a,A1,1,,再见,,"Después de la clase, digo adiós a mis amigos y camino despacio hacia mi casa.",下课后，我和朋友们说再见，然后慢慢走回家。,adios_1.jpg,义项包|A1|int,,想要,早上,喝,大创内容组_senses_table
-gracias,n,f,A1,1,,谢谢,,Digo gracias a mi compañera porque me presta un lápiz rojo durante el examen.,我对同学说谢谢，因为考试时她借给我一支红铅笔。,gracias_1.jpg,义项包|A1|n,,男性朋友,家,明天,大创内容组_senses_table
-perdón,n,m,A1,1,,对不起,,"Perdón, llego tarde porque el autobús pasa muy despacio por el centro esta mañana.",对不起，我迟到了，因为今天早上公交车在市中心开得很慢。,perdon_1.jpg,义项包|A1|n,,大的,父亲,夜晚,大创内容组_senses_table
-sí,adv,n/a,A1,1,,是,,"Sí, quiero estudiar español este año porque me gusta escuchar música latina en casa.",是的，我今年想学西语，因为我喜欢在家听拉丁音乐。,si_1.jpg,义项包|A1|adv,,家庭,不,大的,大创内容组_senses_table
-no,adv,n/a,A1,1,,不,,"No, hoy no quiero café porque ya bebí leche caliente antes de salir.",不，今天我不想喝咖啡，因为出门前已经喝了热牛奶。,no_1.jpg,义项包|A1|adv,,（天气）不好,对不起,是,大创内容组_senses_table
-yo,pron,n/a,A1,1,,我,,Yo estudio en una escuela pequeña y camino allí con mi hermana cada mañana.,我在一所小学校学习，每天早上和妹妹走路去那里。,yo_1.jpg,义项包|A1|pron,,学校,早上,看见,大创内容组_senses_table
-tú,pron,n/a,A1,1,,你,,Tú tienes un libro azul en la mochila y lo usas todos los días.,你书包里有一本蓝色的书，每天都用它。,tu_1.jpg,义项包|A1|pron,,能够,他,大的,大创内容组_senses_table
-él,pron,n/a,A1,1,,他,,Él vive cerca de la escuela y siempre llega temprano a la clase de español.,他住在学校附近，总是很早到西语课。,el_1.jpg,义项包|A1|pron,,再见,是,男孩,大创内容组_senses_table
-ella,pron,n/a,A1,1,,她,,Ella es mi profesora de español y habla muy despacio cuando aprendemos palabras nuevas.,她是我的西语老师，我们学新词时她说得很慢。,ella_1.jpg,义项包|A1|pron,,夜晚,他,听,大创内容组_senses_table
-nosotros,pron,n/a,A1,1,,我们,,Nosotros estudiamos español los lunes y los miércoles en una clase muy luminosa.,我们每周一和周三在一间很明亮的教室学西语。,nosotros_1.jpg,义项包|A1|pron,,看见,房子,下午,大创内容组_senses_table
-ser,v,n/a,A1,1,,是,,Soy estudiante de español y mi profesora es muy paciente con todos los principiantes.,我是西语学生，我的老师对所有初学者都很有耐心。,ser_1.jpg,义项包|A1|v,,看见,朋友们（统称）,夜晚,大创内容组_senses_table
-estar,v,n/a,A1,1,,在,,"El libro está sobre la mesa, al lado de mi mochila negra y mis lápices.",书在桌子上，旁边是我的黑色书包和铅笔。,estar_1.jpg,义项包|A1|v,,不,早上,读,大创内容组_senses_table
-tener,v,n/a,A1,1,,有,,Tengo dos libros de español y un cuaderno pequeño para escribir palabras nuevas.,我有两本西语书和一个写新词的小本子。,tener_1.jpg,义项包|A1|v,,女儿,家,天,大创内容组_senses_table
-ir,v,n/a,A1,1,,去,,Voy a la escuela en autobús porque mi casa está lejos del centro.,我坐公交去学校，因为我家离市中心远。,ir_1.jpg,义项包|A1|v,,女孩,分钟,读书,大创内容组_senses_table
-venir,v,n/a,A1,1,,来,,Mi amigo viene a mi casa esta tarde para estudiar español conmigo.,我朋友今天下午来我家和我一起学西语。,venir_1.jpg,义项包|A1|v,,家人,看见,谢谢,大创内容组_senses_table
-vivir,v,n/a,A1,1,,住,,Vivo con mis padres en un piso pequeño cerca de la estación de tren.,我和父母住在火车站附近的一套小公寓里。,vivir_1.jpg,义项包|A1|v,,读,能够,需要,大创内容组_senses_table
-llamarse,v,n/a,A1,1,,叫作,,Me llamo Laura y soy nueva en esta clase de español para principiantes.,我叫劳拉，是这个西语初级班的新学生。,llamarse_1.jpg,义项包|A1|v,,读书,狗,坏的,大创内容组_senses_table
-necesitar,v,n/a,A1,1,,需要,,Necesito un bolígrafo para escribir la dirección de mi profesor en el cuaderno.,我需要一支圆珠笔，把老师的地址写在本子上。,necesitar_1.jpg,义项包|A1|v,,大的,工作,是,大创内容组_senses_table
-querer,v,n/a,A1,1,,想要,,Quiero un vaso de agua porque hace calor y camino mucho por la tarde.,我想要一杯水，因为天气热，下午走了很多路。,querer_1.jpg,义项包|A1|v,,你,牛奶,能够,大创内容组_senses_table
-poder,v,n/a,A1,1,,能够,,"Puedo leer textos cortos en español, pero todavía necesito practicar la pronunciación.",我能够读短的西语文本，但还需要练习发音。,poder_1.jpg,义项包|A1|v,,父亲,听,住,大创内容组_senses_table
-hacer,v,n/a,A1,1,,做,,Hago los deberes después de cenar y luego leo un libro fácil en español.,我晚饭后做作业，然后读一本简单的西语书。,hacer_1.jpg,义项包|A1|v,,有,需要,写,大创内容组_senses_table
-decir,v,n/a,A1,1,,说,,La profesora dice una palabra nueva y nosotros la repetimos varias veces en voz alta.,老师说一个新词，我们大声重复好几遍。,decir_1.jpg,义项包|A1|v,,明天,读,再见,大创内容组_senses_table
-ver,v,n/a,A1,1,,看见,,Veo un gato blanco en la ventana de la casa de mi vecina.,我看见邻居家窗边有一只白猫。,ver_1.jpg,义项包|A1|v,,家庭,关闭,需要,大创内容组_senses_table
-escuchar,v,n/a,A1,1,,听,,Escucho al profesor con atención porque explica la pronunciación de cada palabra nueva.,我认真听老师讲，因为他解释每个新词的发音。,escuchar_1.jpg,义项包|A1|v,,朋友们（统称）,早上,星期,大创内容组_senses_table
-leer,v,n/a,A1,1,,读,,Leo un libro corto en español cada noche antes de dormir en mi habitación.,我每天晚上睡前在房间里读一本短的西语书。,leer_1.jpg,义项包|A1|v,,是,男人,小的,大创内容组_senses_table
-escribir,v,n/a,A1,1,,写,,Escribo mi nombre y la fecha en el cuaderno al empezar la clase.,上课开始时，我在本子上写名字和日期。,escribir_1.jpg,义项包|A1|v,,夜晚,是,女孩,大创内容组_senses_table
-comprar,v,n/a,A1,1,,买,,Compro pan en la tienda del barrio antes de volver a casa por la tarde.,下午回家前，我在社区商店买面包。,comprar_1.jpg,义项包|A1|v,,女人,是,工作,大创内容组_senses_table
-abrir,v,n/a,A1,1,,打开,,Abro la puerta de la clase y saludo a la profesora con una sonrisa.,我打开教室门，微笑着向老师问好。,abrir_1.jpg,义项包|A1|v,,再见,看见,我们,大创内容组_senses_table
-cerrar,v,n/a,A1,1,,关闭,,Cierro la ventana antes de salir porque empieza a llover en la calle.,出门前我关闭窗户，因为街上开始下雨。,cerrar_1.jpg,义项包|A1|v,,做得好的,再见,狗,大创内容组_senses_table
-padre,n,m,A1,1,,父亲,,Mi padre cocina arroz los domingos y todos comemos juntos en la mesa grande.,我父亲星期天做米饭，我们都围着大桌子一起吃。,padre_1.jpg,义项包|A1|n,,学习,大的,读书,大创内容组_senses_table
-madre,n,f,A1,1,,母亲,,Mi madre lee cuentos por la noche cuando mi hermana no puede dormir temprano.,我母亲晚上给妹妹读故事，因为她不能早睡。,madre_1.jpg,义项包|A1|n,,家人,牛奶,年,大创内容组_senses_table
-hermano,n,m,A1,1,,兄弟,,Mi hermano estudia inglés por la tarde y juega al fútbol después de clase.,我兄弟下午学英语，下课后踢足球。,hermano_1.jpg,义项包|A1|n,,需要,女孩,来,大创内容组_senses_table
-hermana,n,f,A1,1,,姐妹,,Mi hermana vive conmigo y siempre escucha música mientras hace los deberes.,我姐妹和我住在一起，做作业时总是听音乐。,hermana_1.jpg,义项包|A1|n,,喝,再见,大的,大创内容组_senses_table
-hijo,n,m,A1,1,,儿子,,Mi hijo tiene seis años y aprende palabras nuevas en la escuela cada día.,我儿子六岁，每天在学校学新词。,hijo_1.jpg,义项包|A1|n,,读,男孩,你好,大创内容组_senses_table
-hija,n,f,A1,1,,女儿,,Mi hija estudia español conmigo y repite las frases después de escuchar el audio.,我女儿和我一起学西语，听音频后重复句子。,hija_1.jpg,义项包|A1|n,,买,我们,分钟,大创内容组_senses_table
-profesor,n,m,A1,1,,男老师,,El profesor explica la lección con dibujos simples y habla despacio para todos.,男老师用简单图画讲课，并为大家慢慢说。,profesor_1.jpg,义项包|A1|n,,分钟,需要,母亲,大创内容组_senses_table
-profesora,n,f,A1,1,,女老师,,La profesora escribe ejemplos en la pizarra y nosotros copiamos las frases en silencio.,女老师在黑板上写例句，我们安静地抄句子。,profesora_1.jpg,义项包|A1|n,,做,夜晚,她,大创内容组_senses_table
-niño,n,m,A1,1,,男孩,,El niño corre en el parque con su perro después de terminar la escuela.,男孩放学后和他的狗在公园跑。,nino_1.jpg,义项包|A1|n,,兄弟,学校,姐妹,大创内容组_senses_table
-niña,n,f,A1,1,,女孩,,La niña lee un cuento corto en voz alta para practicar español con su madre.,女孩大声读一个短故事，和母亲练习西语。,nina_1.jpg,义项包|A1|n,,我,读书,写,大创内容组_senses_table
-hombre,n,m,A1,1,,男人,,El hombre espera el autobús frente a la escuela con una bolsa negra.,男人拿着黑包在学校前等公交。,hombre_1.jpg,义项包|A1|n,,喝,母亲,学习,大创内容组_senses_table
-mujer,n,f,A1,1,,女人,,La mujer compra fruta en el mercado y vuelve a casa antes de comer.,女人在市场买水果，并在吃饭前回家。,mujer_1.jpg,义项包|A1|n,,做,姐妹,谢谢,大创内容组_senses_table
-día,n,m,A1,1,,天,,"Hoy es un día bonito, así que caminamos al parque después de desayunar.",今天是美好的一天，所以我们早饭后走去公园。,dia_1.jpg,义项包|A1|n,,买,在,父亲,大创内容组_senses_table
-noche,n,f,A1,1,,夜晚,,Por la noche leo un libro fácil y preparo la mochila para mañana.,夜晚我读一本简单的书，并为明天准备书包。,noche_1.jpg,义项包|A1|n,,对不起,住,你好,大创内容组_senses_table
-tarde,n,f,A1,1,,下午,,Por la tarde estudio en casa y después llamo a mi abuela por teléfono.,下午我在家学习，然后给奶奶打电话。,tarde_1.jpg,义项包|A1|n,,读书,家人,女儿,大创内容组_senses_table
-hora,n,f,A1,1,,小时,,Necesito una hora para terminar los deberes de español antes de cenar.,我需要一个小时在晚饭前完成西语作业。,hora_1.jpg,义项包|A1|n,,讲（某种语言）,能够,说,大创内容组_senses_table
-minuto,n,m,A1,1,,分钟,,"Espera un minuto en la puerta, porque todavía busco mi cuaderno azul.",请在门口等一分钟，因为我还在找蓝色本子。,minuto_1.jpg,义项包|A1|n,,女儿,打开,她,大创内容组_senses_table
-año,n,m,A1,1,,年,,Este año quiero aprender español y hablar mejor con mis nuevos amigos.,今年我想学习西语，并和新朋友说得更好。,ano_1.jpg,义项包|A1|n,,男人,学习,朋友们（统称）,大创内容组_senses_table
-semana,n,f,A1,1,,星期,,"Esta semana tenemos clase de español el lunes, el miércoles y el viernes.",这个星期我们周一、周三和周五有西语课。,semana_1.jpg,义项包|A1|n,,母亲,女孩,工作,大创内容组_senses_table
-mesa,n,f,A1,1,,桌子,,"La mesa de la cocina es pequeña, pero toda mi familia come allí cada noche.",厨房的桌子很小，但我全家每晚都在那里吃饭。,mesa_1.jpg,义项包|A1|n,,家,早上,交谈,大创内容组_senses_table
+adiós,int,n/a,A1,1,,再见,,"Después de la clase, digo adiós a mis amigos y camino despacio hacia mi casa.",下课后，我和朋友们说再见，然后慢慢走回家。,adios_1.jpg,义项包|A1|int,,男人,牛奶；乳制品饮品（写作常用）,狗,大创内容组_words_senses_team.csv
+agua,n,f,A1,1,,饮用水；清水（专四写作高频基础词）,,Bebe dos litros de agua todos los días para mantener el cuerpo sano y fuerte.,每天喝两升水，保持身体健康强壮。,agua_1.jpg,义项包|考试路径|A1|n,专四,地铁,牛奶；乳制品饮品（写作常用）,火车；列车,大创内容组_senses_table_tem4 7.18.xlsx
+amigo,n,m,A1,2,,朋友们（统称）,,"Los fines de semana salgo con mis amigos al parque, hablamos mucho y a veces comemos juntos algo sencillo.",周末我和朋友们去公园，聊很多天，有时一起吃些简单的食物。,amigo_2.jpg,义项包|A1|n,,牛奶；乳制品饮品（写作常用）,明天,猫,大创内容组_words_senses_team.csv
+año,n,m,A1,1,,年；年份,,Este año voy a presentarme al examen de español TEM4.,今年我要参加西班牙语专业四级考试。,anio_1.jpg,义项包|考试路径|A1|n,专四,蔬菜；青菜（日常写作必备）,渴；口渴,昨天,大创内容组_senses_table_tem4 7.18.xlsx
+beber,v,n/a,A1,1,,喝,,Bebo agua durante todo el día porque el médico me dice que es muy importante para la salud.,我一整天都会喝水，因为医生告诉我这对健康很重要。,beber_1.jpg,义项包|A1|v,,他,学校,猫,大创内容组_words_senses_team.csv
+ella,pron,n/a,A1,1,,她,,Ella es mi profesora de español y habla muy despacio cuando aprendemos palabras nuevas.,她是我的西语老师，我们学新词时她说得很慢。,ella_1.jpg,义项包|A1|pron,,男人,猫,不,大创内容组_words_senses_team.csv
+escuela,n,f,A1,1,,学校,,Voy a la escuela a las ocho de la mañana y regreso a casa alrededor de las tres de la tarde.,我早上八点去学校，下午三点左右回家。,escuela_1.jpg,义项包|A1|n,,对不起,狗,朋友们（统称）,大创内容组_words_senses_team.csv
+estar,v,n/a,A1,1,,在,,"El libro está sobre la mesa, al lado de mi mochila negra y mis lápices.",书在桌子上，旁边是我的黑色书包和铅笔。,estar_1.jpg,义项包|A1|v,,面包（主食，专四搭配高频）,小的,姐妹,大创内容组_words_senses_team.csv
+estudiar,v,n/a,A1,2,,读书,,Por la noche estudio el libro de texto en mi habitación y subrayo las palabras nuevas que quiero recordar.,晚上我在房间读课本，划出想记住的新词。,estudiar_2.jpg,义项包|A1|v,,女人,大的,交谈,大创内容组_words_senses_team.csv
+familia,n,f,A1,2,,家人,,"Amo a mi familia y les escribo un mensaje casi todos los días, aunque esté muy ocupado con el trabajo.",我爱我的家人，几乎每天都会给他们发消息，即使工作很忙。,familia_2.jpg,义项包|A1|n,,儿子,女儿,狗,大创内容组_words_senses_team.csv
+gato,n,m,A1,1,,猫,,Tengo un gato pequeño de color naranja que duerme mucho durante el día y juega por la noche.,我有一只橙色的小猫，白天睡很多觉，晚上才玩耍。,gato_1.jpg,义项包|A1|n,,男孩,女老师,父亲,大创内容组_words_senses_team.csv
+gracias,n,f,A1,1,,谢谢,,Digo gracias a mi compañera porque me presta un lápiz rojo durante el examen.,我对同学说谢谢，因为考试时她借给我一支红铅笔。,gracias_1.jpg,义项包|A1|n,,女儿,女人,我,大创内容组_words_senses_team.csv
+grande,adj,n/a,A1,1,,大的,,"Mi casa no es muy grande, pero tiene un salón cómodo y una cocina donde toda la familia puede comer juntos.",我的房子不算很大，但有一个舒适的客厅，还有全家能一起吃饭的厨房。,grande_1.jpg,义项包|A1|adj,,读书,是,女老师,大创内容组_words_senses_team.csv
+hablar,v,n/a,A1,2,,交谈,,"Cuando hablamos en grupo, el profesor nos pide usar frases sencillas y escuchar con atención a los demás.",小组讨论时，老师要求我们使用简单的句子，并认真听别人说话。,hablar_2.jpg,义项包|A1|v,,谢谢,学校,再见,大创内容组_words_senses_team.csv
+hermana,n,f,A1,1,,姐妹,,Mi hermana vive conmigo y siempre escucha música mientras hace los deberes.,我姐妹和我住在一起，做作业时总是听音乐。,hermana_1.jpg,义项包|A1|n,,我们,是,面包（主食，专四搭配高频）,大创内容组_words_senses_team.csv
+hermano,n,m,A1,1,,兄弟,,Mi hermano estudia inglés por la tarde y juega al fútbol después de clase.,我兄弟下午学英语，下课后踢足球。,hermano_1.jpg,义项包|A1|n,,喝,女人,他,大创内容组_words_senses_team.csv
+hija,n,f,A1,1,,女儿,,Mi hija estudia español conmigo y repite las frases después de escuchar el audio.,我女儿和我一起学西语，听音频后重复句子。,hija_1.jpg,义项包|A1|n,,兄弟,父亲,我们,大创内容组_words_senses_team.csv
+hijo,n,m,A1,1,,儿子,,Mi hijo tiene seis años y aprende palabras nuevas en la escuela cada día.,我儿子六岁，每天在学校学新词。,hijo_1.jpg,义项包|A1|n,,我们,父亲,朋友们（统称）,大创内容组_words_senses_team.csv
+hola,int,n/a,A1,1,,你好,,"Hola, soy Ana y estudio español por la mañana con mis nuevos compañeros de clase.",你好，我是安娜，早上和新同学一起学西语。,hola_1.jpg,义项包|A1|int,,女孩,大的,再见,大创内容组_words_senses_team.csv
+hombre,n,m,A1,1,,男人,,El hombre espera el autobús frente a la escuela con una bolsa negra.,男人拿着黑包在学校前等公交。,hombre_1.jpg,义项包|A1|n,,交谈,牛奶；乳制品饮品（写作常用）,狗,大创内容组_words_senses_team.csv
+hora,n,f,A1,1,,小时；点钟,,Tengo una hora libre entre la primera y la segunda clase.,第一节和第二节课之间我有一小时空闲。,hora_1.jpg,义项包|考试路径|A1|n,专四,星期三,今天,脸；面孔,大创内容组_senses_table_tem4 7.18.xlsx
+hoy,adv,n/a,A1,1,,今天,,Hoy debemos entregar el ensayo sobre cultura hispánica.,今天我们必须提交关于西语文化的论文。,hoy_1.jpg,义项包|考试路径|A1|adv,专四,医生；大夫,手表；挂钟；时钟,星期二,大创内容组_senses_table_tem4 7.18.xlsx
+leche,n,f,A1,1,,牛奶；乳制品饮品（写作常用）,,Me gusta tomar un vaso de leche caliente antes de dormir todas las noches del invierno.,冬天的每晚我都喜欢睡前喝一杯热牛奶。,leche_1.jpg,义项包|考试路径|A1|n,专四,地铁,窗户；玻璃窗,头；头部,大创内容组_senses_table_tem4 7.18.xlsx
+madre,n,f,A1,1,,母亲,,Mi madre lee cuentos por la noche cuando mi hermana no puede dormir temprano.,我母亲晚上给妹妹读故事，因为她不能早睡。,madre_1.jpg,义项包|A1|n,,女孩,牛奶；乳制品饮品（写作常用）,狗,大创内容组_words_senses_team.csv
+mañana,n,f,A1,1,,早上；上午,,Estudio vocabulario cada mañana antes de entrar al aula.,每天上午进教室前我都会背单词。,manana_1.jpg,义项包|考试路径|A1|n,专四,医生；大夫,渴；口渴,水果（统称，阅读高频）,大创内容组_senses_table_tem4 7.18.xlsx
+mañana,adv,n/a,A1,2,,明天,,Mañana tendremos un examen de vocabulario muy importante.,明天我们有一场十分重要的词汇测试。,manana_2.jpg,义项包|考试路径|A1|adv,专四,困；睡意；梦,脚；足,火车；列车,大创内容组_senses_table_tem4 7.18.xlsx
+minuto,n,m,A1,1,,分钟,,Cada ejercicio de audición dura quince minutos en el examen.,考试里每道听力题时长十五分钟。,minuto_1.jpg,义项包|考试路径|A1|n,专四,下午；傍晚,渴；口渴,星期四,大创内容组_senses_table_tem4 7.18.xlsx
+mujer,n,f,A1,1,,女人,,La mujer compra fruta en el mercado y vuelve a casa antes de comer.,女人在市场买水果，并在吃饭前回家。,mujer_1.jpg,义项包|A1|n,,猫,下午；傍晚,他,大创内容组_words_senses_team.csv
+niña,n,f,A1,1,,女孩,,La niña lee un cuento corto en voz alta para practicar español con su madre.,女孩大声读一个短故事，和母亲练习西语。,nina_1.jpg,义项包|A1|n,,学校,兄弟,男孩,大创内容组_words_senses_team.csv
+niño,n,m,A1,1,,男孩,,El niño corre en el parque con su perro después de terminar la escuela.,男孩放学后和他的狗在公园跑。,nino_1.jpg,义项包|A1|n,,家人,猫,再见,大创内容组_words_senses_team.csv
+no,adv,n/a,A1,1,,不,,"No, hoy no quiero café porque ya bebí leche caliente antes de salir.",不，今天我不想喝咖啡，因为出门前已经喝了热牛奶。,no_1.jpg,义项包|A1|adv,,女孩,下午；傍晚,女儿,大创内容组_words_senses_team.csv
+noche,n,f,A1,1,,夜晚；夜里,,Me gusta leer novelas en español cada noche antes de dormir.,每晚睡前我喜欢读西班牙语小说。,noche_1.jpg,义项包|考试路径|A1|n,专四,年；年份,饮用水；清水（专四写作高频基础词）,胳膊；手臂,大创内容组_senses_table_tem4 7.18.xlsx
+nosotros,pron,n/a,A1,1,,我们,,Nosotros estudiamos español los lunes y los miércoles en una clase muy luminosa.,我们每周一和周三在一间很明亮的教室学西语。,nosotros_1.jpg,义项包|A1|pron,,他,狗,牛奶；乳制品饮品（写作常用）,大创内容组_words_senses_team.csv
+padre,n,m,A1,1,,父亲,,Mi padre cocina arroz los domingos y todos comemos juntos en la mesa grande.,我父亲星期天做米饭，我们都围着大桌子一起吃。,padre_1.jpg,义项包|A1|n,,对不起,母亲,女儿,大创内容组_words_senses_team.csv
+pan,n,m,A1,1,,面包（主食，专四搭配高频）,,Todas las mañanas compro pan fresco en la panadería de la esquina de mi casa.,我每天早上都去我家街角的面包店买新鲜面包。,pan_1.jpg,义项包|考试路径|A1|n,专四,肉类（通用统称，饮食话题核心）,公交车；大巴,药；医学,大创内容组_senses_table_tem4 7.18.xlsx
+pequeño,adj,n/a,A1,1,,小的,,"Tengo un gato pequeño que todavía es joven, pero ya corre por toda la casa con mucha energía.",我有一只小猫，还很年轻，但已经精力充沛地满屋子跑。,pequeno_1.jpg,义项包|A1|adj,,你,父亲,女人,大创内容组_words_senses_team.csv
+perdón,n,m,A1,1,,对不起,,"Perdón, llego tarde porque el autobús pasa muy despacio por el centro esta mañana.",对不起，我迟到了，因为今天早上公交车在市中心开得很慢。,perdon_1.jpg,义项包|A1|n,,大的,再见,读书,大创内容组_words_senses_team.csv
+perro,n,m,A1,1,,狗,,"Mi perro es muy grande y amable, y le encanta correr en el parque con los niños del vecindario.",我的狗又大又友好，最喜欢在公园里和邻居家的孩子一起跑。,perro_1.jpg,义项包|A1|n,,今天,在,兄弟,大创内容组_words_senses_team.csv
+profesora,n,f,A1,1,,女老师,,La profesora escribe ejemplos en la pizarra y nosotros copiamos las frases en silencio.,女老师在黑板上写例句，我们安静地抄句子。,profesora_1.jpg,义项包|A1|n,,我,你,是,大创内容组_words_senses_team.csv
+semana,n,f,A1,1,,星期；一周,,Cada semana hacemos un dictado en la clase de español.,每周西语课我们都会进行一次听写。,semana_1.jpg,义项包|考试路径|A1|n,专四,小时；点钟,嘴；嘴巴,月份；一个月,大创内容组_senses_table_tem4 7.18.xlsx
+ser,v,n/a,A1,1,,是,,Soy estudiante de español y mi profesora es muy paciente con todos los principiantes.,我是西语学生，我的老师对所有初学者都很有耐心。,ser_1.jpg,义项包|A1|v,,女人,年；年份,我们,大创内容组_words_senses_team.csv
+sí,adv,n/a,A1,1,,是,,"Sí, quiero estudiar español este año porque me gusta escuchar música latina en casa.",是的，我今年想学西语，因为我喜欢在家听拉丁音乐。,si_1.jpg,义项包|A1|adv,,他,今天,女老师,大创内容组_words_senses_team.csv
+tarde,n,f,A1,1,,下午；傍晚,,Por la tarde vamos a la biblioteca a repasar gramática.,下午我们去图书馆复习语法。,tarde_1.jpg,义项包|考试路径|A1|n,专四,心脏；心,公交车；大巴,眼睛；目光,大创内容组_senses_table_tem4 7.18.xlsx
+tú,pron,n/a,A1,1,,你,,Tú tienes un libro azul en la mochila y lo usas todos los días.,你书包里有一本蓝色的书，每天都用它。,tu_1.jpg,义项包|A1|pron,,儿子,男人,兄弟,大创内容组_words_senses_team.csv
+yo,pron,n/a,A1,1,,我,,Yo estudio en una escuela pequeña y camino allí con mi hermana cada mañana.,我在一所小学校学习，每天早上和妹妹走路去那里。,yo_1.jpg,义项包|A1|pron,,牛奶；乳制品饮品（写作常用）,下午；傍晚,饮用水；清水（专四写作高频基础词）,大创内容组_words_senses_team.csv
+él,pron,n/a,A1,1,,他,,Él vive cerca de la escuela y siempre llega temprano a la clase de español.,他住在学校附近，总是很早到西语课。,el_1.jpg,义项包|A1|pron,,狗,小时；点钟,她,大创内容组_words_senses_team.csv
+abrir,v,n/a,A2,1,,打开；开启；翻开,,"Por favor, abre la ventana para que entre aire fresco en la habitación.",请打开窗户，让新鲜空气进入房间。,abrir_1.jpg,义项包|考试路径|A2|v,专四,在后面；后方,有；拥有；持有,药片；药丸,大创内容组_senses_table_tem4 7.17.xlsx
+amigo,n,m,A2,1,,朋友；友人,,Los verdaderos amigos están contigo en los buenos y en los malos momentos de la vida.,真正的朋友会陪你度过人生的顺境和逆境。,amigo_1.jpg,义项包|考试路径|A2|n,专四,叫；呼喊；称呼,词汇,摘要；概要,大创内容组_senses_table_tem4 7.17.xlsx
+bueno,adj,n/a,A2,1,,好的；优秀的；美好的；善良的,,Mi profesor dice que mi ensayo es muy bueno y tiene muchas ideas creativas.,我的老师说我的短文写得非常好，有很多有创意的想法。,bueno_1.jpg,义项包|考试路径|A2|adj,专四,留下；待着；停留,叫；呼喊；称呼,生病的；不舒服的；邪恶的,大创内容组_senses_table_tem4 7.17.xlsx
+bueno,adj,n/a,A2,2,,有益的；合适的；对… 有好处的,,Hacer ejercicio todos los días es muy bueno para tu salud física y mental.,每天做运动对你的身心健康都非常有好处。,bueno_2.jpg,义项包|考试路径|A2|adj,专四,起床；起身；站起来,开心的；幸福的,做；干；制作；从事,大创内容组_senses_table_tem4 7.17.xlsx
+casa,n,f,A2,1,,家；家庭；住所,,Después de clase vuelvo a casa para descansar y cenar con mi familia.,下课后我回到家，和家人一起休息、吃晚饭。,casa_1.jpg,义项包|考试路径|A2|n,专四,节省；节约；储蓄；存钱,认为；以为；觉得,南方；南边,大创内容组_senses_table_tem4 7.18.xlsx
+casa,n,f,A2,2,,房子；房屋；建筑,,Mi abuela vive en una casa pequeña con un jardín lleno de flores rojas.,我奶奶住在一栋带满是红花的花园的小房子里。,casa_2.jpg,义项包|考试路径|A2|n,专四,药店；药房,学习；学会；习得,叫；呼喊；称呼,大创内容组_senses_table_tem4 7.17.xlsx
+cerrar,v,n/a,A2,1,,关闭；关上；合上,,"Por favor, cierra el libro y escucha atentamente la explicación del profesor.",请合上书，认真听老师的讲解。,cerrar_1.jpg,义项包|考试路径|A2|v,专四,等待；等候；等,习俗；习惯,摘要；概要,大创内容组_senses_table_tem4 7.17.xlsx
+comer,v,n/a,A2,1,,吃；吃饭；用餐,,"En España, la gente suele comer la cena muy tarde, alrededor de las nueve o diez de la noche.",在西班牙，人们通常很晚吃晚餐，大概在晚上九点或十点。,comer_1.jpg,义项包|考试路径|A2|v,专四,认识；结识；了解（人）,使；让；令；造成,动词变位,大创内容组_senses_table_tem4 7.17.xlsx
+comprar,v,n/a,A2,1,,买；购买；采购,,"Voy al supermercado todos los sábados para comprar frutas, verduras y otros alimentos frescos.",我每周六都会去超市买水果、蔬菜和其他新鲜食材。,comprar_1.jpg,义项包|考试路径|A2|v,专四,热；炎热,丢失；遗失；弄丢,周六,大创内容组_senses_table_tem4 7.17.xlsx
+decir,v,n/a,A2,1,,说；讲；告诉；讲述,,Mi profesor siempre dice que la práctica es la clave para aprender español bien.,我的老师总是说，练习是学好西班牙语的关键。,decir_1.jpg,义项包|考试路径|A2|v,专四,北方；北边,认为；以为；觉得,开始；着手；启动,大创内容组_senses_table_tem4 7.17.xlsx
+día,n,m,A2,1,,天；日子,,Cada día repaso veinte palabras nuevas para ampliar mi vocabulario.,我每天复习二十个新词扩充词汇量。,dia_1.jpg,义项包|考试路径|A2|n,专四,复习；温习,剩下；剩余；留有,重音；（书面）尖音符,大创内容组_senses_table_tem4 7.18.xlsx
+escribir,v,n/a,A2,1,,写；书写；写作,,Los estudiantes deben escribir un ensayo de 500 palabras sobre su vida universitaria.,学生们需要写一篇 500 字的关于大学生活的短文。,escribir_1.jpg,义项包|考试路径|A2|v,专四,听；听到；听见,洗澡；沐浴；泡澡,有益的；合适的；对… 有好处的,大创内容组_senses_table_tem4 7.17.xlsx
+escuchar,v,n/a,A2,1,,听；倾听；聆听,,Me gusta escuchar música tranquila mientras estudio para concentrarme mucho mejor.,我学习的时候喜欢听舒缓的音乐来更好地集中注意力。,escuchar_1.jpg,义项包|考试路径|A2|v,专四,艺术；美术；技艺,钱；金钱；资金,说；讲；告诉；讲述,大创内容组_senses_table_tem4 7.17.xlsx
+estudiar,v,n/a,A2,1,,学习；研究；攻读,,Mis compañeros y yo estudiamos español todos los días en la sala de clase.,我和同学们每天在教室里学习西班牙语。,estudiar_1.jpg,义项包|考试路径|A2|v,专四,作业（常用复数）,教；教授；教导,起床；起身；站起来,大创内容组_senses_table_tem4 7.17.xlsx
+familia,n,f,A2,1,,家庭；家人；家族,,Los domingos siempre comemos juntos toda la familia en casa de los abuelos maternos.,周日我们全家总是在外婆家一起吃饭。,familia_1.jpg,义项包|考试路径|A2|n,专四,使厌烦；使无聊；感到厌烦；感到无聊,房子；房屋；建筑,认识；结识；了解（人）,大创内容组_senses_table_tem4 7.17.xlsx
+hablar,v,n/a,A2,1,,说；讲；说话；交谈,,Yo hablo español con mis compañeros todos los días para practicar mi pronunciación.,我每天都和同学说西班牙语，练习我的发音。,hablar_1.jpg,义项包|考试路径|A2|v,专四,笔记（常用复数）,房子；房屋；建筑,工作；职业；活儿,大创内容组_senses_table_tem4 7.17.xlsx
+hacer,v,n/a,A2,1,,做；干；制作；从事,,Todos los días hago mi tarea de español después de cenar en mi habitación.,我每天晚饭后都在自己的房间里做西班牙语作业。,hacer_1.jpg,义项包|考试路径|A2|v,专四,坐下；就座,快的；迅速的；敏捷的,平静的；安静的,大创内容组_senses_table_tem4 7.17.xlsx
+ir,v,n/a,A2,1,,去；走；前往；到,,Mañana voy a ir al museo de arte español con mi clase para hacer un trabajo.,明天我要和班级一起去西班牙艺术博物馆做一个作业。,ir_1.jpg,义项包|考试路径|A2|v,专四,语言；语种,口头的,进行；进展；处于某种状态,大创内容组_senses_table_tem4 7.17.xlsx
+leer,v,n/a,A2,1,,读；阅读；朗读,,Me gusta leer novelas en español en mi tiempo libre para ampliar mi vocabulario.,我空闲时间喜欢读西班牙语小说，来扩大我的词汇量。,leer_1.jpg,义项包|考试路径|A2|v,专四,生日,关闭；关上；合上,有；拥有；持有,大创内容组_senses_table_tem4 7.17.xlsx
+libro,n,m,A2,1,,书；书籍；著作,,Todos los días leo un libro de novelas españolas antes de dormir.,我每天睡觉前都会读一本西班牙小说书。,libro_1.jpg,义项包|考试路径|A2|n,专四,发生；出现；到来,在后面；后方,留下；待着；停留,大创内容组_senses_table_tem4 7.17.xlsx
+llamarse,v,n/a,A2,1,,名叫；叫做；称为,,El nuevo compañero de clase se llama Carlos y viene de la ciudad de Buenos Aires.,新来的同班同学叫卡洛斯，来自布宜诺斯艾利斯。,llamarse_1.jpg,义项包|考试路径|A2|v,专四,通过（考试）,紧张的；焦虑,出去；离开；出门,大创内容组_senses_table_tem4 7.17.xlsx
+malo,adj,n/a,A2,1,,坏的；不好的；糟糕的；差的,,La nota del examen fue muy mala porque no estudié lo suficiente antes.,这次考试的成绩非常差，因为我之前没有学够。,malo_1.jpg,义项包|考试路径|A2|adj,专四,大道；宽阔主干道,疼痛；疼,自然；大自然；本性,大创内容组_senses_table_tem4 7.17.xlsx
+malo,adj,n/a,A2,2,,生病的；不舒服的；邪恶的,,No puedo ir a clase hoy porque me siento muy malo y tengo fiebre.,我今天不能去上课了，因为我感觉很不舒服，还发烧了。,malo_2.jpg,义项包|考试路径|A2|adj,专四,提问；询问；问,在后面；后方,钱；金钱；资金,大创内容组_senses_table_tem4 7.17.xlsx
+mesa,n,f,A2,1,,书桌；普通桌子,,Pon todos los libros sobre la mesa para ordenarlos después de terminar de estudiar.,把所有书都放在桌子上，学习完了再整理。,mesa_1.jpg,义项包|考试路径|A2|n,专四,拜访；看望；探望,时间表；课表,手机；电话机,大创内容组_senses_table_tem4 7.18.xlsx
+necesitar,v,n/a,A2,1,,需要；必需；需求,,Necesitamos comprar más frutas y verduras frescas para toda la semana que viene.,我们需要为接下来一整周买更多新鲜的水果和蔬菜。,necesitar_1.jpg,义项包|考试路径|A2|v,专四,工作；职业；活儿,继续；接着；持续,电影；影片；胶卷,大创内容组_senses_table_tem4 7.17.xlsx
+poder,v,n/a,A2,1,,能够；可以；会,,¿Puedes ayudarme a llevar esta caja pesada hasta el tercer piso?,你能帮我把这个重箱子搬到三楼吗？,poder_1.jpg,义项包|考试路径|A2|v,专四,知道；了解；得知,好的；优秀的；美好的；善良的,笔记（常用复数）,大创内容组_senses_table_tem4 7.17.xlsx
+profesor,n,m,A2,1,,教师；教授（大学）,,El profesor de español explica las gramáticas con muchos ejemplos prácticos.,西班牙语老师用很多实用的例子讲解语法。,profesor_1.jpg,义项包|考试路径|A2|n,专四,听写,词典,词汇,大创内容组_senses_table_tem4 7.17.xlsx
+querer,v,n/a,A2,1,,想要；希望；打算,,Quiero viajar por toda España durante las vacaciones de verano de este año.,我想在今年暑假期间环游整个西班牙。,querer_1.jpg,义项包|考试路径|A2|v,专四,疼痛；疼,健康；身体状况,词汇,大创内容组_senses_table_tem4 7.17.xlsx
+tener,v,n/a,A2,1,,有；拥有；持有,,Yo tengo dos libros de gramática española y uno de vocabulario.,我有两本西班牙语语法书和一本词汇书。,tener_1.jpg,义项包|考试路径|A2|v,专四,关闭；关上；合上,小说；长篇小说,吃；吃饭；用餐,大创内容组_senses_table_tem4 7.17.xlsx
+trabajar,v,n/a,A2,1,,工作；劳动；上班,,Mi padre trabaja en una empresa de informática desde hace más de diez años.,我父亲在一家 IT 公司工作已经十多年了。,trabajar_1.jpg,义项包|考试路径|A2|v,专四,有；拥有；持有,开门；开业；开放,房子；房屋；建筑,大创内容组_senses_table_tem4 7.17.xlsx
+venir,v,n/a,A2,1,,来；来到；过来,,Mi profesor viene a clase todos los días a las 8 de la mañana puntualmente.,我的老师每天早上 8 点准时来上课。,venir_1.jpg,义项包|考试路径|A2|v,专四,圆珠笔；水性笔,休息；歇息；放松,历史；故事；经历,大创内容组_senses_table_tem4 7.17.xlsx
+ver,v,n/a,A2,1,,看；看见；看到,,"Cuando camino por la calle, veo muchos carteles en español en las tiendas.",我在街上走的时候，能看到商店里很多西班牙语的标语。,ver_1.jpg,义项包|考试路径|A2|v,专四,章；章节；回,电脑；笔记本电脑,书；书籍；著作,大创内容组_senses_table_tem4 7.17.xlsx
+vivir,v,n/a,A2,1,,居住；住在；生活,,Mis abuelos viven en un pueblo pequeño muy bonito cerca de la montaña.,我的祖父母住在山边一个非常美丽的小镇上。,vivir_1.jpg,义项包|考试路径|A2|v,专四,到达；抵达；到,讨人喜欢的；亲切,认识；结识；了解（人）,大创内容组_senses_table_tem4 7.17.xlsx

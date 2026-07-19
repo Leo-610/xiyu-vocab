@@ -8,13 +8,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const BATCHES_DIR = path.join(__dirname, '..', '..', 'data', 'batches')
 const IMAGES_DIR = path.join(__dirname, '..', '..', 'data', 'images')
 
-/** 当前上线词库：严格对齐 senses_table 义项包（A1） */
+/** 当前上线词库：A1 义项包 + 专四/专八完整合并 */
 export const LEVEL_TARGETS = {
-  A1: 79,
-  A2: 0,
-  B1: 0,
-  B2: 0,
-  C1: 0,
+  A1: 91,
+  A2: 235,
+  B1: 123,
+  B2: 64,
+  C1: 25,
   C2: 0,
 }
 

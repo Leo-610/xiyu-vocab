@@ -34,6 +34,7 @@ export function getConfig() {
   const allowDemoLogin = process.env.ALLOW_DEMO_LOGIN === 'true'
     || (process.env.VERCEL && process.env.ALLOW_DEMO_LOGIN !== 'false')
     || (nodeEnv !== 'production' && process.env.ALLOW_DEMO_LOGIN !== 'false')
+  const resendApiKey = process.env.AUTH_RESEND_KEY || process.env.RESEND_API_KEY || ''
 
   return {
     nodeEnv,
@@ -42,6 +43,8 @@ export function getConfig() {
     wechatAppId,
     wechatAppSecret,
     wechatConfigured: Boolean(wechatAppId && wechatAppSecret),
+    resendApiKey,
+    emailAuthConfigured: Boolean(resendApiKey),
     allowDemoLogin,
     isProduction: nodeEnv === 'production',
   }

@@ -20,7 +20,17 @@ function resolveImageUrl(imageFile, level) {
     path.join(IMAGES_ROOT, file),
     path.join(IMAGES_ROOT, level || '', file),
     path.join(IMAGES_ROOT, 'A1', file),
+    path.join(IMAGES_ROOT, 'tem4', file),
+    path.join(IMAGES_ROOT, 'tem8', file),
+    path.join(IMAGES_ROOT, 'exam', file),
   ]
+  // 同 stem 兼容 .png / .jpg
+  const stem = file.replace(/\.(png|jpg|jpeg|webp)$/i, '')
+  for (const dir of ['', level || '', 'A1', 'tem4', 'tem8', 'exam']) {
+    for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
+      candidates.push(path.join(IMAGES_ROOT, dir, stem + ext))
+    }
+  }
   const found = candidates.find((p) => fs.existsSync(p))
   if (!found) return null
 

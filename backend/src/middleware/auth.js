@@ -1,7 +1,19 @@
 import db from '../db.js'
+import { normalizeEmail } from '../services/emailOtp.js'
 
 /** 会话有效期（天），大创试用场景默认 30 天 */
 export const SESSION_TTL_DAYS = 30
+
+export function resolveAuthType(user) {
+  if (!user) return 'demo'
+  if (user.email || String(user.openid || '').startsWith('email_')) return 'email'
+  if (String(user.openid || '').startsWith('demo_')) return 'demo'
+  return 'wechat'
+}
+
+export function isEmailUser(user) {
+  return resolveAuthType(user) === 'email'
+}
 
 export function authMiddleware(req) {
   const header = req.headers.authorization || ''
@@ -155,10 +167,36 @@ export function findUserByToken(token) {
   return db.prepare('SELECT * FROM users WHERE session_token = ?').get(token)
 }
 
+/** 邮箱验证码登录：已存在则刷新 token，否则自动注册 */
+export function loginEmailUser(email) {
+  const normalized = normalizeEmail(email)
+  const openid = `email_${normalized}`
+  const existing = db.prepare(`
+    SELECT * FROM users WHERE email = ? OR openid = ?
+  `).get(normalized, openid)
+
+  if (existing) {
+    if (!existing.email) {
+      db.prepare('UPDATE users SET email = ? WHERE id = ?').run(normalized, existing.id)
+    }
+    return issueSession(existing.id)
+  }
+
+  const nickname = normalized.split('@')[0].slice(0, 32) || '学习者'
+  const token = createSessionToken()
+  const expires = sessionExpiresAt()
+  const loginAt = nowIso()
+  const result = db.prepare(`
+    INSERT INTO users (openid, email, nickname, session_token, streak_days, auth_type, last_login_at, token_expires_at)
+    VALUES (?, ?, ?, ?, 0, 'demo', ?, ?)
+  `).run(openid, normalized, nickname, token, loginAt, expires)
+
+  return db.prepare('SELECT * FROM users WHERE id = ?').get(Number(result.lastInsertRowid))
+}
+
 export function formatAuthMeta(user) {
-  const isDemo = !user.openid || String(user.openid).startsWith('demo_')
   return {
-    authType: isDemo ? 'demo' : 'wechat',
+    authType: resolveAuthType(user),
     sessionExpiresAt: user.token_expires_at || null,
     lastLoginAt: user.last_login_at || null,
   }

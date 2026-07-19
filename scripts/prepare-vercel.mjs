@@ -40,8 +40,8 @@ if (!fs.existsSync(SEED)) {
     fs.copyFileSync(LIVE, SEED)
     console.log('[prepare-vercel] 已从 xiyu.db 生成 seed')
   } else {
-    console.log('[prepare-vercel] 正在导入义项包生成 seed…')
-    execSync('node backend/src/seed.js data/batches/A1/words_senses_team.csv', {
+    console.log('[prepare-vercel] 正在导入义项包+考试路径生成 seed…')
+    execSync('node scripts/reset-with-exams.mjs', {
       cwd: ROOT,
       stdio: 'inherit',
     })

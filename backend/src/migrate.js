@@ -113,6 +113,20 @@ export function runMigrations(db) {
     )`,
     `CREATE INDEX IF NOT EXISTS idx_study_user_time ON study_events(user_id, created_at)`,
     `CREATE INDEX IF NOT EXISTS idx_study_word ON study_events(word_id)`,
+    `ALTER TABLE users ADD COLUMN email TEXT`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)`,
+    `CREATE TABLE IF NOT EXISTS verification_tokens (
+      identifier TEXT NOT NULL,
+      token TEXT NOT NULL,
+      expires TEXT NOT NULL,
+      PRIMARY KEY (identifier, token)
+    )`,
+    `CREATE TABLE IF NOT EXISTS rate_limit_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      key TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now'))
+    )`,
+    `CREATE INDEX IF NOT EXISTS idx_rate_limit_key_time ON rate_limit_events(key, created_at)`,
   ]
 
   for (const sql of MIGRATIONS) {

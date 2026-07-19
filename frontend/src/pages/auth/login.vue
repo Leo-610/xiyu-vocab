@@ -39,66 +39,127 @@
       <!-- #endif -->
 
       <!-- #ifndef MP-WEIXIN -->
-      <view class="mode-tabs">
-        <view
-          class="mode-tab"
-          :class="{ active: mode === 'login' }"
-          @click="switchMode('login')"
-        >
-          登录
+      <template v-if="emailAuthEnabled">
+        <template v-if="step === 'email'">
+          <text class="panel-title">邮箱登录</text>
+          <text class="panel-desc">输入邮箱获取验证码，首次登录将自动创建账号。</text>
+
+          <view class="field" :class="{ focused: emailFocused, error: Boolean(error) }">
+            <text class="label">邮箱</text>
+            <input
+              v-model="email"
+              class="input"
+              type="text"
+              inputmode="email"
+              maxlength="64"
+              placeholder="reader@example.com"
+              confirm-type="next"
+              @focus="emailFocused = true"
+              @blur="emailFocused = false"
+              @confirm="handleSendCode"
+            />
+          </view>
+
+          <view v-if="recentEmail" class="quick-row" @click="useRecentEmail">
+            <text class="quick-label">最近使用</text>
+            <text class="quick-name">{{ recentEmail }}</text>
+          </view>
+
+          <view v-if="error" class="error-msg">{{ error }}</view>
+
+          <AppButton
+            block
+            :loading="loading"
+            :disabled="!apiOnline || !email.trim()"
+            @click="handleSendCode"
+          >
+            发送验证码
+          </AppButton>
+        </template>
+
+        <template v-else>
+          <text class="panel-title">输入验证码</text>
+          <text class="panel-desc">验证码已发送至 {{ email }}</text>
+
+          <view class="wechat-tip">
+            <text class="wechat-tip-title">⚠️ 微信内打开？</text>
+            <text class="wechat-tip-body">请勿点击邮件里的可疑链接。请复制邮件中的 6 位验证码，回到本页手动输入。</text>
+          </view>
+
+          <view class="field" :class="{ focused: codeFocused, error: Boolean(error) }">
+            <text class="label">验证码</text>
+            <input
+              v-model="otpCode"
+              class="input code-input"
+              type="number"
+              maxlength="6"
+              placeholder="000000"
+              confirm-type="done"
+              @focus="codeFocused = true"
+              @blur="codeFocused = false"
+              @confirm="handleVerifyCode"
+            />
+          </view>
+
+          <view v-if="error" class="error-msg">{{ error }}</view>
+
+          <AppButton
+            block
+            :loading="loading"
+            :disabled="!apiOnline || otpCode.trim().length < 6"
+            @click="handleVerifyCode"
+          >
+            确认登录
+          </AppButton>
+
+          <view class="switch-hint" @click="backToEmail">
+            <text class="switch-link">← 更换邮箱</text>
+          </view>
+        </template>
+      </template>
+
+      <template v-else-if="demoAuthEnabled">
+        <view class="dev-badge">开发演示模式</view>
+        <text class="panel-title">昵称登录</text>
+        <text class="panel-desc">邮箱服务未配置时使用。生产环境请配置 Resend 邮箱验证码登录。</text>
+
+        <view class="field" :class="{ focused: nickFocused, error: Boolean(error) }">
+          <text class="label">昵称</text>
+          <input
+            v-model="nickname"
+            class="input"
+            type="text"
+            maxlength="32"
+            placeholder="输入昵称登录或注册"
+            confirm-type="done"
+            @focus="nickFocused = true"
+            @blur="nickFocused = false"
+            @confirm="handleDemoSubmit"
+          />
         </view>
-        <view
-          class="mode-tab"
-          :class="{ active: mode === 'register' }"
-          @click="switchMode('register')"
-        >
-          注册
+
+        <view v-if="recentNickname" class="quick-row" @click="useRecent">
+          <text class="quick-label">最近使用</text>
+          <text class="quick-name">{{ recentNickname }}</text>
         </view>
-      </view>
 
-      <text class="panel-title">{{ mode === 'login' ? '欢迎回来' : '创建账号' }}</text>
-      <text class="panel-desc">
-        {{ mode === 'login'
-          ? '输入你的昵称登录，继续上次的学习进度。'
-          : '取一个昵称完成注册，进度会保存在云端。' }}
-      </text>
+        <view v-if="error" class="error-msg">{{ error }}</view>
 
-      <view class="field" :class="{ focused: nickFocused, error: Boolean(error) }">
-        <text class="label">昵称</text>
-        <input
-          v-model="nickname"
-          class="input"
-          type="text"
-          maxlength="32"
-          :placeholder="mode === 'login' ? '输入已注册的昵称' : '例如：西语同学小李'"
-          confirm-type="done"
-          @focus="nickFocused = true"
-          @blur="nickFocused = false"
-          @confirm="submit"
-        />
-      </view>
+        <AppButton
+          block
+          :loading="loading"
+          :disabled="!apiOnline || !nickname.trim()"
+          @click="handleDemoSubmit"
+        >
+          进入学习 →
+        </AppButton>
+      </template>
 
-      <view v-if="recentNickname && mode === 'login'" class="quick-row" @click="useRecent">
-        <text class="quick-label">最近使用</text>
-        <text class="quick-name">{{ recentNickname }}</text>
-      </view>
-
-      <view v-if="error" class="error-msg">{{ error }}</view>
-
-      <AppButton
-        block
-        :loading="loading"
-        :disabled="!apiOnline || !nickname.trim()"
-        @click="submit"
-      >
-        {{ mode === 'login' ? '进入学习 →' : '注册并开始 →' }}
-      </AppButton>
-
-      <view class="switch-hint" @click="switchMode(mode === 'login' ? 'register' : 'login')">
-        <text v-if="mode === 'login'">还没有账号？</text>
-        <text v-else>已有账号？</text>
-        <text class="switch-link">{{ mode === 'login' ? '去注册' : '去登录' }}</text>
-      </view>
+      <template v-else>
+        <text class="panel-title">登录暂不可用</text>
+        <text class="panel-desc">请配置邮箱验证码服务（AUTH_RESEND_KEY），或联系管理员开启演示登录。</text>
+        <view v-if="error" class="error-msg">{{ error }}</view>
+      </template>
       <!-- #endif -->
 
       <view v-if="wechatStep !== 'profile'" class="legal">
@@ -116,33 +177,49 @@
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
 import {
   checkApiOnline,
+  getAuthConfig,
+  getLastEmail,
   getLastNickname,
   getUserState,
   isLoggedIn,
+  loginWithEmailOtp,
   loginWithNickname,
   loginWithWechat,
   registerWithNickname,
+  sendEmailLoginCode,
   setCachedState,
 } from '../../utils/userService.js'
 
+const email = ref('')
+const otpCode = ref('')
+const step = ref('email')
 const nickname = ref('')
+const recentEmail = ref(getLastEmail())
 const recentNickname = ref(getLastNickname())
-const mode = ref('login')
 const loading = ref(false)
 const error = ref('')
 const apiOnline = ref(false)
 const checkedOnline = ref(false)
+const emailFocused = ref(false)
+const codeFocused = ref(false)
 const nickFocused = ref(false)
 const wechatStep = ref('login')
 const profileUser = ref({ nickname: '', avatarUrl: '' })
 
+const emailAuthEnabled = computed(() => getAuthConfig().email)
+const demoAuthEnabled = computed(() => !emailAuthEnabled.value && getAuthConfig().demoLogin)
+
 onShow(async () => {
+  recentEmail.value = getLastEmail()
   recentNickname.value = getLastNickname()
-  if (!nickname.value && recentNickname.value && mode.value === 'login') {
+  if (!email.value && recentEmail.value) {
+    email.value = recentEmail.value
+  }
+  if (!nickname.value && recentNickname.value) {
     nickname.value = recentNickname.value
   }
 
@@ -166,20 +243,19 @@ onShow(async () => {
   }
 })
 
-function switchMode(next) {
-  if (mode.value === next) return
-  mode.value = next
+function useRecentEmail() {
+  email.value = recentEmail.value
   error.value = ''
-  if (next === 'login' && recentNickname.value && !nickname.value.trim()) {
-    nickname.value = recentNickname.value
-  }
-  if (next === 'register') {
-    nickname.value = ''
-  }
 }
 
 function useRecent() {
   nickname.value = recentNickname.value
+  error.value = ''
+}
+
+function backToEmail() {
+  step.value = 'email'
+  otpCode.value = ''
   error.value = ''
 }
 
@@ -224,18 +300,14 @@ async function handleWechatLogin() {
   }
 }
 
-async function submit() {
-  if (mode.value === 'login') {
-    await handleLogin()
-  } else {
-    await handleRegister()
+async function handleSendCode() {
+  const addr = email.value.trim().toLowerCase()
+  if (!addr) {
+    error.value = '请输入邮箱'
+    return
   }
-}
-
-async function handleLogin() {
-  const name = nickname.value.trim()
-  if (!name) {
-    error.value = '请输入昵称'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) {
+    error.value = '请输入有效的邮箱地址'
     return
   }
   if (!apiOnline.value) {
@@ -245,23 +317,22 @@ async function handleLogin() {
   loading.value = true
   error.value = ''
   try {
-    await loginWithNickname(name)
-    goHome()
+    await sendEmailLoginCode(addr)
+    email.value = addr
+    step.value = 'code'
+    uni.showToast({ title: '验证码已发送', icon: 'success' })
   } catch (e) {
-    error.value = e.message || '登录失败，昵称可能尚未注册'
+    error.value = e.message || '发送失败'
   } finally {
     loading.value = false
   }
 }
 
-async function handleRegister() {
-  const name = nickname.value.trim()
-  if (!name) {
-    error.value = '请输入昵称'
-    return
-  }
-  if (name.length < 2) {
-    error.value = '昵称至少 2 个字符'
+async function handleVerifyCode() {
+  const addr = email.value.trim().toLowerCase()
+  const code = otpCode.value.trim()
+  if (!code || code.length < 6) {
+    error.value = '请输入 6 位验证码'
     return
   }
   if (!apiOnline.value) {
@@ -271,10 +342,43 @@ async function handleRegister() {
   loading.value = true
   error.value = ''
   try {
-    await registerWithNickname(name)
+    await loginWithEmailOtp(addr, code)
     goHome()
   } catch (e) {
-    error.value = e.message || '注册失败，该昵称可能已被使用'
+    error.value = e.message || '验证码错误或已过期'
+  } finally {
+    loading.value = false
+  }
+}
+
+async function handleDemoSubmit() {
+  const name = nickname.value.trim()
+  if (!name) {
+    error.value = '请输入昵称'
+    return
+  }
+  if (!apiOnline.value) {
+    error.value = '请先连接网络服务'
+    return
+  }
+  loading.value = true
+  error.value = ''
+  try {
+    if (name.length >= 2) {
+      try {
+        await loginWithNickname(name)
+        goHome()
+        return
+      } catch {
+        await registerWithNickname(name)
+        goHome()
+        return
+      }
+    }
+    await loginWithNickname(name)
+    goHome()
+  } catch (e) {
+    error.value = e.message || '登录失败'
   } finally {
     loading.value = false
   }
@@ -392,30 +496,15 @@ async function handleRegister() {
   box-shadow: 0 -12rpx 40rpx rgba(26, 26, 46, 0.06);
 }
 
-.mode-tabs {
-  display: flex;
-  gap: 8rpx;
-  padding: 8rpx;
-  margin-bottom: 36rpx;
-  background: $bg-muted;
-  border-radius: $radius-full;
-}
-
-.mode-tab {
-  flex: 1;
-  text-align: center;
-  padding: 18rpx 0;
-  font-size: 28rpx;
+.dev-badge {
+  display: inline-block;
+  margin-bottom: 20rpx;
+  padding: 8rpx 18rpx;
+  font-size: 22rpx;
   font-weight: 600;
-  color: $text-muted;
+  color: $primary;
+  background: rgba($primary, 0.08);
   border-radius: $radius-full;
-  transition: all 0.2s ease;
-
-  &.active {
-    background: #fff;
-    color: $primary;
-    box-shadow: $shadow-sm;
-  }
 }
 
 .panel-title {
@@ -469,6 +558,34 @@ async function handleRegister() {
   color: $text-primary;
 }
 
+.code-input {
+  letter-spacing: 12rpx;
+  text-align: center;
+}
+
+.wechat-tip {
+  margin-bottom: 28rpx;
+  padding: 20rpx 24rpx;
+  background: rgba($warning, 0.1);
+  border: 1rpx solid rgba($warning, 0.35);
+  border-radius: $radius-md;
+}
+
+.wechat-tip-title {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: darken($warning, 18%);
+  margin-bottom: 8rpx;
+}
+
+.wechat-tip-body {
+  display: block;
+  font-size: 22rpx;
+  line-height: 1.6;
+  color: $text-secondary;
+}
+
 .quick-row {
   display: flex;
   align-items: center;
@@ -509,7 +626,6 @@ async function handleRegister() {
 }
 
 .switch-link {
-  margin-left: 8rpx;
   color: $primary;
   font-weight: 700;
 }

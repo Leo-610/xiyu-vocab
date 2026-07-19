@@ -20,6 +20,7 @@
                 <text class="hero-greet">{{ displayGreet }}</text>
                 <text class="hero-sub">{{ state.nickname || '学习者' }}</text>
                 <text v-if="state.authType === 'wechat' || state.isWechatUser" class="hero-tag">微信账号</text>
+                <text v-else-if="state.authType === 'email'" class="hero-tag">邮箱账号</text>
                 <text v-else class="hero-tag">演示账号</text>
               </view>
             </view>

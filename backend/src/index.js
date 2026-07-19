@@ -7,8 +7,10 @@ import db, { getDbPath } from './db.js'
 import { getConfig } from './config.js'
 import { runMigrations } from './migrate.js'
 import { seedWords, wordCount } from './seed.js'
-import { authMiddleware, loginUser, registerUser, loginWechatUser, logoutUser, formatAuthMeta } from './middleware/auth.js'
+import { authMiddleware, loginUser, registerUser, loginWechatUser, loginEmailUser, logoutUser, formatAuthMeta } from './middleware/auth.js'
 import { code2Session } from './services/wechat.js'
+import { sendEmailLoginOtp, verifyEmailLoginOtp, isValidEmail, normalizeEmail } from './services/emailOtp.js'
+import { checkRateLimit, getClientIp } from './services/rateLimit.js'
 import {
   buildUserState,
   getMixedDailyPack,
@@ -118,6 +120,7 @@ async function handleApi(req, res, pathname, query) {
       content: getContentStatus(),
       auth: {
         wechat: appConfig.wechatConfigured,
+        email: appConfig.emailAuthConfigured,
         demoLogin: appConfig.allowDemoLogin,
         env: appConfig.nodeEnv,
       },
@@ -172,6 +175,61 @@ async function handleApi(req, res, pathname, query) {
     }
   }
 
+  if (pathname === '/api/auth/email/send' && method === 'POST') {
+    if (!appConfig.emailAuthConfigured) {
+      return sendJson(res, 503, {
+        error: '邮箱登录尚未配置',
+        code: 'EMAIL_AUTH_NOT_CONFIGURED',
+      })
+    }
+    const body = await readBody(req)
+    const email = normalizeEmail(body.email)
+    if (!isValidEmail(email)) {
+      return sendJson(res, 400, { error: '请输入有效的邮箱地址', code: 'INVALID_EMAIL' })
+    }
+    const rate = checkRateLimit('email_signin', getClientIp(req))
+    if (!rate.allowed) {
+      return sendJson(res, 429, { error: rate.error, code: 'RATE_LIMITED' })
+    }
+    const result = await sendEmailLoginOtp(email)
+    if (result.error) {
+      return sendJson(res, 502, { error: result.error, code: 'EMAIL_SEND_FAILED' })
+    }
+    return sendJson(res, 200, { success: true, email: result.email })
+  }
+
+  if (pathname === '/api/auth/email/verify' && method === 'POST') {
+    if (!appConfig.emailAuthConfigured) {
+      return sendJson(res, 503, {
+        error: '邮箱登录尚未配置',
+        code: 'EMAIL_AUTH_NOT_CONFIGURED',
+      })
+    }
+    const body = await readBody(req)
+    const email = normalizeEmail(body.email)
+    const code = String(body.code || '').trim()
+    if (!email || !code) {
+      return sendJson(res, 400, { error: '请输入验证码', code: 'MISSING_CODE' })
+    }
+    const rate = checkRateLimit('email_otp_verify', email)
+    if (!rate.allowed) {
+      return sendJson(res, 429, { error: rate.error, code: 'RATE_LIMITED' })
+    }
+    if (!verifyEmailLoginOtp(email, code)) {
+      return sendJson(res, 401, { error: '验证码错误或已过期', code: 'INVALID_OTP' })
+    }
+    try {
+      const user = loginEmailUser(email)
+      return sendJson(res, 200, {
+        token: user.session_token,
+        user: buildUserState(db, user.id),
+        ...formatAuthMeta(user),
+      })
+    } catch (err) {
+      return sendJson(res, 400, { error: err.message, code: err.code || 'EMAIL_LOGIN_FAILED' })
+    }
+  }
+
   if (pathname === '/api/auth/wechat' && method === 'POST') {
     const body = await readBody(req)
     if (!body.code) {
@@ -201,7 +259,9 @@ async function handleApi(req, res, pathname, query) {
   if (!authResult.ok && pathname.startsWith('/api/')
     && pathname !== '/api/login'
     && pathname !== '/api/register'
-    && pathname !== '/api/auth/wechat') {
+    && pathname !== '/api/auth/wechat'
+    && pathname !== '/api/auth/email/send'
+    && pathname !== '/api/auth/email/verify') {
     return sendJson(res, authResult.status, { error: authResult.error, code: authResult.code })
   }
   const user = authResult.user

@@ -1,7 +1,8 @@
 import * as api from './api.js'
-import { performDemoLogin, performWechatLogin } from './authLogin.js'
+import { performDemoLogin, performWechatLogin, performEmailSendOtp, performEmailVerifyOtp } from './authLogin.js'
 
 const LAST_NICKNAME_KEY = 'last_nickname'
+const LAST_EMAIL_KEY = 'last_email'
 
 const EMOJI_MAP = {
   hola: '👋', adiós: '👋', gracias: '🙏', 'por favor': '🙏',
@@ -19,6 +20,25 @@ const EMOJI_MAP = {
 
 let cachedState = null
 let apiOnline = null
+let authConfig = { email: false, demoLogin: true }
+
+export function getAuthConfig() {
+  return authConfig
+}
+
+export function getLastEmail() {
+  try {
+    return uni.getStorageSync(LAST_EMAIL_KEY) || ''
+  } catch {
+    return ''
+  }
+}
+
+function saveLastEmail(email) {
+  if (email) {
+    uni.setStorageSync(LAST_EMAIL_KEY, email)
+  }
+}
 
 function attachEmoji(word) {
   return { ...word, emoji: EMOJI_MAP[word.lemma] || '📝' }
@@ -34,8 +54,12 @@ export function enrichWord(word) {
 
 export async function checkApiOnline() {
   try {
-    await api.healthCheck()
+    const health = await api.healthCheck()
     apiOnline = true
+    authConfig = {
+      email: Boolean(health?.auth?.email),
+      demoLogin: health?.auth?.demoLogin !== false,
+    }
   } catch {
     apiOnline = false
   }
@@ -70,7 +94,22 @@ function applyAuthResponse(res) {
   if (res.user?.nickname) {
     saveLastNickname(res.user.nickname)
   }
+  if (res.user?.email) {
+    saveLastEmail(res.user.email)
+  }
   return cachedState
+}
+
+export async function sendEmailLoginCode(email) {
+  const res = await performEmailSendOtp(email)
+  saveLastEmail(email)
+  return res
+}
+
+export async function loginWithEmailOtp(email, code) {
+  const res = await performEmailVerifyOtp(email, code)
+  saveLastEmail(email)
+  return applyAuthResponse(res)
 }
 
 export async function loginWithNickname(nickname) {

@@ -107,7 +107,8 @@
           />
           <view class="account-meta">
             <text class="account-name">{{ stats.nickname || '未命名' }}</text>
-            <text v-if="stats.isWechatUser" class="account-tag">微信用户</text>
+            <text v-if="stats.authType === 'wechat' || stats.isWechatUser" class="account-tag">微信用户</text>
+            <text v-else-if="stats.authType === 'email'" class="account-tag">邮箱用户</text>
             <text v-else class="account-tag">演示账号</text>
           </view>
         </view>

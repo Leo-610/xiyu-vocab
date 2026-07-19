@@ -13,6 +13,8 @@ backend/data/*.db-*
 backend/data/avatars/*
 !backend/data/avatars/.gitkeep
 data/content/xlsx_media/
+data/content/_exam_staging/
+data/content/*_with_images.xlsx
+data/content/vercel-deploy*.json
 .vercel
 *.seed.db-journal
-data/content/vercel-deploy*.json

@@ -93,6 +93,22 @@ export function loginWechat(code, nickname) {
   })
 }
 
+/** 邮箱验证码：发送登录码 */
+export function sendEmailOtp(email) {
+  return request('/auth/email/send', {
+    method: 'POST',
+    data: { email },
+  })
+}
+
+/** 邮箱验证码：验证并登录（首次自动注册） */
+export function verifyEmailOtp(email, code) {
+  return request('/auth/email/verify', {
+    method: 'POST',
+    data: { email, code },
+  })
+}
+
 export function getApiBase() {
   return API_BASE
 }
