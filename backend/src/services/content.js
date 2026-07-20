@@ -11,10 +11,10 @@ const IMAGES_DIR = path.join(__dirname, '..', '..', 'data', 'images');
 
 /** 当前上线词库：A1 义项包 + 专四/专八完整合并 */
 export const LEVEL_TARGETS = {
-  A1: 91,
-  A2: 235,
-  B1: 123,
-  B2: 64,
+  A1: 94,
+  A2: 282,
+  B1: 224,
+  B2: 84,
   C1: 25,
   C2: 0
 };
@@ -114,10 +114,10 @@ export async function seedConfusablePairs() {
 
   let n = 0;
   for (const [a, b] of pairs) {
-    const wa = findId.get(a);
-    const wb = findId.get(b);
+    const wa = await findId.get(a);
+    const wb = await findId.get(b);
     if (wa && wb) {
-      insert.run(wa.id, wb.id, `【待西语同学A填写】${a} 与 ${b} 的辨析说明`);
+      await insert.run(wa.id, wb.id, `【待西语同学A填写】${a} 与 ${b} 的辨析说明`);
       n += 1;
     }
   }

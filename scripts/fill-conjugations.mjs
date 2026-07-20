@@ -165,50 +165,126 @@ const PRESENT = {
   ver: ['veo', 'ves', 've', 'vemos', 'veis', 'ven'],
   vestirse: ['me visto', 'te vistes', 'se viste', 'nos vestimos', 'os vestís', 'se visten'],
   vivir: ['vivo', 'vives', 'vive', 'vivimos', 'vivís', 'viven'],
+  // —— 专四 7.19 新增 ——
+  acercar: ['acerco', 'acercas', 'acerca', 'acercamos', 'acercáis', 'acercan'],
+  acordarse: ['me acuerdo', 'te acuerdas', 'se acuerda', 'nos acordamos', 'os acordáis', 'se acuerdan'],
+  adquirir: ['adquiero', 'adquieres', 'adquiere', 'adquirimos', 'adquirís', 'adquieren'],
+  alcanzar: ['alcanzo', 'alcanzas', 'alcanza', 'alcanzamos', 'alcanzáis', 'alcanzan'],
+  alejarse: ['me alejo', 'te alejas', 'se aleja', 'nos alejamos', 'os alejáis', 'se alejan'],
+  aplicar: ['aplico', 'aplicas', 'aplica', 'aplicamos', 'aplicáis', 'aplican'],
+  apreciar: ['aprecio', 'aprecias', 'aprecia', 'apreciamos', 'apreciáis', 'aprecian'],
+  clarificar: ['clarifico', 'clarificas', 'clarifica', 'clarificamos', 'clarificáis', 'clarifican'],
+  comparar: ['comparo', 'comparas', 'compara', 'comparamos', 'comparáis', 'comparan'],
+  comprender: ['comprendo', 'comprendes', 'comprende', 'comprendemos', 'comprendéis', 'comprenden'],
+  comprobar: ['compruebo', 'compruebas', 'comprueba', 'comprobamos', 'comprobáis', 'comprueban'],
+  concretar: ['concreto', 'concretas', 'concreta', 'concretamos', 'concretáis', 'concretan'],
+  conectar: ['conecto', 'conectas', 'conecta', 'conectamos', 'conectáis', 'conectan'],
+  confirmar: ['confirmo', 'confirmas', 'confirma', 'confirmamos', 'confirmáis', 'confirman'],
+  conseguir: ['consigo', 'consigues', 'consigue', 'conseguimos', 'conseguís', 'consiguen'],
+  considerar: ['considero', 'consideras', 'considera', 'consideramos', 'consideráis', 'consideran'],
+  contener: ['contengo', 'contienes', 'contiene', 'contenemos', 'contenéis', 'contienen'],
+  dejar: ['dejo', 'dejas', 'deja', 'dejamos', 'dejáis', 'dejan'],
+  demostrar: ['demuestro', 'demuestras', 'demuestra', 'demostramos', 'demostráis', 'demuestran'],
+  descubrir: ['descubro', 'descubres', 'descubre', 'descubrimos', 'descubrís', 'descubren'],
+  detallar: ['detallo', 'detallas', 'detalla', 'detallamos', 'detalláis', 'detallan'],
+  diferenciar: ['diferencio', 'diferencias', 'diferencia', 'diferenciamos', 'diferenciáis', 'diferencian'],
+  distraer: ['distraigo', 'distraes', 'distrae', 'distraemos', 'distraéis', 'distraen'],
+  distraerse: ['me distraigo', 'te distraes', 'se distrae', 'nos distraemos', 'os distraéis', 'se distraen'],
+  dudar: ['dudo', 'dudas', 'duda', 'dudamos', 'dudáis', 'dudan'],
+  dudarse: ['me dudo', 'te dudas', 'se duda', 'nos dudamos', 'os dudáis', 'se dudan'],
+  enriquecer: ['enriquezco', 'enriqueces', 'enriquece', 'enriquecemos', 'enriquecéis', 'enriquecen'],
+  esquematizar: ['esquematizo', 'esquematizas', 'esquematiza', 'esquematizamos', 'esquematizáis', 'esquematizan'],
+  establecer: ['establezco', 'estableces', 'establece', 'establecemos', 'establecéis', 'establecen'],
+  evitar: ['evito', 'evitas', 'evita', 'evitamos', 'evitáis', 'evitan'],
+  guardar: ['guardo', 'guardas', 'guarda', 'guardamos', 'guardáis', 'guardan'],
+  ilustrar: ['ilustro', 'ilustras', 'ilustra', 'ilustramos', 'ilustráis', 'ilustran'],
+  imaginar: ['imagino', 'imaginas', 'imagina', 'imaginamos', 'imagináis', 'imaginan'],
+  imaginarse: ['me imagino', 'te imaginas', 'se imagina', 'nos imaginamos', 'os imagináis', 'se imaginan'],
+  intentar: ['intento', 'intentas', 'intenta', 'intentamos', 'intentáis', 'intentan'],
+  intercambiar: ['intercambio', 'intercambias', 'intercambia', 'intercambiamos', 'intercambiáis', 'intercambian'],
+  lograr: ['logro', 'logras', 'logra', 'logramos', 'lográis', 'logran'],
+  mejorar: ['mejoro', 'mejoras', 'mejora', 'mejoramos', 'mejoráis', 'mejoran'],
+  merecer: ['merezco', 'mereces', 'merece', 'merecemos', 'merecéis', 'merecen'],
+  merecerse: ['me merezco', 'te mereces', 'se merece', 'nos merecemos', 'os merecéis', 'se merecen'],
+  meter: ['meto', 'metes', 'mete', 'metemos', 'metéis', 'meten'],
+  mezclar: ['mezclo', 'mezclas', 'mezcla', 'mezclamos', 'mezcláis', 'mezclan'],
+  modificar: ['modifico', 'modificas', 'modifica', 'modificamos', 'modificáis', 'modifican'],
+  observar: ['observo', 'observas', 'observa', 'observamos', 'observáis', 'observan'],
+  ocultar: ['oculto', 'ocultas', 'oculta', 'ocultamos', 'ocultáis', 'ocultan'],
+  olvidar: ['olvido', 'olvidas', 'olvida', 'olvidamos', 'olvidáis', 'olvidan'],
+  olvidarse: ['me olvido', 'te olvidas', 'se olvida', 'nos olvidamos', 'os olvidáis', 'se olvidan'],
+  permitir: ['permito', 'permites', 'permite', 'permitimos', 'permitís', 'permiten'],
+  precisar: ['preciso', 'precisas', 'precisa', 'precisamos', 'precisáis', 'precisan'],
+  preferir: ['prefiero', 'prefieres', 'prefiere', 'preferimos', 'preferís', 'prefieren'],
+  prohibir: ['prohíbo', 'prohíbes', 'prohíbe', 'prohibimos', 'prohibís', 'prohíben'],
+  publicar: ['publico', 'publicas', 'publica', 'publicamos', 'publicáis', 'publican'],
+  recoger: ['recojo', 'recoges', 'recoge', 'recogemos', 'recogéis', 'recogen'],
+  recordar: ['recuerdo', 'recuerdas', 'recuerda', 'recordamos', 'recordáis', 'recuerdan'],
+  recuperar: ['recupero', 'recuperas', 'recupera', 'recuperamos', 'recuperáis', 'recuperan'],
+  renovar: ['renuevo', 'renuevas', 'renueva', 'renovamos', 'renováis', 'renuevan'],
+  reparar: ['reparo', 'reparas', 'repara', 'reparamos', 'reparáis', 'reparan'],
+  resolver: ['resuelvo', 'resuelves', 'resuelve', 'resolvemos', 'resolvéis', 'resuelven'],
+  sacar: ['saco', 'sacas', 'saca', 'sacamos', 'sacáis', 'sacan'],
+  separar: ['separo', 'separas', 'separa', 'separamos', 'separáis', 'separan'],
+  separarse: ['me separo', 'te separas', 'se separa', 'nos separamos', 'os separáis', 'se separan'],
+  superar: ['supero', 'superas', 'supera', 'superamos', 'superáis', 'superan'],
+  suponer: ['supongo', 'supones', 'supone', 'suponemos', 'suponéis', 'suponen'],
+  suprimir: ['suprimo', 'suprimes', 'suprime', 'suprimimos', 'suprimís', 'suprimen'],
+  usar: ['uso', 'usas', 'usa', 'usamos', 'usáis', 'usan'],
+  vincular: ['vinculo', 'vinculas', 'vincula', 'vinculamos', 'vinculáis', 'vinculan'],
 }
 
-runMigrations(db)
-
-const update = db.prepare('UPDATE words SET conjugation_json = ? WHERE lemma = ? AND pos = ?')
-let n = 0
-const notInTable = []
-
-for (const [lemma, forms] of Object.entries(PRESENT)) {
-  if (forms.length !== 6) {
-    console.error(`[error] ${lemma} 人称数不对: ${forms.length}`)
-    continue
+runMigrations(db).then(async () => {
+  // 强制只写本地库
+  const { getDbBackend } = await import('../backend/src/db.js')
+  if (getDbBackend() !== 'sqlite-local' && process.env.TURSO_DATABASE_URL) {
+    console.warn('[warn] fill-conjugations 检测到远程库配置，请确认是否误连')
   }
-  const json = JSON.stringify(pack(lemma, forms))
-  const info = update.run(json, lemma, 'v')
-  if (info.changes > 0) n += info.changes
-  else notInTable.push(lemma)
-}
 
-const pending = db.prepare(`
+  const update = db.prepare('UPDATE words SET conjugation_json = ? WHERE lemma = ? AND pos = ?')
+  let n = 0
+  const notInTable = []
+
+  for (const [lemma, forms] of Object.entries(PRESENT)) {
+    if (forms.length !== 6) {
+      console.error(`[error] ${lemma} 人称数不对: ${forms.length}`)
+      continue
+    }
+    const json = JSON.stringify(pack(lemma, forms))
+    const info = await update.run(json, lemma, 'v')
+    if (info.changes > 0) n += info.changes
+    else notInTable.push(lemma)
+  }
+
+  const pending = await db.prepare(`
   SELECT DISTINCT lemma FROM words WHERE pos = 'v'
     AND (conjugation_json IS NULL OR conjugation_json = '')
   ORDER BY lemma
 `).all()
 
-const covered = db.prepare(`
+  const covered = (await db.prepare(`
   SELECT COUNT(*) AS c FROM words WHERE pos = 'v'
     AND conjugation_json IS NOT NULL AND conjugation_json != ''
-`).get().c
+`).get()).c
 
-const querer = db.prepare(`
+  const querer = await db.prepare(`
   SELECT lemma, conjugation_json FROM words WHERE lemma = 'querer' AND pos = 'v' LIMIT 1
 `).get()
 
-console.log(`[ok] 已写入变位 ${n} 行；库中有变位动词行 ${covered}`)
-if (notInTable.length) console.log('[info] 字典有但库中无:', notInTable.join(', '))
-if (pending.length) console.log('[warn] 仍缺变位:', pending.map((r) => r.lemma).join(', '))
-else console.log('[ok] 全部动词变位已补齐')
-if (querer?.conjugation_json) {
-  const j = JSON.parse(querer.conjugation_json)
-  console.log('[sample querer]', j.tenses[0].forms.map((f) => f.form).join(', '))
-}
+  console.log(`[ok] 已写入变位 ${n} 行；库中有变位动词行 ${covered}`)
+  if (notInTable.length) console.log('[info] 字典有但库中无:', notInTable.join(', '))
+  if (pending.length) console.log('[warn] 仍缺变位:', pending.map((r) => r.lemma).join(', '))
+  else console.log('[ok] 全部动词变位已补齐')
+  if (querer?.conjugation_json) {
+    const j = JSON.parse(querer.conjugation_json)
+    console.log('[sample querer]', j.tenses[0].forms.map((f) => f.form).join(', '))
+  }
 
-if (fs.existsSync(LIVE)) {
-  fs.copyFileSync(LIVE, SEED)
-  console.log(`[ok] 已同步 seed → ${SEED}`)
-}
+  if (fs.existsSync(LIVE)) {
+    fs.copyFileSync(LIVE, SEED)
+    console.log(`[ok] 已同步 seed → ${SEED}`)
+  }
+}).catch((err) => {
+  console.error(err)
+  process.exit(1)
+})

@@ -121,7 +121,7 @@ export async function seedWords(csvPath = DEFAULT_CSV) {
       const level = row.level?.trim().toUpperCase();
       const pos = row.pos?.trim() || '';
 
-      insertWord.run(
+      await insertWord.run(
         lemma,
         pos,
         gender,
@@ -136,14 +136,14 @@ export async function seedWords(csvPath = DEFAULT_CSV) {
         tags
       );
 
-      const wordRow = getWordId.get(lemma, pos, sense);
+      const wordRow = await getWordId.get(lemma, pos, sense);
       const wordId = wordRow.id;
 
-      deleteOptions.run(wordId);
-      insertOption.run(wordId, row.meaning_zh?.trim(), 1);
-      insertOption.run(wordId, row.distractor_1?.trim() || '待填写', 0);
-      insertOption.run(wordId, row.distractor_2?.trim() || '待填写', 0);
-      insertOption.run(wordId, row.distractor_3?.trim() || '待填写', 0);
+      await deleteOptions.run(wordId);
+      await insertOption.run(wordId, row.meaning_zh?.trim(), 1);
+      await insertOption.run(wordId, row.distractor_1?.trim() || '待填写', 0);
+      await insertOption.run(wordId, row.distractor_2?.trim() || '待填写', 0);
+      await insertOption.run(wordId, row.distractor_3?.trim() || '待填写', 0);
       count += 1;
     }
     await db.exec('COMMIT');

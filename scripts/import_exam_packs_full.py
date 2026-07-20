@@ -6,6 +6,7 @@
   images专业四级2.zip → senses_table_tem4 7.16.xlsx (+143 图)
   images专业四级3.zip → senses_table_tem4 7.17.xlsx (+143 图)
   images专业四级4.zip → senses_table_tem4 7.18.xlsx (+163 图)
+  images专业四级5.zip → senses_table_tem4 7.19.xlsx (+170 图)
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
 
 用法:
@@ -49,6 +50,7 @@ ZIPS = [
     ("tem4_716", WECHAT / "images专业四级2.zip", "专四"),
     ("tem4_717", WECHAT / "images专业四级3.zip", "专四"),
     ("tem4_718", WECHAT / "images专业四级4.zip", "专四"),
+    ("tem4_719", WECHAT / "images专业四级5.zip", "专四"),
     ("tem8", WECHAT / "images专业八级1(1).zip", "专八"),
 ]
 
@@ -409,8 +411,8 @@ def main() -> None:
             merge_entry(store, e, "专四")
         print(f"[info] + {base_xlsx.name} → {len(store)}")
 
-    # zip 内三张专四表（按日期递增覆盖）
-    for label in ("tem4_716", "tem4_717", "tem4_718"):
+    # zip 内专四表（按日期递增覆盖）
+    for label in ("tem4_716", "tem4_717", "tem4_718", "tem4_719"):
         d = staging.get(label)
         if not d:
             continue
