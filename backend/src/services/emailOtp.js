@@ -1,32 +1,32 @@
-import { randomInt } from 'node:crypto'
-import db from '../db.js'
-import { sendResendEmail } from './resend.js'
+import { randomInt } from 'node:crypto';
+import db from '../db.js';
+import { sendResendEmail } from './resend.js';
 
-const OTP_TTL_MS = 10 * 60 * 1000
+const OTP_TTL_MS = 10 * 60 * 1000;
 
 function generateOtpCode() {
-  return String(randomInt(0, 1_000_000)).padStart(6, '0')
+  return String(randomInt(0, 1_000_000)).padStart(6, '0');
 }
 
 export function normalizeEmail(email) {
-  return String(email || '').trim().toLowerCase()
+  return String(email || '').trim().toLowerCase();
 }
 
 export function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export async function sendEmailLoginOtp(email) {
-  const normalized = normalizeEmail(email)
-  const code = generateOtpCode()
-  const expires = new Date(Date.now() + OTP_TTL_MS).toISOString()
-  const minutes = OTP_TTL_MS / 60000
+  const normalized = normalizeEmail(email);
+  const code = generateOtpCode();
+  const expires = new Date(Date.now() + OTP_TTL_MS).toISOString();
+  const minutes = OTP_TTL_MS / 60000;
 
-  db.prepare('DELETE FROM verification_tokens WHERE identifier = ?').run(normalized)
-  db.prepare(`
+  await db.prepare('DELETE FROM verification_tokens WHERE identifier = ?').run(normalized);
+  await db.prepare(`
     INSERT INTO verification_tokens (identifier, token, expires)
     VALUES (?, ?, ?)
-  `).run(normalized, code, expires)
+  `).run(normalized, code, expires);
 
   const result = await sendResendEmail({
     to: normalized,
@@ -39,40 +39,40 @@ export async function sendEmailLoginOtp(email) {
         <p style="font-size:14px;color:#555;margin:0 0 8px">验证码 ${minutes} 分钟内有效。</p>
         <p style="font-size:12px;color:#888;margin:16px 0 0">请勿在微信内点击可疑链接；本邮件仅含验证码，无需点击任何按钮。</p>
       </div>
-    `,
-  })
+    `
+  });
 
   if (!result.ok) {
-    db.prepare(`
+    await db.prepare(`
       DELETE FROM verification_tokens
       WHERE identifier = ? AND token = ?
-    `).run(normalized, code)
-    return { error: result.error }
+    `).run(normalized, code);
+    return { error: result.error };
   }
 
-  return { success: true, email: normalized }
+  return { success: true, email: normalized };
 }
 
-export function verifyEmailLoginOtp(email, code) {
-  const normalized = normalizeEmail(email)
-  const normalizedCode = String(code || '').trim()
+export async function verifyEmailLoginOtp(email, code) {
+  const normalized = normalizeEmail(email);
+  const normalizedCode = String(code || '').trim();
   if (!/^\d{6}$/.test(normalizedCode)) {
-    return false
+    return false;
   }
 
-  const row = db.prepare(`
+  const row = await db.prepare(`
     SELECT * FROM verification_tokens
     WHERE identifier = ? AND token = ?
-  `).get(normalized, normalizedCode)
+  `).get(normalized, normalizedCode);
 
   if (!row || new Date(row.expires) < new Date()) {
-    return false
+    return false;
   }
 
-  db.prepare(`
+  await db.prepare(`
     DELETE FROM verification_tokens
     WHERE identifier = ? AND token = ?
-  `).run(normalized, normalizedCode)
+  `).run(normalized, normalizedCode);
 
-  return true
+  return true;
 }

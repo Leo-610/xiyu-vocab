@@ -1,42 +1,161 @@
+/**
+ * 数据库入口：本地 node:sqlite；生产配置 Turso 时走远程 libSQL（账号/进度持久化）
+ */
 import { DatabaseSync } from 'node:sqlite'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { createClient } from '@libsql/client'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DB_DIR = path.join(__dirname, '..', 'data')
 const SEED_DB = path.join(DB_DIR, 'xiyu.seed.db')
 const LOCAL_DB = path.join(DB_DIR, 'xiyu.db')
 
-function resolveDbPath() {
+function loadEnvFromBackend() {
+  const envPath = path.join(__dirname, '..', '.env')
+  if (!fs.existsSync(envPath)) return
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) continue
+    const eq = trimmed.indexOf('=')
+    const key = trimmed.slice(0, eq).trim()
+    let val = trimmed.slice(eq + 1).trim()
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1)
+    }
+    if (process.env[key] === undefined) process.env[key] = val
+  }
+}
+
+loadEnvFromBackend()
+
+function resolveLocalSqlitePath() {
   const isServerless = Boolean(process.env.VERCEL || process.env.XIYU_USE_TMP_DB === '1')
   if (!isServerless) {
-    if (!fs.existsSync(DB_DIR)) {
-      fs.mkdirSync(DB_DIR, { recursive: true })
-    }
-    return LOCAL_DB
+    if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true })
+    return { path: LOCAL_DB, backend: 'sqlite-local' }
   }
-
-  // Vercel 只读部署包：运行时拷到 /tmp 以便写入学习进度
   const tmpDir = process.env.XIYU_DB_DIR || '/tmp'
   const runtime = path.join(tmpDir, 'xiyu.db')
   if (!fs.existsSync(runtime)) {
     const source = fs.existsSync(SEED_DB) ? SEED_DB : LOCAL_DB
-    if (fs.existsSync(source)) {
-      fs.copyFileSync(source, runtime)
-    }
+    if (fs.existsSync(source)) fs.copyFileSync(source, runtime)
   }
-  return runtime
+  return { path: runtime, backend: 'sqlite-tmp' }
 }
 
-const DB_PATH = resolveDbPath()
-
-if (!fs.existsSync(path.dirname(DB_PATH))) {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true })
+function rowFromLibsql(row) {
+  if (!row) return undefined
+  // Row may be array-like with .toJSON() or plain object
+  if (typeof row.toJSON === 'function') return row.toJSON()
+  if (Array.isArray(row)) return row
+  return { ...row }
 }
 
-const db = new DatabaseSync(DB_PATH)
+function createSqliteAdapter(syncDb, backend) {
+  return {
+    backend,
+    path: syncDb.name || null,
+    prepare(sql) {
+      const stmt = syncDb.prepare(sql)
+      return {
+        get: async (...params) => stmt.get(...params),
+        all: async (...params) => stmt.all(...params),
+        run: async (...params) => {
+          const r = stmt.run(...params)
+          return {
+            lastInsertRowid: Number(r.lastInsertRowid),
+            changes: Number(r.changes),
+          }
+        },
+      }
+    },
+    exec: async (sql) => {
+      syncDb.exec(sql)
+    },
+    async batch(statements) {
+      syncDb.exec('BEGIN')
+      try {
+        for (const s of statements) {
+          if (typeof s === 'string') syncDb.exec(s)
+          else syncDb.prepare(s.sql).run(...(s.args || []))
+        }
+        syncDb.exec('COMMIT')
+      } catch (e) {
+        syncDb.exec('ROLLBACK')
+        throw e
+      }
+    },
+  }
+}
 
+function createTursoAdapter(client, backend) {
+  return {
+    backend,
+    path: process.env.TURSO_DATABASE_URL || null,
+    prepare(sql) {
+      return {
+        get: async (...params) => {
+          const r = await client.execute({ sql, args: params })
+          const row = r.rows[0]
+          return row ? rowFromLibsql(row) : undefined
+        },
+        all: async (...params) => {
+          const r = await client.execute({ sql, args: params })
+          return r.rows.map(rowFromLibsql)
+        },
+        run: async (...params) => {
+          const r = await client.execute({ sql, args: params })
+          return {
+            lastInsertRowid: Number(r.lastInsertRowid || 0),
+            changes: Number(r.rowsAffected || 0),
+          }
+        },
+      }
+    },
+    exec: async (sql) => {
+      // 多语句：executeMultiple；单语句：execute
+      if (/\b(BEGIN|COMMIT|ROLLBACK|PRAGMA)\b/i.test(sql) || sql.includes(';')) {
+        await client.executeMultiple(sql)
+      } else {
+        await client.execute(sql)
+      }
+    },
+    async batch(statements) {
+      await client.batch(
+        statements.map((s) => (typeof s === 'string' ? s : { sql: s.sql, args: s.args || [] })),
+        'write',
+      )
+    },
+  }
+}
+
+const tursoUrl = (process.env.TURSO_DATABASE_URL || '').trim()
+const tursoToken = (process.env.TURSO_AUTH_TOKEN || '').trim()
+
+let db
+let dbBackend
+let dbPath
+
+if (tursoUrl && tursoToken) {
+  const client = createClient({ url: tursoUrl, authToken: tursoToken })
+  dbBackend = 'turso'
+  dbPath = tursoUrl
+  db = createTursoAdapter(client, dbBackend)
+  console.log('[db] backend=turso', tursoUrl.replace(/\/\/.*@/, '//***@').slice(0, 60))
+} else {
+  const resolved = resolveLocalSqlitePath()
+  dbPath = resolved.path
+  dbBackend = resolved.backend
+  if (!fs.existsSync(path.dirname(dbPath))) {
+    fs.mkdirSync(path.dirname(dbPath), { recursive: true })
+  }
+  const syncDb = new DatabaseSync(dbPath)
+  db = createSqliteAdapter(syncDb, dbBackend)
+}
+
+/** 与历史 SCHEMA 一致：仅在本地文件库首次创建时补表；Turso 靠 migrate */
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -225,14 +344,25 @@ CREATE TABLE IF NOT EXISTS ai_reviews (
 CREATE INDEX IF NOT EXISTS idx_ai_reviews_status ON ai_reviews(status, created_at);
 `
 
-db.exec(SCHEMA)
+let schemaReady = null
+export async function ensureSchema() {
+  if (schemaReady) return schemaReady
+  schemaReady = (async () => {
+    await db.exec(SCHEMA)
+  })()
+  await schemaReady
+}
 
 export function getDb() {
   return db
 }
 
 export function getDbPath() {
-  return DB_PATH
+  return dbPath
+}
+
+export function getDbBackend() {
+  return dbBackend
 }
 
 export default db

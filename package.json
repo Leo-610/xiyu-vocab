@@ -19,11 +19,19 @@
     "import:ci": "bash scripts/ci-import-vocabulary.sh",
     "export:pilot": "node scripts/export-pilot-report.mjs",
     "import:corpus": "node scripts/import-corpus.mjs --from-words --seed-db",
+    "db:push-turso": "node scripts/push-db-to-turso.mjs",
     "deploy:prod": "bash scripts/deploy-production.sh",
     "prepare:vercel": "node scripts/prepare-vercel.mjs",
     "vercel-build": "npm run setup && npm run build:frontend && node scripts/prepare-vercel.mjs"
   },
   "devDependencies": {
+    "@babel/generator": "^7.29.7",
+    "@babel/parser": "^7.29.7",
+    "@babel/traverse": "^7.29.7",
+    "@babel/types": "^7.29.7",
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0"
   }
 }
