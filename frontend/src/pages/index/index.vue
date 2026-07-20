@@ -172,7 +172,7 @@ import {
   resetTodaySession, fetchVocabularyTotal, fetchExamPacks, isApiOnline,
 } from '../../utils/userService.js'
 
-const levels = ['A1']
+const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 const loading = ref(true)
 const apiOnline = ref(false)
 const vocabTotal = ref(0)
