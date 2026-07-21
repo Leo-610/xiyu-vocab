@@ -32,7 +32,7 @@
         <text class="panel-title">微信登录</text>
         <text class="panel-desc">使用微信身份同步学习进度，数据保存在云端。</text>
         <view v-if="error" class="error-msg">{{ error }}</view>
-        <AppButton block :loading="loading" :disabled="!apiOnline" @click="handleWechatLogin">
+        <AppButton block :loading="loading" @click="handleWechatLogin">
           微信一键登录
         </AppButton>
       </template>
@@ -401,13 +401,18 @@ function onProfileSaved(user) {
 }
 
 async function handleWechatLogin() {
-  if (!apiOnline.value) {
-    error.value = '请先连接后端服务'
-    return
-  }
   loading.value = true
   error.value = ''
   try {
+    // 乐观探测：即使状态仍是「检测中」也允许点登录，失败再提示
+    if (checkedOnline.value && !apiOnline.value) {
+      const online = await checkApiOnline()
+      apiOnline.value = online
+      if (!online) {
+        error.value = '服务器暂不可用，请检查网络后重试'
+        return
+      }
+    }
     const state = await loginWithWechat()
     // #ifdef MP-WEIXIN
     if (state.needsProfile) {
@@ -418,7 +423,13 @@ async function handleWechatLogin() {
     // #endif
     goHome()
   } catch (e) {
-    error.value = e.message || '微信登录失败'
+    const msg = e.message || '微信登录失败'
+    error.value = /超时|timeout/i.test(msg) ? '登录超时，请再点一次重试' : msg
+    // 失败后强制刷新在线状态
+    checkApiOnline().then((online) => {
+      apiOnline.value = online
+      checkedOnline.value = true
+    })
   } finally {
     loading.value = false
   }

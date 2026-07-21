@@ -36,7 +36,12 @@ function toError(payload, fallback) {
   return new Error(String(msg))
 }
 
-function request(path, options = {}) {
+function isTimeoutError(err) {
+  const detail = err?.errMsg || err?.message || String(err || '')
+  return /timeout/i.test(detail)
+}
+
+function requestOnce(path, options = {}) {
   const token = getToken()
   const header = {
     'Content-Type': 'application/json',
@@ -52,7 +57,7 @@ function request(path, options = {}) {
       method: options.method || 'GET',
       data: options.data,
       header,
-      timeout: options.timeout || 60000,
+      timeout: options.timeout || 15000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
@@ -73,18 +78,32 @@ function request(path, options = {}) {
         reject(toError(res.data, `请求失败 (${res.statusCode})`))
       },
       fail(err) {
-        const detail = err?.errMsg || err?.message || ''
-        const tip = /timeout/i.test(detail)
-          ? `连接超时，请检查网络或域名配置（${API_BASE}）`
-          : '网络错误'
+        const tip = isTimeoutError(err)
+          ? '网络超时，请检查网络后重试'
+          : '网络错误，请稍后重试'
         reject(toError(err, tip))
       },
     })
   })
 }
 
+/** 超时自动重试 1 次，减轻冷启动偶发失败 */
+async function request(path, options = {}) {
+  const retries = options.retries ?? 1
+  let lastError
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await requestOnce(path, options)
+    } catch (err) {
+      lastError = err
+      if (i >= retries || !isTimeoutError(err)) throw err
+    }
+  }
+  throw lastError
+}
+
 export function healthCheck() {
-  return request('/health', { timeout: 8000 })
+  return request('/health', { timeout: 8000, retries: 1 })
 }
 
 export function logout() {

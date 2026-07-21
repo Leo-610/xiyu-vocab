@@ -4,6 +4,7 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "frontend/dist/build/h5",
   "installCommand": "npm install",
+  "regions": ["hnd1"],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" }
   ],
