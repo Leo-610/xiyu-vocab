@@ -10,7 +10,7 @@
     "router": { "mode": "hash" }
   },
   "mp-weixin": {
-    "appid": "",
+    "appid": "wx151acc89311a4d3e",
     "setting": {
       "urlCheck": true,
       "es6": true,

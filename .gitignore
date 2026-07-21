@@ -7,6 +7,10 @@ unpackage/
 .env.local
 backend/.env
 frontend/.env.production.local
+frontend/project.config.json
+secrets/
+*.key
+private.*.key
 backend/data/*.db
 backend/data/*.db-*
 !backend/data/*.seed.db
