@@ -14,12 +14,25 @@
           <text class="link" @click="openPrivacy">《隐私政策》</text>
         </view>
         <text class="p muted">
-          我们将采集微信 openid 与学习进度，用于同步个人数据，不采集手机号等敏感信息。详情见隐私政策。
+          我们将采集微信 openid、头像昵称（自愿填写）与学习进度，用于同步个人数据。详情见隐私政策。
         </text>
       </view>
 
       <view class="actions">
+        <!-- 微信要求：隐私同意需使用官方 open-type，否则后续 chooseAvatar 等会失败 -->
+        <!-- #ifdef MP-WEIXIN -->
+        <button
+          id="agree-btn"
+          class="agree-native"
+          open-type="agreePrivacyAuthorization"
+          @agreeprivacyauthorization="onAgreePrivacy"
+        >
+          同意并继续
+        </button>
+        <!-- #endif -->
+        <!-- #ifndef MP-WEIXIN -->
         <AppButton block @click="onAgree">同意并继续</AppButton>
+        <!-- #endif -->
         <AppButton block variant="outline" class="mt-btn" @click="onDecline">不同意</AppButton>
       </view>
     </view>
@@ -29,6 +42,7 @@
 <script setup>
 import { APP_CONFIG } from '../../config/app.js'
 import { setPrivacyAgreed, declinePrivacy } from '../../utils/privacy.js'
+import { markWxPrivacyAgreed } from '../../utils/wxPrivacy.js'
 import { safeNavigateTo, safeReLaunch } from '../../utils/nav.js'
 
 const appName = APP_CONFIG.name
@@ -41,9 +55,18 @@ function openTerms() {
   safeNavigateTo('/pages/legal/terms')
 }
 
-function onAgree() {
+function finishAgree() {
+  markWxPrivacyAgreed()
   setPrivacyAgreed()
   safeReLaunch('/pages/auth/login')
+}
+
+function onAgree() {
+  finishAgree()
+}
+
+function onAgreePrivacy() {
+  finishAgree()
 }
 
 function onDecline() {
@@ -120,6 +143,25 @@ function onDecline() {
 
 .actions {
   margin-top: 48rpx;
+}
+
+.agree-native {
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, $primary-light, $primary);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 24rpx rgba($primary, 0.35);
+
+  &::after {
+    border: none;
+  }
 }
 
 .mt-btn {

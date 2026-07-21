@@ -33,15 +33,10 @@ function onClick(e) {
 .app-btn {
   border: none;
   font-weight: 600;
-  transition: transform 0.15s ease, opacity 0.15s ease;
   line-height: 1.4;
 
   &::after {
     border: none;
-  }
-
-  &:active:not([disabled]) {
-    transform: scale(0.98);
   }
 
   &.block {
@@ -85,7 +80,7 @@ function onClick(e) {
     box-shadow: 0 8rpx 24rpx rgba($success, 0.3);
   }
 
-  &[disabled], &.disabled {
+  &.disabled {
     opacity: 0.45;
     box-shadow: none;
   }

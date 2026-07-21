@@ -4,24 +4,41 @@
     <text v-if="subtitle" class="form-sub">{{ subtitle }}</text>
 
     <view class="avatar-picker">
-      <button class="avatar-btn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+      <!-- 优先微信头像能力；未声明隐私指引时回退相册选择 -->
+      <!-- #ifdef MP-WEIXIN -->
+      <button
+        id="agree-btn"
+        class="avatar-btn"
+        open-type="chooseAvatar"
+        @chooseavatar="onChooseAvatar"
+        @click="onAvatarTap"
+      >
         <UserAvatar :src="avatarPreview" :nickname="nickname" :size="128" />
         <text class="avatar-hint">点击选择头像</text>
       </button>
+      <!-- #endif -->
+      <!-- #ifndef MP-WEIXIN -->
+      <view class="avatar-btn" @click="pickFromAlbum">
+        <UserAvatar :src="avatarPreview" :nickname="nickname" :size="128" />
+        <text class="avatar-hint">点击选择头像</text>
+      </view>
+      <!-- #endif -->
     </view>
 
     <view class="field">
       <text class="label">昵称</text>
+      <!-- 使用普通文本输入，避免未声明隐私指引时 nickname 配件报错 -->
       <input
         v-model="nickname"
         class="nickname-input"
-        type="nickname"
+        type="text"
         maxlength="32"
-        placeholder="点击输入微信昵称"
+        placeholder="请输入昵称"
       />
     </view>
 
     <view v-if="error" class="error-msg">{{ error }}</view>
+    <view v-if="hint" class="hint-msg">{{ hint }}</view>
 
     <AppButton block :loading="loading" @click="handleSave">
       {{ submitText }}
@@ -42,6 +59,7 @@
 import { ref, watch } from 'vue'
 import UserAvatar from './UserAvatar.vue'
 import { updateProfile, uploadAvatar } from '../utils/api.js'
+import { requireWxPrivacyAuthorize } from '../utils/wxPrivacy.js'
 
 const props = defineProps({
   initialNickname: { type: String, default: '' },
@@ -59,6 +77,7 @@ const avatarPreview = ref(props.initialAvatarUrl)
 const avatarLocalPath = ref('')
 const loading = ref(false)
 const error = ref('')
+const hint = ref('')
 
 watch(() => props.initialNickname, (v) => {
   if (v && v !== '微信用户') nickname.value = v
@@ -68,11 +87,45 @@ watch(() => props.initialAvatarUrl, (v) => {
   if (v) avatarPreview.value = v
 })
 
+async function onAvatarTap() {
+  await requireWxPrivacyAuthorize()
+}
+
 function onChooseAvatar(e) {
   const path = e.detail?.avatarUrl
-  if (!path) return
+  if (!path) {
+    // 隐私未声明等失败时回退相册
+    pickFromAlbum()
+    return
+  }
   avatarLocalPath.value = path
   avatarPreview.value = path
+  hint.value = ''
+  error.value = ''
+}
+
+function pickFromAlbum() {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['compressed'],
+    sourceType: ['album', 'camera'],
+    success(res) {
+      const path = res.tempFilePaths?.[0]
+      if (!path) return
+      avatarLocalPath.value = path
+      avatarPreview.value = path
+      hint.value = ''
+      error.value = ''
+    },
+    fail(err) {
+      const msg = err?.errMsg || ''
+      if (/privacy|authorize|scope/i.test(msg)) {
+        hint.value = '请在微信公众平台配置「用户隐私保护指引」后重试，或稍后设置头像'
+      } else {
+        error.value = '选择图片失败，可稍后设置'
+      }
+    },
+  })
 }
 
 async function handleSave() {
@@ -176,6 +229,17 @@ async function handleSave() {
   color: $error;
   border-radius: $radius-sm;
   font-size: 26rpx;
+}
+
+.hint-msg {
+  display: block;
+  margin-bottom: 20rpx;
+  padding: 16rpx 20rpx;
+  background: rgba($warning, 0.12);
+  color: $text-secondary;
+  border-radius: $radius-sm;
+  font-size: 24rpx;
+  line-height: 1.5;
 }
 
 .mt-btn {

@@ -52,6 +52,7 @@ function request(path, options = {}) {
       method: options.method || 'GET',
       data: options.data,
       header,
+      timeout: options.timeout || 60000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
@@ -72,7 +73,11 @@ function request(path, options = {}) {
         reject(toError(res.data, `请求失败 (${res.statusCode})`))
       },
       fail(err) {
-        reject(toError(err, '网络错误'))
+        const detail = err?.errMsg || err?.message || ''
+        const tip = /timeout/i.test(detail)
+          ? `连接超时，请检查网络或域名配置（${API_BASE}）`
+          : '网络错误'
+        reject(toError(err, tip))
       },
     })
   })
