@@ -6,7 +6,20 @@ page {
   color: $text-primary;
   font-size: 28rpx;
   line-height: 1.5;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
+
+view,
+text,
+button,
+input,
+textarea,
+image {
+  box-sizing: border-box;
+}
+
 
 .container {
   padding: 24rpx 32rpx calc(140rpx + env(safe-area-inset-bottom));

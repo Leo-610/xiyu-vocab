@@ -532,9 +532,13 @@ async function handlePasswordSubmit() {
 
 .auth-page {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   background: $bg-page;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .hero {
@@ -629,6 +633,7 @@ async function handlePasswordSubmit() {
 
 .panel {
   flex: 1;
+  width: 100%;
   margin-top: -40rpx;
   padding: 48rpx 40rpx 64rpx;
   background: $bg-page;
@@ -636,6 +641,8 @@ async function handlePasswordSubmit() {
   position: relative;
   z-index: 2;
   box-shadow: 0 -12rpx 40rpx rgba(26, 26, 46, 0.06);
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .dev-badge {

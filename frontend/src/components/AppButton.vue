@@ -44,9 +44,15 @@ function onClick(e) {
 @import '../styles/theme.scss';
 
 .app-btn {
+  box-sizing: border-box;
+  max-width: 100%;
   border: none;
   font-weight: 600;
   line-height: 1.4;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &::after {
     border: none;
@@ -54,6 +60,7 @@ function onClick(e) {
 
   &.block {
     width: 100%;
+    display: flex;
   }
 
   &.md {
