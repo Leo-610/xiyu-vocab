@@ -1,4 +1,15 @@
 <template>
+  <!-- #ifdef MP-WEIXIN -->
+  <view
+    class="app-btn"
+    :class="[variant, size, { block, disabled: disabled || loading }]"
+    @click="onClick"
+  >
+    <text v-if="loading" class="btn-loading">···</text>
+    <slot v-else />
+  </view>
+  <!-- #endif -->
+  <!-- #ifndef MP-WEIXIN -->
   <button
     type="button"
     class="app-btn"
@@ -9,10 +20,11 @@
     <text v-if="loading" class="btn-loading">···</text>
     <slot v-else />
   </button>
+  <!-- #endif -->
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   variant: { type: String, default: 'primary' },
   size: { type: String, default: 'md' },
   block: { type: Boolean, default: false },
@@ -22,6 +34,7 @@ defineProps({
 const emit = defineEmits(['click'])
 
 function onClick(e) {
+  if (props.disabled || props.loading) return
   if (e?.preventDefault) e.preventDefault()
   emit('click', e)
 }

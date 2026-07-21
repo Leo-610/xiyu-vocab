@@ -19,20 +19,8 @@
       </view>
 
       <view class="actions">
-        <!-- 微信要求：隐私同意需使用官方 open-type，否则后续 chooseAvatar 等会失败 -->
-        <!-- #ifdef MP-WEIXIN -->
-        <button
-          id="agree-btn"
-          class="agree-native"
-          open-type="agreePrivacyAuthorization"
-          @agreeprivacyauthorization="onAgreePrivacy"
-        >
-          同意并继续
-        </button>
-        <!-- #endif -->
-        <!-- #ifndef MP-WEIXIN -->
+        <!-- 避免 open-type 原生按钮在模拟器引发渲染层崩溃；App 内同意 + 后台隐私指引即可 -->
         <AppButton block @click="onAgree">同意并继续</AppButton>
-        <!-- #endif -->
         <AppButton block variant="outline" class="mt-btn" @click="onDecline">不同意</AppButton>
       </view>
     </view>
@@ -55,18 +43,10 @@ function openTerms() {
   safeNavigateTo('/pages/legal/terms')
 }
 
-function finishAgree() {
+function onAgree() {
   markWxPrivacyAgreed()
   setPrivacyAgreed()
   safeReLaunch('/pages/auth/login')
-}
-
-function onAgree() {
-  finishAgree()
-}
-
-function onAgreePrivacy() {
-  finishAgree()
 }
 
 function onDecline() {
@@ -143,25 +123,6 @@ function onDecline() {
 
 .actions {
   margin-top: 48rpx;
-}
-
-.agree-native {
-  width: 100%;
-  height: 96rpx;
-  line-height: 96rpx;
-  padding: 0;
-  margin: 0;
-  border: none;
-  border-radius: 999rpx;
-  background: linear-gradient(135deg, $primary-light, $primary);
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: 600;
-  box-shadow: 0 8rpx 24rpx rgba($primary, 0.35);
-
-  &::after {
-    border: none;
-  }
 }
 
 .mt-btn {

@@ -3,31 +3,22 @@
     <text class="form-title">{{ title }}</text>
     <text v-if="subtitle" class="form-sub">{{ subtitle }}</text>
 
-    <view class="avatar-picker">
-      <!-- 优先微信头像能力；未声明隐私指引时回退相册选择 -->
-      <!-- #ifdef MP-WEIXIN -->
-      <button
-        id="agree-btn"
-        class="avatar-btn"
-        open-type="chooseAvatar"
-        @chooseavatar="onChooseAvatar"
-        @click="onAvatarTap"
-      >
-        <UserAvatar :src="avatarPreview" :nickname="nickname" :size="128" />
-        <text class="avatar-hint">点击选择头像</text>
-      </button>
-      <!-- #endif -->
-      <!-- #ifndef MP-WEIXIN -->
-      <view class="avatar-btn" @click="pickFromAlbum">
-        <UserAvatar :src="avatarPreview" :nickname="nickname" :size="128" />
-        <text class="avatar-hint">点击选择头像</text>
+    <!-- 不用 open-type=chooseAvatar 包自定义组件（会导致渲染层 FLOW / addListener 崩溃） -->
+    <view class="avatar-picker" @click="pickAvatar">
+      <image
+        v-if="avatarPreview"
+        class="avatar-img"
+        :src="avatarPreview"
+        mode="aspectFill"
+      />
+      <view v-else class="avatar-fallback">
+        <text class="avatar-initial">{{ avatarInitial }}</text>
       </view>
-      <!-- #endif -->
+      <text class="avatar-hint">点击选择头像</text>
     </view>
 
     <view class="field">
       <text class="label">昵称</text>
-      <!-- 使用普通文本输入，避免未声明隐私指引时 nickname 配件报错 -->
       <input
         v-model="nickname"
         class="nickname-input"
@@ -56,10 +47,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import UserAvatar from './UserAvatar.vue'
+import { computed, ref, watch } from 'vue'
 import { updateProfile, uploadAvatar } from '../utils/api.js'
-import { requireWxPrivacyAuthorize } from '../utils/wxPrivacy.js'
+import { userInitial } from '../utils/media.js'
 
 const props = defineProps({
   initialNickname: { type: String, default: '' },
@@ -79,6 +69,8 @@ const loading = ref(false)
 const error = ref('')
 const hint = ref('')
 
+const avatarInitial = computed(() => userInitial(nickname.value))
+
 watch(() => props.initialNickname, (v) => {
   if (v && v !== '微信用户') nickname.value = v
 })
@@ -87,24 +79,7 @@ watch(() => props.initialAvatarUrl, (v) => {
   if (v) avatarPreview.value = v
 })
 
-async function onAvatarTap() {
-  await requireWxPrivacyAuthorize()
-}
-
-function onChooseAvatar(e) {
-  const path = e.detail?.avatarUrl
-  if (!path) {
-    // 隐私未声明等失败时回退相册
-    pickFromAlbum()
-    return
-  }
-  avatarLocalPath.value = path
-  avatarPreview.value = path
-  hint.value = ''
-  error.value = ''
-}
-
-function pickFromAlbum() {
+function pickAvatar() {
   uni.chooseImage({
     count: 1,
     sizeType: ['compressed'],
@@ -119,9 +94,9 @@ function pickFromAlbum() {
     },
     fail(err) {
       const msg = err?.errMsg || ''
-      if (/privacy|authorize|scope/i.test(msg)) {
-        hint.value = '请在微信公众平台配置「用户隐私保护指引」后重试，或稍后设置头像'
-      } else {
+      if (/privacy|authorize|scope|cancel/i.test(msg) && !/cancel/i.test(msg)) {
+        hint.value = '若无法选图，请在公众平台配置隐私指引中的「选中的照片或视频」'
+      } else if (!/cancel/i.test(msg)) {
         error.value = '选择图片失败，可稍后设置'
       }
     },
@@ -173,24 +148,31 @@ async function handleSave() {
 
 .avatar-picker {
   display: flex;
-  justify-content: center;
-  margin-bottom: 32rpx;
-}
-
-.avatar-btn {
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: none;
-  line-height: 1.2;
-  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12rpx;
+  margin-bottom: 32rpx;
+}
 
-  &::after {
-    border: none;
-  }
+.avatar-img,
+.avatar-fallback {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $primary-light, $primary);
+}
+
+.avatar-initial {
+  color: #fff;
+  font-size: 48rpx;
+  font-weight: 700;
 }
 
 .avatar-hint {

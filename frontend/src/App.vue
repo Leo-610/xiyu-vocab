@@ -1,13 +1,11 @@
 <script>
 import { checkApiOnline } from './utils/userService.js'
 import { hasPrivacyAgreed } from './utils/privacy.js'
-import { setupWxPrivacyListener } from './utils/wxPrivacy.js'
 import { getToken } from './utils/api.js'
 import { safeReLaunch } from './utils/nav.js'
 
 export default {
   onLaunch() {
-    setupWxPrivacyListener()
     this.routeByPrivacy()
   },
   onShow() {
