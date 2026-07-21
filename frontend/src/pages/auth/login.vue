@@ -322,7 +322,7 @@ function switchAuthMode(mode) {
   passwordConfirm.value = ''
 }
 
-onShow(async () => {
+onShow(() => {
   recentEmail.value = getLastEmail()
   recentAccount.value = getLastAccount()
   if (!email.value && recentEmail.value) {
@@ -332,16 +332,26 @@ onShow(async () => {
     account.value = recentAccount.value
   }
 
-  apiOnline.value = await checkApiOnline()
+  // 先渲染登录页，健康检查放后台，避免卡在「检测中」
+  apiOnline.value = true
+  checkedOnline.value = false
+  probeApiInBackground()
+  resumeIfLoggedIn()
+})
+
+async function probeApiInBackground() {
+  const online = await checkApiOnline()
+  apiOnline.value = online
   checkedOnline.value = true
   if (passwordAuthEnabled.value) {
     h5Method.value = 'password'
   } else if (emailAuthEnabled.value) {
     h5Method.value = 'otp'
   }
+}
 
+async function resumeIfLoggedIn() {
   if (!isLoggedIn()) return
-
   try {
     const state = await getUserState(true)
     // #ifdef MP-WEIXIN
@@ -355,7 +365,7 @@ onShow(async () => {
   } catch {
     // stay on login
   }
-})
+}
 
 function useRecentEmail() {
   email.value = recentEmail.value

@@ -203,14 +203,22 @@ const progressPercent = computed(() => {
 
 async function refresh() {
   loading.value = true
+  apiOnline.value = true
   try {
-    apiOnline.value = await checkApiOnline()
-    if (apiOnline.value) {
-      await ensureAuth()
-      state.value = await getUserState(true)
-      vocabTotal.value = await fetchVocabularyTotal()
-      examPacks.value = await fetchExamPacks()
-    }
+    // 先拉用户态，health 并行；避免串行等 3–4s health
+    const onlinePromise = checkApiOnline()
+    await ensureAuth()
+    const [online, userState, total, packs] = await Promise.all([
+      onlinePromise,
+      getUserState(true),
+      fetchVocabularyTotal().catch(() => 0),
+      fetchExamPacks().catch(() => []),
+    ])
+    apiOnline.value = online
+    if (!online) return
+    state.value = userState
+    vocabTotal.value = total
+    examPacks.value = packs
   } catch (e) {
     uni.showToast({ title: e.message || '加载失败', icon: 'none' })
   } finally {

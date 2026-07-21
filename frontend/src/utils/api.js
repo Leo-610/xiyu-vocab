@@ -84,7 +84,7 @@ function request(path, options = {}) {
 }
 
 export function healthCheck() {
-  return request('/health')
+  return request('/health', { timeout: 8000 })
 }
 
 export function logout() {
