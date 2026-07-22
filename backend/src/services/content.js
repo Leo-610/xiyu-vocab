@@ -11,10 +11,10 @@ const IMAGES_DIR = path.join(__dirname, '..', '..', 'data', 'images');
 
 /** 当前上线词库：A1 义项包 + 专四/专八完整合并 */
 export const LEVEL_TARGETS = {
-  A1: 94,
-  A2: 282,
-  B1: 224,
-  B2: 84,
+  A1: 101,
+  A2: 338,
+  B1: 307,
+  B2: 85,
   C1: 25,
   C2: 0
 };

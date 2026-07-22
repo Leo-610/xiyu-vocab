@@ -20,6 +20,7 @@
 | `images专业四级3.zip` | `senses_table_tem4 7.17.xlsx` | 143 |
 | `images专业四级4.zip` | `senses_table_tem4 7.18.xlsx` | 163 |
 | `images专业四级5.zip` | `senses_table_tem4 7.19.xlsx` | ~170 |
+| `images专业四级6.zip` | `senses_table_tem4 7.20.xlsx` | ~148 |
 | `images专业八级1.zip` | （词表用带图表） | 59 |
 
 另：`senses_table_tem4_with_images.xlsx`、`senses_table_tem8_with_images.xlsx` 提供基线专四/专八内嵌图。
