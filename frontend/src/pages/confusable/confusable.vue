@@ -2,7 +2,7 @@
   <view class="container">
     <AppCard>
       <text class="page-title">易混词辨析</text>
-      <text class="page-sub">西语专属 · 内容由同学 A 填写</text>
+      <text class="page-sub">西语高频易混对 · 用法口诀与例句</text>
     </AppCard>
 
     <view v-if="loading"><AppCard><text class="skeleton-pulse">加载...</text></AppCard></view>
@@ -109,6 +109,7 @@ onMounted(async () => {
   padding: 20rpx;
   border-radius: $radius-md;
   font-size: 26rpx;
-  line-height: 1.6;
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 </style>
