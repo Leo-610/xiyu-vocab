@@ -34,6 +34,7 @@ export function playWordAudio(word) {
 function playRemoteAudio(url, fallbackLemma) {
   return new Promise((resolve) => {
     const audio = uni.createInnerAudioContext()
+    audio.obeyMuteSwitch = false
     audio.src = url
     audio.onEnded(() => {
       audio.destroy()
@@ -43,6 +44,10 @@ function playRemoteAudio(url, fallbackLemma) {
       audio.destroy()
       speakLemma(fallbackLemma).then(resolve).catch(() => resolve())
     })
-    audio.play()
+    try {
+      audio.play()
+    } catch {
+      speakLemma(fallbackLemma).then(resolve).catch(() => resolve())
+    }
   })
 }

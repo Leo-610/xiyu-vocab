@@ -139,7 +139,7 @@ flowchart TD
 |------|------|--------|
 | request 合法域名 | `https://api.yourdomain.com` | 后端 API |
 | uploadFile | 若用户上传 | 初期 **无 UGC 可不配** |
-| downloadFile | 若拉取文件 | 可选 |
+| downloadFile | `https://bjtu.club` | 词库配图 + 听写/学习发音 `/api/tts` 必配 |
 | **业务域名** | H5  web-view 打开协议页 | 隐私政策若用 web-view |
 
 注意：

@@ -27,6 +27,7 @@ const CSVs = [
   path.join(ROOT, 'data', 'batches', 'A1', 'words_senses_team.csv'),
   path.join(ROOT, 'data', 'batches', 'exam', 'words_tem4.csv'),
   path.join(ROOT, 'data', 'batches', 'exam', 'words_tem8.csv'),
+  path.join(ROOT, 'data', 'batches', 'exam', 'words_confusable_support.csv'),
 ]
 
 async function main() {

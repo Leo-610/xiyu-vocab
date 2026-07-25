@@ -57,7 +57,7 @@ function requestOnce(path, options = {}) {
       method: options.method || 'GET',
       data: options.data,
       header,
-      timeout: options.timeout || 15000,
+      timeout: options.timeout || 20000,
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
@@ -103,7 +103,7 @@ async function request(path, options = {}) {
 }
 
 export function healthCheck() {
-  return request('/health', { timeout: 8000, retries: 1 })
+  return request('/health', { timeout: 20000, retries: 2 })
 }
 
 export function logout() {
@@ -137,6 +137,8 @@ export function loginWechat(code, nickname) {
   return request('/auth/wechat', {
     method: 'POST',
     data: { code, nickname },
+    timeout: 20000,
+    retries: 1,
   })
 }
 

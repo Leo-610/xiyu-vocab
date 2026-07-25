@@ -160,11 +160,11 @@ async function onPlay() {
   playing.value = true
   try {
     await playWordAudio({
-      lemma: currentWord.value._speak,
+      lemma: currentWord.value._speak || currentWord.value.lemma,
       audio_url: currentWord.value.audio_url,
     })
-  } catch {
-    uni.showToast({ title: '播放失败', icon: 'none' })
+  } catch (e) {
+    uni.showToast({ title: e?.message || '播放失败', icon: 'none' })
   } finally {
     playing.value = false
   }

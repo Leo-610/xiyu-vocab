@@ -1,0 +1,29 @@
+{
+  "description": "打开本仓库根目录时，小程序根目录指向 uni-app 编译产物",
+  "miniprogramRoot": "frontend/dist/build/mp-weixin/",
+  "compileType": "miniprogram",
+  "appid": "wx151acc89311a4d3e",
+  "projectname": "西语背单词",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "uglifyFileName": false,
+    "enhance": true,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": false,
+    "minifyWXML": true
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
+}

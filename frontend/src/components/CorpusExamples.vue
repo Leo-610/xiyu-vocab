@@ -11,8 +11,8 @@
     </view>
 
     <view v-for="(ex, i) in examples" :key="ex.chunkId || i" class="ex-item">
-      <text class="ex-es">{{ ex.text_es }}</text>
-      <text v-if="ex.text_zh" class="ex-zh">{{ ex.text_zh }}</text>
+      <text class="ex-es" user-select>{{ ex.text_es }}</text>
+      <text v-if="ex.text_zh" class="ex-zh" user-select>{{ ex.text_zh }}</text>
       <view class="ex-source">
         <text class="source-badge">{{ ex.source }}</text>
         <text v-if="ex.level" class="source-level">{{ ex.level }}</text>

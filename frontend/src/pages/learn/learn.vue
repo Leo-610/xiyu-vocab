@@ -51,7 +51,7 @@
         </view>
         <view class="word-info">
           <view class="lemma-row">
-            <text class="lemma">{{ currentWord.lemma }}</text>
+            <text class="lemma" user-select>{{ currentWord.lemma }}</text>
             <view class="speak-btn" @click="onSpeak">🔊</view>
           </view>
           <text v-if="currentWord.ipa && showIpa" class="ipa">/{{ currentWord.ipa }}/</text>
@@ -92,10 +92,10 @@
           <text class="fb-icon">{{ lastCorrect ? '✓' : '✗' }}</text>
           <text class="fb-title">{{ lastCorrect ? '正确！' : '再想想' }}</text>
         </view>
-        <text v-if="!lastCorrect" class="fb-answer">答案：{{ currentWord.meaning_zh }}</text>
+        <text v-if="!lastCorrect" class="fb-answer" user-select>答案：{{ currentWord.meaning_zh }}</text>
         <view v-if="currentWord.example_es" class="example-box">
-          <text class="example">{{ currentWord.example_es }}</text>
-          <text v-if="currentWord.example_zh" class="example-zh">{{ currentWord.example_zh }}</text>
+          <text class="example" user-select>{{ currentWord.example_es }}</text>
+          <text v-if="currentWord.example_zh" class="example-zh" user-select>{{ currentWord.example_zh }}</text>
         </view>
         <CorpusExamples
           :word-id="currentWord.id"
@@ -131,6 +131,7 @@ import {
   getUserState, shuffleOptions, posLabel, getCachedState,
 } from '../../utils/userService.js'
 import { speakLemma } from '../../utils/tts.js'
+import { resolveMediaUrl } from '../../utils/media.js'
 import CorpusExamples from '../../components/CorpusExamples.vue'
 import MistakeExplain from '../../components/MistakeExplain.vue'
 
@@ -164,12 +165,7 @@ const doneSubtitle = computed(() => {
 
 const currentWord = computed(() => pack.value[currentIndex.value] || null)
 
-const imageSrc = computed(() => {
-  const url = currentWord.value?.image_url
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  return url
-})
+const imageSrc = computed(() => resolveMediaUrl(currentWord.value?.image_url))
 
 onLoad((options) => {
   if (options?.exam) {

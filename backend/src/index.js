@@ -41,6 +41,7 @@ import { getExamPack, getExamSummaries, EXAM_PACKS } from './services/exam.js';
 import { retrieveExamplesForWord, corpusStats } from './services/rag.js';
 import { explainMistake, listAiReviews, reviewAiItem, llmStatus } from './services/llm.js';
 import { ensureAllUsersHaveArm, ragFeaturesEnabled } from './services/experiment.js';
+import { fetchTtsAudio } from './services/tts.js';
 import { spawnSync } from 'node:child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -150,6 +151,27 @@ async function handleApi(req, res, pathname, query) {
 
   if (pathname === '/api/content/status' && method === 'GET') {
     return sendJson(res, 200, await getContentStatus());
+  }
+
+  if (pathname === '/api/tts' && method === 'GET') {
+    try {
+      const text = query.q || query.text || '';
+      const lang = query.lang || 'es';
+      const { buffer, contentType } = await fetchTtsAudio(text, lang);
+      res.writeHead(200, {
+        'Content-Type': contentType,
+        'Content-Length': buffer.length,
+        'Cache-Control': 'public, max-age=86400',
+        'Access-Control-Allow-Origin': '*'
+      });
+      return res.end(buffer);
+    } catch (err) {
+      const status = err.code === 'MISSING_TEXT' ? 400 : 502;
+      return sendJson(res, status, {
+        error: err.message || '发音服务暂不可用',
+        code: err.code || 'TTS_FAILED'
+      });
+    }
   }
 
   if (pathname === '/api/admin/pilot-report' && method === 'GET') {
@@ -348,6 +370,7 @@ async function handleApi(req, res, pathname, query) {
   pathname !== '/api/auth/wechat' &&
   pathname !== '/api/auth/email/send' &&
   pathname !== '/api/auth/email/verify' &&
+  pathname !== '/api/tts' &&
   !pathname.startsWith('/api/admin/')) {
     return sendJson(res, authResult.status, { error: authResult.error, code: authResult.code });
   }

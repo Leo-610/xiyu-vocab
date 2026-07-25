@@ -12,7 +12,7 @@ export const APP_CONFIG = {
    * 联系邮箱 — 微信审核必填，请改成你的真实邮箱
    * 示例：163/QQ/Outlook 等常用邮箱均可
    */
-  contactEmail: '763860802@qq.com',
+  contactEmail: 'leo610666@gmail.com',
 
   /** 指导教师（个人主体可留空） */
   advisorName: '',

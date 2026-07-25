@@ -9,6 +9,7 @@
 | 义项包 A1 | `data/batches/A1/words_senses_team.csv` | `data/images/A1/` |
 | 专四 | `data/batches/exam/words_tem4.csv` | `data/images/tem4/` |
 | 专八 | `data/batches/exam/words_tem8.csv` | `data/images/tem8/` |
+| 易混词配套 | `data/batches/exam/words_confusable_support.csv` | （可无图） |
 
 > 一词可同时带「义项包 + 专四」标签；数据库按 lemma+pos+sense 去重。
 

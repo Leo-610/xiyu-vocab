@@ -8,11 +8,11 @@
       <text class="muted">正在生成解析…</text>
     </view>
     <view v-else-if="summary" class="explain-body">
-      <text class="summary">{{ summary }}</text>
+      <text class="summary" user-select>{{ summary }}</text>
       <view v-if="citations.length" class="cites">
         <text class="cites-title">引用语料</text>
         <view v-for="c in citations" :key="c.index" class="cite-row">
-          <text class="cite-es">{{ c.index }}. {{ c.text_es }}</text>
+          <text class="cite-es" user-select>{{ c.index }}. {{ c.text_es }}</text>
           <text class="cite-src">{{ c.source }}</text>
         </view>
       </view>
