@@ -18,7 +18,7 @@ export const APP_CONFIG = {
   advisorName: '',
 
   /** 隐私协议版本：政策更新后递增，会触发用户重新确认 */
-  privacyVersion: '1.0.1',
+  privacyVersion: '1.0.2',
 
   /** 个人上线版：关闭内容组开发横幅 */
   showDevBanner: false,

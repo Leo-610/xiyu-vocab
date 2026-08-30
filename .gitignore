@@ -18,6 +18,7 @@ backend/data/avatars/*
 !backend/data/avatars/.gitkeep
 data/content/xlsx_media/
 data/content/_exam_staging/
+data/content/_incoming_tem4/
 data/content/*_with_images.xlsx
 data/content/vercel-deploy*.json
 .vercel

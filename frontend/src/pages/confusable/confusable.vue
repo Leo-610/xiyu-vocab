@@ -35,13 +35,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchConfusables } from '../../utils/userService.js'
+import { ensureSession, fetchConfusables } from '../../utils/userService.js'
 
 const loading = ref(true)
 const pairs = ref([])
 
 onMounted(async () => {
   try {
+    await ensureSession()
     pairs.value = await fetchConfusables()
   } catch (e) {
     uni.showToast({ title: e.message, icon: 'none' })

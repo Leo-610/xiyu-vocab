@@ -31,7 +31,19 @@
       </view>
 
       <AppCard v-if="answered">
-        <AppButton block @click="nextWord">{{ done ? '完成' : '下一词' }}</AppButton>
+        <text v-if="!lastCorrect" class="fb-answer">答案：{{ currentWord.meaning_zh }}</text>
+        <CorpusExamples
+          :word-id="currentWord.id"
+          :enabled="ragEnabled"
+          :show="answered"
+        />
+        <MistakeExplain
+          :word-id="currentWord.id"
+          :wrong-choice="wrongChoiceText"
+          :enabled="ragEnabled"
+          :show="answered && !lastCorrect"
+        />
+        <AppButton block class="mt" @click="nextWord">{{ done ? '完成' : '下一词' }}</AppButton>
       </AppCard>
     </template>
   </view>
@@ -39,7 +51,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { ensureAuth, fetchReviewPack, submitWordAnswer, shuffleOptions } from '../../utils/userService.js'
+import {
+  ensureSession, fetchReviewPack, submitWordAnswer, shuffleOptions, getUserState,
+} from '../../utils/userService.js'
+import CorpusExamples from '../../components/CorpusExamples.vue'
+import MistakeExplain from '../../components/MistakeExplain.vue'
 
 const loading = ref(true)
 const pack = ref([])
@@ -47,13 +63,21 @@ const currentIndex = ref(0)
 const shuffledOptions = ref([])
 const answered = ref(false)
 const selectedOpt = ref(null)
+const lastCorrect = ref(false)
 const done = ref(false)
+const ragEnabled = ref(true)
 
 const currentWord = computed(() => pack.value[currentIndex.value] || null)
+const wrongChoiceText = computed(() => {
+  if (lastCorrect.value || !selectedOpt.value) return ''
+  return selectedOpt.value.text || ''
+})
 
 onMounted(async () => {
   try {
-    await ensureAuth()
+    await ensureSession()
+    const state = await getUserState(true)
+    ragEnabled.value = Boolean(state.ragEnabled)
     const res = await fetchReviewPack('mistakes', 10)
     pack.value = res.words
     loadOptions()
@@ -67,6 +91,7 @@ function loadOptions() {
     shuffledOptions.value = shuffleOptions(currentWord.value)
     answered.value = false
     selectedOpt.value = null
+    lastCorrect.value = false
   }
 }
 
@@ -74,6 +99,7 @@ async function selectOption(opt) {
   if (answered.value) return
   selectedOpt.value = opt
   answered.value = true
+  lastCorrect.value = Boolean(opt.correct)
   await submitWordAnswer(currentWord.value.id, opt.correct, 'mistake')
 }
 
@@ -117,6 +143,12 @@ function goBack() {
   &.correct { background: $success-bg; }
   &.wrong { background: $error-bg; }
   &.dim { opacity: 0.5; }
+}
+.fb-answer {
+  display: block;
+  margin-bottom: 12rpx;
+  font-size: 26rpx;
+  color: $text-secondary;
 }
 .mt { margin-top: 24rpx; }
 </style>

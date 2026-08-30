@@ -1,10 +1,12 @@
 import * as api from './api.js'
-import { performDemoLogin, performWechatLogin, performEmailSendOtp, performEmailVerifyOtp, performPasswordLogin, performPasswordRegister } from './authLogin.js'
-import { safeReLaunch } from './nav.js'
+import { performDemoLogin, performDemoRegister, performWechatLogin, performEmailSendOtp, performEmailVerifyOtp, performPasswordLogin, performPasswordRegister } from './authLogin.js'
+import { safeNavigateTo, safeReLaunch } from './nav.js'
 
 const LAST_NICKNAME_KEY = 'last_nickname'
 const LAST_EMAIL_KEY = 'last_email'
 const LAST_ACCOUNT_KEY = 'last_account'
+const GUEST_FLAG_KEY = 'auth_is_guest'
+const GUEST_ID_KEY = 'guest_device_id'
 
 const EMOJI_MAP = {
   hola: '👋', adiós: '👋', gracias: '🙏', 'por favor': '🙏',
@@ -74,7 +76,39 @@ export function isApiOnline() {
 }
 
 export function isLoggedIn() {
-  return Boolean(api.getToken())
+  return Boolean(api.getToken()) && !isGuestSession()
+}
+
+export function isGuestSession() {
+  try {
+    if (!api.getToken()) return true
+    return uni.getStorageSync(GUEST_FLAG_KEY) === true
+  } catch {
+    return true
+  }
+}
+
+function setGuestFlag(isGuest) {
+  if (isGuest) uni.setStorageSync(GUEST_FLAG_KEY, true)
+  else uni.removeStorageSync(GUEST_FLAG_KEY)
+}
+
+function getOrCreateGuestId() {
+  let id = ''
+  try {
+    id = uni.getStorageSync(GUEST_ID_KEY) || ''
+  } catch {
+    id = ''
+  }
+  if (!id) {
+    id = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
+    uni.setStorageSync(GUEST_ID_KEY, id)
+  }
+  return id
+}
+
+export function goLoginPage() {
+  safeNavigateTo('/pages/auth/login')
 }
 
 export function getLastNickname() {
@@ -105,10 +139,11 @@ function saveLastAccount(account) {
   }
 }
 
-function applyAuthResponse(res) {
+function applyAuthResponse(res, { guest = false } = {}) {
   api.setToken(res.token)
   cachedState = res.user
-  if (res.user?.nickname) {
+  setGuestFlag(guest)
+  if (!guest && res.user?.nickname) {
     saveLastNickname(res.user.nickname)
   }
   if (res.user?.email) {
@@ -119,6 +154,21 @@ function applyAuthResponse(res) {
     saveLastAccount(res.user.phone)
   }
   return cachedState
+}
+
+async function createGuestSession() {
+  const nick = `体验_${getOrCreateGuestId().slice(0, 12)}`
+  let res
+  try {
+    res = await performDemoLogin(nick)
+  } catch {
+    try {
+      res = await performDemoRegister(nick)
+    } catch {
+      res = await performDemoLogin(nick)
+    }
+  }
+  return applyAuthResponse(res, { guest: true })
 }
 
 export async function sendEmailLoginCode(email) {
@@ -178,29 +228,44 @@ export async function logout() {
   }
   api.clearToken()
   cachedState = null
-  safeReLaunch('/pages/auth/login')
+  setGuestFlag(true)
+  safeReLaunch('/pages/index/index')
 }
 
-export async function requireAuth() {
+/** 静默游客会话，不跳转登录页（微信审核：先体验再自愿登录） */
+export async function ensureSession() {
   if (apiOnline === false) {
     throw new Error('OFFLINE')
   }
-  if (!api.getToken()) {
-    safeReLaunch('/pages/auth/login')
-    throw new Error('UNAUTHORIZED')
+  if (api.getToken()) {
+    try {
+      cachedState = await api.getMe()
+      return cachedState
+    } catch {
+      api.clearToken()
+      cachedState = null
+    }
   }
-  try {
-    return await getUserState(true)
-  } catch {
-    api.clearToken()
-    cachedState = null
-    safeReLaunch('/pages/auth/login')
-    throw new Error('UNAUTHORIZED')
-  }
+  return createGuestSession()
+}
+
+export async function requireAuth() {
+  return ensureSession()
 }
 
 export async function ensureAuth() {
-  return requireAuth()
+  return ensureSession()
+}
+
+/** 需真实账号时才进登录页（编辑资料等） */
+export async function requireLogin() {
+  if (api.getToken() && !isGuestSession()) {
+    return getUserState(true)
+  }
+  goLoginPage()
+  const err = new Error('LOGIN_REQUIRED')
+  err.code = 'LOGIN_REQUIRED'
+  throw err
 }
 
 export async function getUserState(force = false) {
@@ -211,7 +276,7 @@ export async function getUserState(force = false) {
     return cachedState
   }
   if (!api.getToken()) {
-    return ensureAuth()
+    return ensureSession()
   }
   cachedState = await api.getMe()
   return cachedState

@@ -6,7 +6,7 @@
 
       <view class="body">
         <text class="p">
-          欢迎使用「{{ appName }}」。我们重视您的个人信息保护。使用前请阅读并同意：
+          欢迎使用「{{ appName }}」。我们重视您的个人信息保护。使用前请阅读：
         </text>
         <view class="link-row">
           <text class="link" @click="openTerms">《用户协议》</text>
@@ -18,9 +18,15 @@
         </text>
       </view>
 
+      <view class="agree-row" @click="toggleAgree">
+        <view class="agree-check" :class="{ on: agreed }">
+          <text v-if="agreed" class="agree-check-mark">✓</text>
+        </view>
+        <text class="agree-label">我已阅读并同意《用户协议》与《隐私政策》</text>
+      </view>
+
       <view class="actions">
-        <!-- 避免 open-type 原生按钮在模拟器引发渲染层崩溃；App 内同意 + 后台隐私指引即可 -->
-        <AppButton block @click="onAgree">同意并继续</AppButton>
+        <AppButton block :disabled="!agreed" @click="onAgree">同意并继续</AppButton>
         <AppButton block variant="outline" class="mt-btn" @click="onDecline">不同意</AppButton>
       </view>
     </view>
@@ -28,12 +34,15 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { APP_CONFIG } from '../../config/app.js'
 import { setPrivacyAgreed, declinePrivacy } from '../../utils/privacy.js'
 import { markWxPrivacyAgreed } from '../../utils/wxPrivacy.js'
 import { safeNavigateTo, safeReLaunch } from '../../utils/nav.js'
 
 const appName = APP_CONFIG.name
+/** 默认不勾选，须用户主动点选后才能继续（微信审核） */
+const agreed = ref(false)
 
 function openPrivacy() {
   safeNavigateTo('/pages/legal/privacy')
@@ -43,10 +52,18 @@ function openTerms() {
   safeNavigateTo('/pages/legal/terms')
 }
 
+function toggleAgree() {
+  agreed.value = !agreed.value
+}
+
 function onAgree() {
+  if (!agreed.value) {
+    uni.showToast({ title: '请先勾选同意协议', icon: 'none' })
+    return
+  }
   markWxPrivacyAgreed()
   setPrivacyAgreed()
-  safeReLaunch('/pages/auth/login')
+  safeReLaunch('/pages/index/index')
 }
 
 function onDecline() {
@@ -121,8 +138,48 @@ function onDecline() {
   color: $text-secondary;
 }
 
+.agree-row {
+  margin-top: 36rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.agree-check {
+  flex-shrink: 0;
+  width: 36rpx;
+  height: 36rpx;
+  margin-top: 4rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid $text-muted;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+
+  &.on {
+    border-color: $primary;
+    background: $primary;
+  }
+}
+
+.agree-check-mark {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.agree-label {
+  flex: 1;
+  font-size: 26rpx;
+  line-height: 1.55;
+  color: $text-secondary;
+}
+
 .actions {
-  margin-top: 48rpx;
+  margin-top: 40rpx;
 }
 
 .mt-btn {

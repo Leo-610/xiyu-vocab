@@ -10,16 +10,17 @@
       <AppCard variant="hero" class="hero-card animate-pop">
         <view class="hero-inner">
           <view class="hero-text">
-            <view class="user-row" @click="goProfile">
+            <view class="user-row" @click="onUserTap">
               <UserAvatar
                 :src="state.avatarUrl"
-                :nickname="state.nickname"
+                :nickname="isGuest ? '游客' : state.nickname"
                 :size="72"
               />
               <view class="user-meta">
                 <text class="hero-greet">{{ displayGreet }}</text>
-                <text class="hero-sub">{{ state.nickname || '学习者' }}</text>
-                <text v-if="state.authType === 'wechat' || state.isWechatUser" class="hero-tag">微信账号</text>
+                <text class="hero-sub">{{ isGuest ? '游客体验 · 点此登录同步进度' : (state.nickname || '学习者') }}</text>
+                <text v-if="isGuest" class="hero-tag">未登录</text>
+                <text v-else-if="state.authType === 'wechat' || state.isWechatUser" class="hero-tag">微信账号</text>
                 <text v-else-if="state.authType === 'email'" class="hero-tag">邮箱账号</text>
                 <text v-else class="hero-tag">演示账号</text>
               </view>
@@ -37,6 +38,11 @@
           />
         </view>
       </AppCard>
+
+      <view v-if="isGuest" class="guest-bar" @click="goLogin">
+        <text class="guest-bar-text">可先体验学习功能，登录后同步进度</text>
+        <text class="guest-bar-action">去登录</text>
+      </view>
 
       <AppCard>
         <SectionHeader title="学习目标" :subtitle="vocabSubtitle" />
@@ -128,7 +134,7 @@
             <text class="feature-icon">⚖️</text>
             <view>
               <text class="feature-title">易混词辨析</text>
-              <text class="feature-desc">ser/estar · por/para（内容待补充）</text>
+              <text class="feature-desc">ser/estar · por/para</text>
             </view>
             <text class="arrow">›</text>
           </view>
@@ -168,8 +174,9 @@
 import { computed, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import {
-  checkApiOnline, ensureAuth, getUserState, updateTargetLevel,
+  checkApiOnline, ensureSession, getUserState, updateTargetLevel,
   resetTodaySession, fetchVocabularyTotal, fetchExamPacks, isApiOnline,
+  isGuestSession, goLoginPage,
 } from '../../utils/userService.js'
 
 const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
@@ -189,6 +196,7 @@ const state = ref({
 })
 
 const displayGreet = computed(() => '¡Hola!')
+const isGuest = computed(() => isGuestSession() || !state.value.nickname || state.value.nickname.startsWith('体验_'))
 
 const vocabSubtitle = computed(() => {
   const total = vocabTotal.value > 0 ? vocabTotal.value : '…'
@@ -207,7 +215,7 @@ async function refresh() {
   try {
     // 先拉用户态，health 并行；避免串行等 3–4s health
     const onlinePromise = checkApiOnline()
-    await ensureAuth()
+    await ensureSession()
     const [online, userState, total, packs] = await Promise.all([
       onlinePromise,
       getUserState(true),
@@ -278,16 +286,24 @@ function goTerms() {
   uni.navigateTo({ url: '/pages/legal/terms' })
 }
 
-function goProfile() {
-  if (state.value.isWechatUser) {
-    uni.navigateTo({ url: '/pages/auth/profile' })
+function goLogin() {
+  goLoginPage()
+}
+
+function onUserTap() {
+  if (isGuest.value) {
+    goLogin()
     return
   }
-  // #ifndef MP-WEIXIN
-  if (state.value.authType === 'demo' || !state.value.isWechatUser) {
-    uni.navigateTo({ url: '/pages/auth/profile' })
+  goProfile()
+}
+
+function goProfile() {
+  if (isGuest.value) {
+    goLogin()
+    return
   }
-  // #endif
+  uni.navigateTo({ url: '/pages/auth/profile' })
 }
 </script>
 
@@ -296,6 +312,33 @@ function goProfile() {
 
 .hero-card {
   padding: 40rpx 36rpx !important;
+}
+
+.guest-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin: 0 0 24rpx;
+  padding: 22rpx 28rpx;
+  background: #fff;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  border: 1rpx solid rgba($primary, 0.12);
+}
+
+.guest-bar-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: $text-secondary;
+  line-height: 1.5;
+}
+
+.guest-bar-action {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: $primary;
 }
 
 .hero-inner {

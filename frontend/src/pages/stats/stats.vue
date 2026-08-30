@@ -92,9 +92,9 @@
         />
       </AppCard>
 
-      <AppCard v-if="stats.checkins?.length">
-        <text class="section-title">打卡记录</text>
-        <CheckinHeatmap :checkins="stats.checkins" />
+      <AppCard v-if="stats.checkins?.length !== undefined">
+        <SectionHeader title="学习热力图" subtitle="近 12 周打卡强度" />
+        <CheckinHeatmap :checkins="stats.checkins || []" />
       </AppCard>
 
       <AppCard>
@@ -106,15 +106,16 @@
             :size="88"
           />
           <view class="account-meta">
-            <text class="account-name">{{ stats.nickname || '未命名' }}</text>
-            <text v-if="stats.authType === 'wechat' || stats.isWechatUser" class="account-tag">微信用户</text>
+            <text class="account-name">{{ isGuest ? '游客体验' : (stats.nickname || '未命名') }}</text>
+            <text v-if="isGuest" class="account-tag">未登录</text>
+            <text v-else-if="stats.authType === 'wechat' || stats.isWechatUser" class="account-tag">微信用户</text>
             <text v-else-if="stats.authType === 'email'" class="account-tag">邮箱用户</text>
             <text v-else class="account-tag">演示账号</text>
           </view>
         </view>
         <!-- #ifdef MP-WEIXIN -->
         <AppButton
-          v-if="stats.isWechatUser"
+          v-if="!isGuest && stats.isWechatUser"
           block
           variant="outline"
           class="profile-btn"
@@ -125,6 +126,7 @@
         <!-- #endif -->
         <!-- #ifndef MP-WEIXIN -->
         <AppButton
+          v-if="!isGuest"
           block
           variant="outline"
           class="profile-btn"
@@ -133,7 +135,8 @@
           编辑昵称
         </AppButton>
         <!-- #endif -->
-        <AppButton block variant="outline" class="logout-btn" @click="handleLogout">退出登录</AppButton>
+        <AppButton v-if="isGuest" block class="profile-btn" @click="goLogin">登录同步进度</AppButton>
+        <AppButton v-else block variant="outline" class="logout-btn" @click="handleLogout">退出登录</AppButton>
       </AppCard>
 
       <AppCard variant="flat">
@@ -153,7 +156,8 @@
 import { ref, computed, reactive } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import {
-  ensureAuth, fetchStats, resetAllProgress, logout, setCachedState,
+  ensureSession, fetchStats, resetAllProgress, logout, setCachedState,
+  isGuestSession, goLoginPage,
 } from '../../utils/userService.js'
 import * as api from '../../utils/api.js'
 
@@ -161,6 +165,7 @@ const COLORS = { A1: '#2A9D8F', A2: '#43AA8B', B1: '#F4A261', B2: '#E76F51', C1:
 
 const loading = ref(true)
 const stats = ref({})
+const isGuest = computed(() => isGuestSession() || String(stats.value.nickname || '').startsWith('体验_'))
 const settings = reactive({
   soundEnabled: true,
   vibrationEnabled: true,
@@ -176,15 +181,15 @@ const statCards = computed(() => [
 ])
 
 const roadmap = [
-  { phase: '二期', text: 'SM-2 复习 · 微信小程序 · 5000 词' },
-  { phase: '三期', text: 'RAG 语境例句 · LLM 错题解析' },
-  { phase: '四期', text: '可视化热力图 · 国家级大创' },
+  { phase: '二期', text: '✅ SM-2 复习 · 微信小程序 · 词库扩容' },
+  { phase: '三期', text: '✅ RAG 语境例句 · LLM 错题解析' },
+  { phase: '四期', text: '✅ 可视化热力图 · 大创材料推进中' },
 ]
 
 onShow(async () => {
   loading.value = true
   try {
-    await ensureAuth()
+    await ensureSession()
     stats.value = await fetchStats()
     syncSettings(stats.value.settings)
   } catch (e) {
@@ -255,7 +260,15 @@ function handleLogout() {
   })
 }
 
+function goLogin() {
+  goLoginPage()
+}
+
 function goEditProfile() {
+  if (isGuest.value) {
+    goLogin()
+    return
+  }
   uni.navigateTo({ url: '/pages/auth/profile' })
 }
 </script>

@@ -17,21 +17,6 @@
   },
   "pages": [
     {
-      "path": "pages/auth/profile",
-      "style": {
-        "navigationBarTitleText": "编辑资料",
-        "navigationBarBackgroundColor": "#9b0f18",
-        "navigationBarTextStyle": "white"
-      }
-    },
-    {
-      "path": "pages/auth/login",
-      "style": {
-        "navigationBarTitleText": "登录",
-        "navigationStyle": "custom"
-      }
-    },
-    {
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "西语背单词",
@@ -83,6 +68,21 @@
       "path": "pages/dictation/dictation",
       "style": {
         "navigationBarTitleText": "听写练习",
+        "navigationBarBackgroundColor": "#9b0f18",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/auth/profile",
+      "style": {
+        "navigationBarTitleText": "编辑资料",
         "navigationBarBackgroundColor": "#9b0f18",
         "navigationBarTextStyle": "white"
       }

@@ -183,7 +183,7 @@ onShow(async () => {
     }
     const state = await getUserState(true)
     showIpa.value = state.settings?.showIpa !== false
-    ragEnabled.value = Boolean(state.ragEnabled) && state.experimentArm !== 'A'
+    ragEnabled.value = Boolean(state.ragEnabled)
     if (isExamMode.value) {
       const title = examPackId.value === 'tem8' ? '专八高频词包' : '专四冲刺词包'
       uni.setNavigationBarTitle({ title })

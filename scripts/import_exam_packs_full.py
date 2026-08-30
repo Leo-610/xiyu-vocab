@@ -8,6 +8,9 @@
   images专业四级4.zip → senses_table_tem4 7.18.xlsx (+163 图)
   images专业四级5.zip → senses_table_tem4 7.19.xlsx (+170 图)
   images专业四级6.zip → senses_table_tem4 7.20.xlsx
+  images专业四级9.zip → senses_table_tem4 7.30.xlsx
+  images专业四级10.zip → senses_table_tem4 7.31.xlsx
+  images专业四级11.zip → senses_table_tem4 7.31.xlsx（续）
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
 
 用法:
@@ -18,6 +21,7 @@
 from __future__ import annotations
 
 import csv
+import os
 import random
 import re
 import shutil
@@ -46,22 +50,71 @@ WECHAT = Path(
     "/Users/liuyiming/Library/Containers/com.tencent.xinWeChat/"
     "Data/Documents/xwechat_files/wxid_56yn1iomktsr12_9b4c/msg/file/2026-07"
 )
+# 微信 Containers 可能无权限；优先读项目内副本
+INCOMING = CONTENT / "_incoming_tem4"
+
+def _zip(*names: str) -> Path:
+    for n in names:
+        for base in (INCOMING, WECHAT):
+            p = base / n
+            try:
+                if p.exists() and os.access(p, os.R_OK):
+                    return p
+            except OSError:
+                continue
+    return INCOMING / names[0]
 
 ZIPS = [
-    ("tem4_716", WECHAT / "images专业四级2.zip", "专四"),
-    ("tem4_717", WECHAT / "images专业四级3.zip", "专四"),
-    ("tem4_718", WECHAT / "images专业四级4.zip", "专四"),
-    ("tem4_719", WECHAT / "images专业四级5.zip", "专四"),
-    ("tem4_720", WECHAT / "images专业四级6.zip", "专四"),
-    ("tem8", WECHAT / "images专业八级1(1).zip", "专八"),
+    ("tem4_716", _zip("images专业四级2.zip"), "专四"),
+    ("tem4_717", _zip("images专业四级3.zip"), "专四"),
+    ("tem4_718", _zip("images专业四级4.zip"), "专四"),
+    ("tem4_719", _zip("images专业四级5.zip"), "专四"),
+    ("tem4_720", _zip("images专业四级6.zip"), "专四"),
+    ("tem4_730", _zip("images专业四级9.zip"), "专四"),
+    ("tem4_731a", _zip("images专业四级10.zip"), "专四"),
+    ("tem4_731b", _zip("images专业四级11.zip"), "专四"),
+    ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
 ]
 
+TEM4_ZIP_LABELS = (
+    "tem4_716",
+    "tem4_717",
+    "tem4_718",
+    "tem4_719",
+    "tem4_720",
+    "tem4_730",
+    "tem4_731a",
+    "tem4_731b",
+)
+
+def _readable(path: Path) -> bool:
+    try:
+        return path.exists() and path.is_file() and os.access(path, os.R_OK)
+    except OSError:
+        return False
+
+
+def _first_readable(*paths: Path) -> Path | None:
+    for p in paths:
+        if _readable(p):
+            return p
+    return None
+
+
 TEM4_BASE_XLSX = [
-    WECHAT / "senses_table_tem4 7.15(1).xlsx",
     CONTENT / "senses_table_tem4.xlsx",
+    CONTENT / "senses_table_tem4 7.30.xlsx",
+    WECHAT / "senses_table_tem4 7.15(1).xlsx",
 ]
-TEM4_WITH_IMG = WECHAT / "senses_table_tem4_with_images.xlsx"
-TEM8_WITH_IMG = WECHAT / "senses_table_tem8_with_images.xlsx"
+TEM4_WITH_IMG = _first_readable(
+    CONTENT / "senses_table_tem4_with_images.xlsx",
+    WECHAT / "senses_table_tem4_with_images.xlsx",
+)
+TEM8_WITH_IMG = _first_readable(
+    CONTENT / "senses_table_tem8_with_images.xlsx",
+    CONTENT / "senses_table_tem8.xlsx",
+    WECHAT / "senses_table_tem8_with_images.xlsx",
+)
 A1_CSV = BATCHES / "A1" / "words_senses_team.csv"
 
 CSV_FIELDS = [
@@ -180,17 +233,22 @@ def extract_zips() -> dict[str, Path]:
         d = STAGING / label
         img_dir = d / "images"
         img_dir.mkdir(parents=True)
-        with zipfile.ZipFile(zp) as zf:
-            for name in zf.namelist():
-                if name.endswith("/") or "__MACOSX" in name:
-                    continue
-                low = name.lower()
-                bn = Path(name).name
-                if low.endswith((".xlsx", ".xls")):
-                    (d / bn).write_bytes(zf.read(name))
-                    print(f"[ok] 抽出 Excel {label}/{bn}")
-                elif low.endswith((".png", ".jpg", ".jpeg", ".webp")):
-                    (img_dir / bn).write_bytes(zf.read(name))
+        try:
+            with zipfile.ZipFile(zp) as zf:
+                for name in zf.namelist():
+                    if name.endswith("/") or "__MACOSX" in name:
+                        continue
+                    low = name.lower()
+                    bn = Path(name).name
+                    if low.endswith((".xlsx", ".xls")):
+                        (d / bn).write_bytes(zf.read(name))
+                        print(f"[ok] 抽出 Excel {label}/{bn}")
+                    elif low.endswith((".png", ".jpg", ".jpeg", ".webp")):
+                        (img_dir / bn).write_bytes(zf.read(name))
+        except (PermissionError, OSError) as err:
+            print(f"[warn] 无法读取 {zp}: {err}")
+            shutil.rmtree(d, ignore_errors=True)
+            continue
         print(f"[ok] {label} 图片 {len(list(img_dir.glob('*')))} 张")
         dirs[label] = d
     return dirs
@@ -282,6 +340,45 @@ def load_a1_csv() -> dict[tuple[str, int], dict]:
                 "pack": "A1",
                 "tags_extra": ["义项包"],
                 "source": "words_senses_team.csv",
+            }
+    return rows
+
+
+def load_existing_exam_csv(path: Path, exam_tag: str) -> dict[tuple[str, int], dict]:
+    """旧 zip 可能已不在微信目录；用现有 CSV 保底，避免全量重导丢词。"""
+    rows: dict[tuple[str, int], dict] = {}
+    if not path.exists():
+        return rows
+    with path.open(encoding="utf-8-sig") as f:
+        for row in csv.DictReader(f):
+            lemma = (row.get("lemma") or "").strip()
+            if not lemma:
+                continue
+            sense = int(row.get("sense") or 1)
+            img = (row.get("image_file") or "").strip()
+            stem = slugify(Path(img).stem) if img else f"{slugify(lemma)}_{sense}"
+            tags = set()
+            for part in re.split(r"[|,]", row.get("exam_tags") or ""):
+                t = part.strip()
+                if t:
+                    tags.add(t)
+            if exam_tag:
+                tags.add(exam_tag)
+            rows[(lemma, sense)] = {
+                "lemma": lemma,
+                "pos": row.get("pos") or "n",
+                "gender": row.get("gender") or "n/a",
+                "level": (row.get("level") or "A2").upper(),
+                "sense": sense,
+                "meaning_zh": row.get("meaning_zh") or "",
+                "example_es": row.get("example_es") or "",
+                "example_zh": row.get("example_zh") or "",
+                "image_stem": stem,
+                "image_file": img or f"{stem}.jpg",
+                "exam_tags": tags,
+                "pack": "exam",
+                "tags_extra": [],
+                "source": path.name,
             }
     return rows
 
@@ -402,41 +499,62 @@ def main() -> None:
     store = load_a1_csv()
     print(f"[info] A1 义项包 {len(store)}")
 
-    # 基线专四（7.15 / with_images）
-    base_xlsx = next((p for p in TEM4_BASE_XLSX if p.exists()), None)
-    if TEM4_WITH_IMG.exists():
+    # 现有 CSV 保底（旧 zip 缺失时不丢词）
+    for path, tag in (
+        (BATCHES / "exam" / "words_tem4.csv", "专四"),
+        (BATCHES / "exam" / "words_tem8.csv", "专八"),
+    ):
+        existing = load_existing_exam_csv(path, tag)
+        for key, e in existing.items():
+            if key not in store:
+                store[key] = e
+            else:
+                merge_entry(store, e, tag)
+        print(f"[info] + 现有 {path.name} → store {len(store)}（本文件 {len(existing)}）")
+
+    # 基线专四（with_images / 本地副本）
+    base_xlsx = _first_readable(*TEM4_BASE_XLSX)
+    if TEM4_WITH_IMG:
         for e in load_xlsx_rows(TEM4_WITH_IMG):
             merge_entry(store, e, "专四")
-        print(f"[info] + tem4_with_images → {len(store)}")
+        print(f"[info] + {TEM4_WITH_IMG.name} → {len(store)}")
     elif base_xlsx:
         for e in load_xlsx_rows(base_xlsx):
             merge_entry(store, e, "专四")
         print(f"[info] + {base_xlsx.name} → {len(store)}")
 
     # zip 内专四表（按日期递增覆盖）
-    for label in ("tem4_716", "tem4_717", "tem4_718", "tem4_719", "tem4_720"):
+    for label in TEM4_ZIP_LABELS:
         d = staging.get(label)
         if not d:
             continue
-        xlsxs = list(d.glob("*.xlsx"))
+        xlsxs = sorted(d.glob("*.xlsx"))
         if not xlsxs:
             continue
         for e in load_xlsx_rows(xlsxs[0]):
             merge_entry(store, e, "专四")
-        print(f"[info] + {xlsxs[0].name} → {len(store)}")
+        print(f"[info] + {label}/{xlsxs[0].name} → {len(store)}")
 
     # 专八
-    if TEM8_WITH_IMG.exists():
-        safe_copy(TEM8_WITH_IMG, CONTENT / "senses_table_tem8_with_images.xlsx")
+    if TEM8_WITH_IMG:
+        dest8 = CONTENT / "senses_table_tem8_with_images.xlsx"
+        if TEM8_WITH_IMG.resolve() != dest8.resolve():
+            safe_copy(TEM8_WITH_IMG, dest8)
         for e in load_xlsx_rows(TEM8_WITH_IMG):
             merge_entry(store, e, "专八")
-        print(f"[info] + tem8_with_images → {len(store)}")
+        print(f"[info] + {TEM8_WITH_IMG.name} → {len(store)}")
 
     embedded: dict[tuple[str, int], bytes] = {}
-    if TEM4_WITH_IMG.exists():
+    if TEM4_WITH_IMG:
         embedded.update(load_embedded_images(TEM4_WITH_IMG))
-    if TEM8_WITH_IMG.exists():
+    if TEM8_WITH_IMG:
         embedded.update(load_embedded_images(TEM8_WITH_IMG))
+    for label in TEM4_ZIP_LABELS:
+        d = staging.get(label)
+        if not d:
+            continue
+        for xp in d.glob("*.xlsx"):
+            embedded.update(load_embedded_images(xp))
 
     print("\n=== 3. 配图落盘 ===")
     a1_dir = IMAGES / "A1"
@@ -444,6 +562,12 @@ def main() -> None:
     tem8_dir = IMAGES / "tem8"
     for d in (a1_dir, tem4_dir, tem8_dir):
         d.mkdir(parents=True, exist_ok=True)
+
+    # 已有落盘配图也进索引，避免重导时「缺图」误报、丢引用
+    for folder in (a1_dir, tem4_dir, tem8_dir):
+        for p in folder.iterdir():
+            if p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}:
+                img_index[slugify(p.stem)] = p
 
     a1_rows: list[dict] = []
     tem4_rows: list[dict] = []

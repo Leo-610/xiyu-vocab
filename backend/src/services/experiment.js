@@ -1,6 +1,6 @@
+/** 对照实验：A/B 臂仍写入 users，用于大创对照分析；产品侧 RAG/LLM 默认对全体开放 */
 import db from '../db.js';
 
-/** 对照实验：A=对照组（无 RAG/LLM），B=实验组（可溯源例句+错题解析） */
 export async function setExperimentArmForUser(userId) {
   const arm = Number(userId) % 2 === 0 ? 'A' : 'B';
   await db.prepare('UPDATE users SET experiment_arm = ? WHERE id = ?').run(arm, userId);
@@ -15,9 +15,16 @@ export async function getExperimentArm(userId) {
   return await setExperimentArmForUser(userId);
 }
 
-/** 实验组才启用 RAG/LLM 增强 */
+/**
+ * RAG/LLM 产品开关。
+ * - 默认全体可用（三期交付）
+ * - 设 RAG_AB_ONLY=true 时恢复「仅实验组 B」
+ */
 export async function ragFeaturesEnabled(userId) {
-  return (await getExperimentArm(userId)) === 'B';
+  if (process.env.RAG_AB_ONLY === 'true') {
+    return (await getExperimentArm(userId)) === 'B';
+  }
+  return true;
 }
 
 export async function ensureAllUsersHaveArm() {

@@ -30,10 +30,13 @@
 
       <template v-else>
         <text class="panel-title">微信登录</text>
-        <text class="panel-desc">使用微信身份同步学习进度，数据保存在云端。</text>
+        <text class="panel-desc">登录后可同步学习进度。也可先不登录，直接体验看图识词、听写与易混词。</text>
         <view v-if="error" class="error-msg">{{ error }}</view>
-        <AppButton block :loading="loading" @click="handleWechatLogin">
+        <AppButton block :loading="loading" :disabled="!legalAgreed" @click="handleWechatLogin">
           微信一键登录
+        </AppButton>
+        <AppButton block variant="outline" class="skip-login" @click="goHome">
+          暂不登录，先体验功能
         </AppButton>
       </template>
       <!-- #endif -->
@@ -139,7 +142,7 @@
         <AppButton
           block
           :loading="loading"
-          :disabled="!apiOnline || !account.trim() || !password"
+          :disabled="!apiOnline || !legalAgreed || !account.trim() || !password"
           @click="handlePasswordSubmit"
         >
           {{ authMode === 'login' ? '登录并进入 →' : '注册并开始 →' }}
@@ -187,7 +190,7 @@
           <AppButton
             block
             :loading="loading"
-            :disabled="!apiOnline || !email.trim()"
+            :disabled="!apiOnline || !legalAgreed || !email.trim()"
             @click="handleSendCode"
           >
             发送验证码
@@ -227,7 +230,7 @@
           <AppButton
             block
             :loading="loading"
-            :disabled="!apiOnline || otpCode.trim().length < 6"
+            :disabled="!apiOnline || !legalAgreed || otpCode.trim().length < 6"
             @click="handleVerifyCode"
           >
             确认登录
@@ -246,11 +249,16 @@
       </template>
       <!-- #endif -->
 
-      <view v-if="wechatStep !== 'profile'" class="legal">
-        <text class="legal-text">继续即表示同意</text>
-        <text class="legal-link" @click="goTerms">用户协议</text>
-        <text class="legal-dot">与</text>
-        <text class="legal-link" @click="goPrivacy">隐私政策</text>
+      <view v-if="wechatStep !== 'profile'" class="legal" @click="toggleLegalAgree">
+        <view class="legal-check" :class="{ on: legalAgreed }">
+          <text v-if="legalAgreed" class="legal-check-mark">✓</text>
+        </view>
+        <view class="legal-copy">
+          <text class="legal-text">我已阅读并同意</text>
+          <text class="legal-link" @click.stop="goTerms">《用户协议》</text>
+          <text class="legal-dot">与</text>
+          <text class="legal-link" @click.stop="goPrivacy">《隐私政策》</text>
+        </view>
       </view>
     </view>
 
@@ -268,7 +276,6 @@ import {
   getAuthConfig,
   getLastAccount,
   getLastEmail,
-  getUserState,
   isLoggedIn,
   loginWithAccount,
   loginWithEmailOtp,
@@ -301,6 +308,8 @@ const passFocused = ref(false)
 const pass2Focused = ref(false)
 const wechatStep = ref('login')
 const profileUser = ref({ nickname: '', avatarUrl: '' })
+/** 默认不勾选：须用户主动同意协议后方可登录（微信审核要求） */
+const legalAgreed = ref(false)
 
 const emailAuthEnabled = computed(() => getAuthConfig().email)
 const passwordAuthEnabled = computed(() => getAuthConfig().password !== false)
@@ -352,19 +361,7 @@ async function probeApiInBackground() {
 
 async function resumeIfLoggedIn() {
   if (!isLoggedIn()) return
-  try {
-    const state = await getUserState(true)
-    // #ifdef MP-WEIXIN
-    if (state.needsProfile) {
-      profileUser.value = state
-      wechatStep.value = 'profile'
-      return
-    }
-    // #endif
-    goHome()
-  } catch {
-    // stay on login
-  }
+  goHome()
 }
 
 function useRecentEmail() {
@@ -391,6 +388,16 @@ function goTerms() {
   uni.navigateTo({ url: '/pages/legal/terms' })
 }
 
+function toggleLegalAgree() {
+  legalAgreed.value = !legalAgreed.value
+}
+
+function requireLegalAgree() {
+  if (legalAgreed.value) return true
+  uni.showToast({ title: '请先勾选同意用户协议与隐私政策', icon: 'none' })
+  return false
+}
+
 function goHome() {
   uni.switchTab({ url: '/pages/index/index' })
 }
@@ -401,6 +408,7 @@ function onProfileSaved(user) {
 }
 
 async function handleWechatLogin() {
+  if (!requireLegalAgree()) return
   loading.value = true
   error.value = ''
   try {
@@ -414,14 +422,10 @@ async function handleWechatLogin() {
       }
     }
     const state = await loginWithWechat()
-    // #ifdef MP-WEIXIN
-    if (state.needsProfile) {
-      profileUser.value = state
-      wechatStep.value = 'profile'
-      return
-    }
-    // #endif
     goHome()
+    if (state?.needsProfile) {
+      uni.showToast({ title: '已登录，可稍后在统计页完善资料', icon: 'none' })
+    }
   } catch (e) {
     const msg = e.message || '微信登录失败'
     error.value = /超时|timeout/i.test(msg) ? '登录超时，请再点一次重试' : msg
@@ -436,6 +440,7 @@ async function handleWechatLogin() {
 }
 
 async function handleSendCode() {
+  if (!requireLegalAgree()) return
   const addr = email.value.trim().toLowerCase()
   if (!addr) {
     error.value = '请输入邮箱'
@@ -464,6 +469,7 @@ async function handleSendCode() {
 }
 
 async function handleVerifyCode() {
+  if (!requireLegalAgree()) return
   const addr = email.value.trim().toLowerCase()
   const code = otpCode.value.trim()
   if (!code || code.length < 6) {
@@ -487,6 +493,7 @@ async function handleVerifyCode() {
 }
 
 async function handlePasswordSubmit() {
+  if (!requireLegalAgree()) return
   const acct = account.value.trim()
   const pw = password.value
   if (!acct) {
@@ -834,13 +841,52 @@ async function handlePasswordSubmit() {
   font-weight: 700;
 }
 
+.skip-login {
+  margin-top: 20rpx;
+}
+
 .legal {
   margin-top: 40rpx;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding: 0 8rpx;
+}
+
+.legal-check {
+  flex-shrink: 0;
+  width: 36rpx;
+  height: 36rpx;
+  margin-top: 4rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid $text-muted;
+  box-sizing: border-box;
+  display: flex;
   align-items: center;
-  gap: 8rpx;
+  justify-content: center;
+  background: #fff;
+
+  &.on {
+    border-color: $primary;
+    background: $primary;
+  }
+}
+
+.legal-check-mark {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.legal-copy {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4rpx 8rpx;
 }
 
 .legal-text,

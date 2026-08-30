@@ -7,7 +7,8 @@
     </view>
 
     <view v-if="!loading && !examples.length" class="corpus-empty">
-      <text>暂无匹配语料（不会用模型编造例句）</text>
+      <text>{{ loadError || '暂无匹配语料（不会用模型编造例句）' }}</text>
+      <text v-if="loadError" class="retry" @click="load">重试</text>
     </view>
 
     <view v-for="(ex, i) in examples" :key="ex.chunkId || i" class="ex-item">
@@ -34,6 +35,7 @@ const props = defineProps({
 const loading = ref(false)
 const examples = ref([])
 const disabled = ref(false)
+const loadError = ref('')
 
 const visible = computed(() => props.show && props.enabled && !disabled.value)
 
@@ -41,6 +43,7 @@ async function load() {
   if (!props.wordId || !props.enabled || !props.show) return
   loading.value = true
   examples.value = []
+  loadError.value = ''
   try {
     const res = await getWordExamples(props.wordId, 3)
     if (res.disabled) {
@@ -50,8 +53,9 @@ async function load() {
     }
     disabled.value = false
     examples.value = res.examples || []
-  } catch {
+  } catch (e) {
     examples.value = []
+    loadError.value = e?.message || '检索失败'
   } finally {
     loading.value = false
   }
@@ -101,6 +105,15 @@ watch(
   font-size: 24rpx;
   color: $text-muted;
   line-height: 1.5;
+}
+
+.retry {
+  display: inline-block;
+  margin-top: 8rpx;
+  margin-left: 12rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: $primary;
 }
 
 .ex-item {

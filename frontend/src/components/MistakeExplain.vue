@@ -7,6 +7,10 @@
     <view v-if="loading" class="explain-body">
       <text class="muted">正在生成解析…</text>
     </view>
+    <view v-else-if="errorTip" class="explain-body">
+      <text class="muted">{{ errorTip }}</text>
+      <text class="retry" @click="load">点击重试</text>
+    </view>
     <view v-else-if="summary" class="explain-body">
       <text class="summary" user-select>{{ summary }}</text>
       <view v-if="citations.length" class="cites">
@@ -17,6 +21,11 @@
         </view>
       </view>
       <text v-if="pendingHint" class="hint">解析待西语同学审核后入库</text>
+      <text v-if="insufficient" class="hint">语料不足时仅给释义提示，不会编造例句</text>
+    </view>
+    <view v-else class="explain-body">
+      <text class="muted">暂时无法生成解析，请稍后再试</text>
+      <text class="retry" @click="load">点击重试</text>
     </view>
   </view>
 </template>
@@ -36,7 +45,10 @@ const loading = ref(false)
 const summary = ref('')
 const citations = ref([])
 const status = ref('')
+const mode = ref('')
+const insufficient = ref(false)
 const disabled = ref(false)
+const errorTip = ref('')
 
 const visible = computed(() => props.show && props.enabled && !disabled.value)
 const pendingHint = computed(() => status.value === 'pending')
@@ -44,6 +56,8 @@ const statusLabel = computed(() => {
   if (loading.value) return '…'
   if (status.value === 'approved') return '已审核'
   if (status.value === 'pending') return '待审核'
+  if (mode.value === 'llm' || mode.value === 'template-fallback') return 'LLM'
+  if (mode.value === 'template') return '模板'
   return 'RAG'
 })
 
@@ -52,6 +66,8 @@ async function load() {
   loading.value = true
   summary.value = ''
   citations.value = []
+  errorTip.value = ''
+  insufficient.value = false
   try {
     const res = await explainWordMistake(props.wordId, props.wrongChoice)
     if (res.disabled) {
@@ -62,7 +78,13 @@ async function load() {
     status.value = res.status || ''
     summary.value = res.explanation?.summary_zh || ''
     citations.value = res.explanation?.citations || []
-  } catch {
+    mode.value = res.explanation?.mode || ''
+    insufficient.value = Boolean(res.explanation?.insufficient_context)
+    if (!summary.value) {
+      errorTip.value = '解析结果为空'
+    }
+  } catch (e) {
+    errorTip.value = e?.message || '解析请求失败'
     summary.value = ''
   } finally {
     loading.value = false
@@ -116,6 +138,14 @@ watch(
 }
 
 .muted { font-size: 24rpx; color: $text-muted; }
+
+.retry {
+  display: inline-block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: $primary;
+}
 
 .cites { margin-top: 16rpx; }
 .cites-title {

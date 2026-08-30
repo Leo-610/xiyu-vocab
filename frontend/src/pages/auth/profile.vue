@@ -48,7 +48,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { ensureAuth, setCachedState } from '../../utils/userService.js'
+import { setCachedState, requireLogin } from '../../utils/userService.js'
 import { updateProfile } from '../../utils/api.js'
 
 const user = ref({ nickname: '', avatarUrl: '' })
@@ -61,7 +61,7 @@ onShow(async () => {
   saved.value = false
   error.value = ''
   try {
-    user.value = await ensureAuth()
+    user.value = await requireLogin()
     nickname.value = user.value.nickname === '微信用户' ? '' : (user.value.nickname || '')
   } catch {
     // redirected to login

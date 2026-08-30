@@ -67,12 +67,7 @@ function requestOnce(path, options = {}) {
           clearToken()
           const code = res.data?.code
           if (code === 'TOKEN_EXPIRED') {
-            uni.showToast({ title: '登录已过期', icon: 'none' })
-            setTimeout(() => {
-              import('./nav.js').then(({ safeReLaunch }) => {
-                safeReLaunch('/pages/auth/login')
-              })
-            }, 600)
+            uni.showToast({ title: '登录已过期，可重新登录同步进度', icon: 'none' })
           }
         }
         reject(toError(res.data, `请求失败 (${res.statusCode})`))

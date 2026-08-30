@@ -420,7 +420,7 @@ export async function finishSession(db, userId) {
   return await buildUserState(db, userId);
 }
 
-export async function getCheckinHistory(db, userId, days = 35) {
+export async function getCheckinHistory(db, userId, days = 84) {
   const rows = await db.prepare(`
     SELECT checkin_date AS date, words_done AS count
     FROM checkin_log WHERE user_id = ?
@@ -464,7 +464,7 @@ export async function getStats(db, userId) {
     ...state,
     vocabularyTotal,
     levelBars,
-    checkins: await getCheckinHistory(db, userId, 35),
+    checkins: await getCheckinHistory(db, userId, 84),
     studySummary: await getStudySummary(db, userId, 30),
     accuracy: state.todaySession.total ?
     Math.round(state.todaySession.correct / state.todaySession.total * 100) :

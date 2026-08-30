@@ -8,3 +8,13 @@
 {"source":"team-a2-2026","level":"A2","text_es":"¿Has visto mi libro nuevo?","text_zh":"你看到我的新书了吗？","lemmas":["ver","libro","nuevo"]}
 {"source":"team-a2-2026","level":"A2","text_es":"Por favor, espera un momento.","text_zh":"请等一会儿。","lemmas":["por favor","esperar"]}
 {"source":"team-a2-2026","level":"A2","text_es":"El examen no es tan difícil.","text_zh":"考试并没有那么难。","lemmas":["examen","ser"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "Voy al mercado a comprar fruta fresca.", "text_zh": "我去市场买新鲜水果。", "lemmas": ["ir", "mercado", "comprar", "fruta"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "¿Puedes ayudarme con este ejercicio?", "text_zh": "你能帮我做这道练习吗？", "lemmas": ["poder", "ayudar", "ejercicio"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "Me gusta escuchar música por la tarde.", "text_zh": "我喜欢下午听音乐。", "lemmas": ["gustar", "escuchar", "música", "tarde"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "Ella trabaja en una oficina cerca de casa.", "text_zh": "她在离家近的办公室工作。", "lemmas": ["trabajar", "oficina", "cerca", "casa"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "Necesitamos más tiempo para terminar.", "text_zh": "我们需要更多时间完成。", "lemmas": ["necesitar", "tiempo", "terminar"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "El tren sale a las ocho de la mañana.", "text_zh": "火车早上八点开。", "lemmas": ["tren", "salir", "mañana"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "Abrimos la ventana para que entre aire.", "text_zh": "我们开窗让空气进来。", "lemmas": ["abrir", "ventana", "aire"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "No olvides llevar tu pasaporte.", "text_zh": "别忘了带护照。", "lemmas": ["olvidar", "llevar", "pasaporte"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "Después de comer, descansamos un rato.", "text_zh": "吃完后我们休息一会儿。", "lemmas": ["después", "comer", "descansar"]}
+{"source": "team-a2-2026", "level": "A2", "text_es": "¿Cuál es tu color favorito?", "text_zh": "你最喜欢的颜色是什么？", "lemmas": ["cuál", "color", "favorito"]}
