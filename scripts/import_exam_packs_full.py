@@ -11,6 +11,10 @@
   images专业四级9.zip → senses_table_tem4 7.30.xlsx
   images专业四级10.zip → senses_table_tem4 7.31.xlsx
   images专业四级11.zip → senses_table_tem4 7.31.xlsx（续）
+  images专业四级12.zip → senses_table_tem4 9.9.xlsx
+  images专业四级13.zip → senses_table_tem4 9.13.xlsx
+  images专业四级15.zip → senses_table_tem4 9.16.xlsx
+  images专业四级17.zip → senses_table_tem4 9.26.xlsx
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
 
 用法:
@@ -46,16 +50,23 @@ IMAGES = ROOT / "data" / "images"
 BATCHES = ROOT / "data" / "batches"
 STAGING = ROOT / "data" / "content" / "_exam_staging"
 
-WECHAT = Path(
+WECHAT_ROOT = Path(
     "/Users/liuyiming/Library/Containers/com.tencent.xinWeChat/"
-    "Data/Documents/xwechat_files/wxid_56yn1iomktsr12_9b4c/msg/file/2026-07"
+    "Data/Documents/xwechat_files/wxid_56yn1iomktsr12_9b4c/msg/file"
 )
+WECHAT_DIRS = (
+    WECHAT_ROOT / "2026-10",
+    WECHAT_ROOT / "2026-09",
+    WECHAT_ROOT / "2026-07",
+)
+# 兼容旧变量名
+WECHAT = WECHAT_DIRS[-1]
 # 微信 Containers 可能无权限；优先读项目内副本
 INCOMING = CONTENT / "_incoming_tem4"
 
 def _zip(*names: str) -> Path:
     for n in names:
-        for base in (INCOMING, WECHAT):
+        for base in (INCOMING, *WECHAT_DIRS):
             p = base / n
             try:
                 if p.exists() and os.access(p, os.R_OK):
@@ -73,6 +84,10 @@ ZIPS = [
     ("tem4_730", _zip("images专业四级9.zip"), "专四"),
     ("tem4_731a", _zip("images专业四级10.zip"), "专四"),
     ("tem4_731b", _zip("images专业四级11.zip"), "专四"),
+    ("tem4_99", _zip("images专业四级12.zip"), "专四"),
+    ("tem4_913", _zip("images专业四级13.zip"), "专四"),
+    ("tem4_916", _zip("images专业四级15.zip"), "专四"),
+    ("tem4_926", _zip("images专业四级17.zip"), "专四"),
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
 ]
 
@@ -85,6 +100,10 @@ TEM4_ZIP_LABELS = (
     "tem4_730",
     "tem4_731a",
     "tem4_731b",
+    "tem4_99",
+    "tem4_913",
+    "tem4_916",
+    "tem4_926",
 )
 
 def _readable(path: Path) -> bool:
