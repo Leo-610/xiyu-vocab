@@ -12,3 +12,6 @@ docs/**/*.docx
 docs/**/*.pdf
 *.log
 .DS_Store
+data/content/_incoming_tem4
+data/content/_exam_staging
+.pydeps
