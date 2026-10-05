@@ -15,6 +15,7 @@
   images专业四级13.zip → senses_table_tem4 9.13.xlsx
   images专业四级15.zip → senses_table_tem4 9.16.xlsx
   images专业四级17.zip → senses_table_tem4 9.26.xlsx
+  images专业四级18.7z → senses_table_tem4 10.3.xlsx
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
 
 用法:
@@ -29,6 +30,7 @@ import os
 import random
 import re
 import shutil
+import sys
 import unicodedata
 import xml.etree.ElementTree as ET
 import zipfile
@@ -45,6 +47,8 @@ except ImportError:
     raise SystemExit("请先安装: pip3 install pillow openpyxl")
 
 ROOT = Path(__file__).resolve().parent.parent
+# 本地 vendor（py7zr 等），不入库
+sys.path.insert(0, str(ROOT / ".pydeps"))
 CONTENT = ROOT / "data" / "content"
 IMAGES = ROOT / "data" / "images"
 BATCHES = ROOT / "data" / "batches"
@@ -88,6 +92,7 @@ ZIPS = [
     ("tem4_913", _zip("images专业四级13.zip"), "专四"),
     ("tem4_916", _zip("images专业四级15.zip"), "专四"),
     ("tem4_926", _zip("images专业四级17.zip"), "专四"),
+    ("tem4_1003", _zip("images专业四级18.7z"), "专四"),
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
 ]
 
@@ -104,6 +109,7 @@ TEM4_ZIP_LABELS = (
     "tem4_913",
     "tem4_916",
     "tem4_926",
+    "tem4_1003",
 )
 
 def _readable(path: Path) -> bool:
@@ -239,6 +245,36 @@ def save_jpg(dest: Path, data: bytes) -> None:
     im.save(dest, "JPEG", quality=82, optimize=True)
 
 
+def _iter_archive_files(zp: Path):
+    """yield (member_name, bytes) for zip / 7z。"""
+    suffix = zp.suffix.lower()
+    if suffix == ".7z":
+        try:
+            import py7zr
+        except ImportError as err:
+            raise RuntimeError("读取 .7z 需要 py7zr（pip install py7zr）") from err
+        tmp = STAGING / f".raw_{zp.stem}"
+        if tmp.exists():
+            shutil.rmtree(tmp)
+        tmp.mkdir(parents=True)
+        try:
+            with py7zr.SevenZipFile(zp, "r") as zf:
+                zf.extractall(path=tmp)
+            for p in tmp.rglob("*"):
+                if not p.is_file() or "__MACOSX" in str(p):
+                    continue
+                rel = str(p.relative_to(tmp))
+                yield rel, p.read_bytes()
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        return
+    with zipfile.ZipFile(zp) as zf:
+        for name in zf.namelist():
+            if name.endswith("/") or "__MACOSX" in name:
+                continue
+            yield name, zf.read(name)
+
+
 def extract_zips() -> dict[str, Path]:
     """返回 label → staging 目录（含 images/ 与 *.xlsx）。"""
     if STAGING.exists():
@@ -247,24 +283,21 @@ def extract_zips() -> dict[str, Path]:
     dirs: dict[str, Path] = {}
     for label, zp, _tag in ZIPS:
         if not zp.exists():
-            print(f"[warn] 缺少 zip: {zp}")
+            print(f"[warn] 缺少压缩包: {zp}")
             continue
         d = STAGING / label
         img_dir = d / "images"
         img_dir.mkdir(parents=True)
         try:
-            with zipfile.ZipFile(zp) as zf:
-                for name in zf.namelist():
-                    if name.endswith("/") or "__MACOSX" in name:
-                        continue
-                    low = name.lower()
-                    bn = Path(name).name
-                    if low.endswith((".xlsx", ".xls")):
-                        (d / bn).write_bytes(zf.read(name))
-                        print(f"[ok] 抽出 Excel {label}/{bn}")
-                    elif low.endswith((".png", ".jpg", ".jpeg", ".webp")):
-                        (img_dir / bn).write_bytes(zf.read(name))
-        except (PermissionError, OSError) as err:
+            for name, data in _iter_archive_files(zp):
+                low = name.lower()
+                bn = Path(name).name
+                if low.endswith((".xlsx", ".xls")):
+                    (d / bn).write_bytes(data)
+                    print(f"[ok] 抽出 Excel {label}/{bn}")
+                elif low.endswith((".png", ".jpg", ".jpeg", ".webp")):
+                    (img_dir / bn).write_bytes(data)
+        except (PermissionError, OSError, RuntimeError) as err:
             print(f"[warn] 无法读取 {zp}: {err}")
             shutil.rmtree(d, ignore_errors=True)
             continue

@@ -1,4 +1,6 @@
 dominicano#1 (imagesdominicano_1)
+lomo#1 (lomo_1)
+longitud#1 (longitud_1)
 acusación#1 (acusacion_1)
 afirmación#1 (afirmacion_1)
 alusión#1 (alusion_1)
