@@ -5,13 +5,13 @@ import { safeReLaunch } from './utils/nav.js'
 
 export default {
   onLaunch() {
-    this.routeByPrivacy()
+    this.routeByPrivacy({ ping: true })
   },
   onShow() {
-    this.routeByPrivacy()
+    this.routeByPrivacy({ ping: false })
   },
   methods: {
-    routeByPrivacy() {
+    routeByPrivacy({ ping } = { ping: false }) {
       const pages = getCurrentPages()
       const current = pages[pages.length - 1]
       const route = current?.route || ''
@@ -23,7 +23,7 @@ export default {
         return
       }
 
-      this.initApp()
+      if (ping) this.initApp()
     },
     async initApp() {
       try {

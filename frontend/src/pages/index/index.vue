@@ -174,7 +174,7 @@
 import { computed, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import {
-  checkApiOnline, ensureSession, getUserState, updateTargetLevel,
+  checkApiOnline, ensureSession, updateTargetLevel,
   resetTodaySession, fetchVocabularyTotal, fetchExamPacks, isApiOnline,
   isGuestSession, goLoginPage,
 } from '../../utils/userService.js'
@@ -209,24 +209,39 @@ const progressPercent = computed(() => {
   return goal ? Math.min(100, Math.round((total / goal) * 100)) : 0
 })
 
-async function refresh() {
-  loading.value = true
+const HOME_TTL_MS = 45000
+let lastRefreshAt = 0
+
+async function refresh({ force = false, silent = false } = {}) {
+  const now = Date.now()
+  const warmed = Boolean(state.value.userId)
+  if (!force && lastRefreshAt && now - lastRefreshAt < HOME_TTL_MS && warmed) {
+    try {
+      state.value = await ensureSession()
+    } catch {
+      // keep last frame
+    }
+    return
+  }
+  if (!silent || !warmed) loading.value = true
   apiOnline.value = true
   try {
-    // 先拉用户态，health 并行；避免串行等 3–4s health
-    const onlinePromise = checkApiOnline()
-    await ensureSession()
-    const [online, userState, total, packs] = await Promise.all([
-      onlinePromise,
-      getUserState(true),
-      fetchVocabularyTotal().catch(() => 0),
-      fetchExamPacks().catch(() => []),
-    ])
+    const online = await checkApiOnline()
     apiOnline.value = online
     if (!online) return
+    const userState = await ensureSession()
     state.value = userState
+    const [total, packs] = await Promise.all([
+      vocabTotal.value && !force
+        ? Promise.resolve(vocabTotal.value)
+        : fetchVocabularyTotal().catch(() => vocabTotal.value || 0),
+      examPacks.value.length && !force
+        ? Promise.resolve(examPacks.value)
+        : fetchExamPacks().catch(() => examPacks.value),
+    ])
     vocabTotal.value = total
     examPacks.value = packs
+    lastRefreshAt = Date.now()
   } catch (e) {
     uni.showToast({ title: e.message || '加载失败', icon: 'none' })
   } finally {
@@ -235,7 +250,8 @@ async function refresh() {
 }
 
 onShow(() => {
-  refresh().catch(() => {})
+  const warmed = Boolean(state.value.userId)
+  refresh({ silent: warmed, force: false }).catch(() => {})
 })
 
 async function setLevel(lv) {

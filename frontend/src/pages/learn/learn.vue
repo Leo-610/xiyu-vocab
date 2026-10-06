@@ -175,13 +175,13 @@ onLoad((options) => {
 })
 
 onShow(async () => {
+  if (pack.value.length || finished.value) return
   loading.value = true
   try {
-    await ensureAuth()
+    const state = await ensureAuth()
     if (!examPackId.value) {
       examPackId.value = uni.getStorageSync('exam_pack') || ''
     }
-    const state = await getUserState(true)
     showIpa.value = state.settings?.showIpa !== false
     ragEnabled.value = Boolean(state.ragEnabled)
     if (isExamMode.value) {
@@ -194,7 +194,6 @@ onShow(async () => {
     sessionStats.value = { ...state.todaySession }
     if (state.todaySession.finished) {
       finished.value = true
-      loading.value = false
       return
     }
     await initPack()
@@ -223,7 +222,7 @@ async function initPack() {
       return
     }
 
-    const state = await getUserState(true)
+    const state = getCachedState() || await getUserState(true)
     const remaining = Math.max(state.dailyNew - state.todaySession.total, 1)
     const res = await fetchDailyPack(remaining)
     if (res.finished) {

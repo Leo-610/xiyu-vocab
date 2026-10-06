@@ -53,24 +53,26 @@ const HOST = appConfig.host;
 
 await ensureSchema();
 await runMigrations(db);
-await seedConfusablePairs();
-await ensureAllUsersHaveArm();
-if ((await corpusStats()).chunks === 0) {
-  try {
-    spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'import-corpus.mjs'), '--from-words'], {
-      cwd: ROOT,
-      stdio: 'inherit',
-      env: process.env
-    });
-  } catch (e) {
-    console.warn('[corpus] auto-import skipped:', e.message);
+// Serverless 冷启动不做灌库/全表扫描；生产词库已在 Turso
+if (!process.env.VERCEL) {
+  await seedConfusablePairs();
+  await ensureAllUsersHaveArm();
+  if ((await corpusStats()).chunks === 0) {
+    try {
+      spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'import-corpus.mjs'), '--from-words'], {
+        cwd: ROOT,
+        stdio: 'inherit',
+        env: process.env
+      });
+    } catch (e) {
+      console.warn('[corpus] auto-import skipped:', e.message);
+    }
   }
-}
-
-if ((await wordCount()) === 0) {
-  console.log('[db] 词库为空，正在从义项表 CSV 导入...');
-  const n = await seedWords();
-  console.log(`[db] 已导入 ${n} 个义项`);
+  if ((await wordCount()) === 0) {
+    console.log('[db] 词库为空，正在从义项表 CSV 导入...');
+    const n = await seedWords();
+    console.log(`[db] 已导入 ${n} 个义项`);
+  }
 }
 
 function readBody(req) {
@@ -110,9 +112,11 @@ function sendFile(res, filePath) {
     '.webp': 'image/webp', '.html': 'text/html; charset=utf-8',
     '.css': 'text/css', '.js': 'application/javascript'
   };
+  const isImage = ['.jpg', '.jpeg', '.png', '.webp'].includes(ext);
   res.writeHead(200, {
     'Content-Type': types[ext] || 'application/octet-stream',
-    'Access-Control-Allow-Origin': '*'
+    'Access-Control-Allow-Origin': '*',
+    ...(isImage ? { 'Cache-Control': 'public, max-age=86400, immutable' } : {})
   });
   fs.createReadStream(filePath).pipe(res);
 }
@@ -130,23 +134,26 @@ async function handleApi(req, res, pathname, query) {
   }
 
   if (pathname === '/api/health' && method === 'GET') {
-    return sendJson(res, 200, {
+    const payload = {
       ok: true,
-      words: await wordCount(),
-      db: getDbPath(),
       dbBackend: getDbBackend(),
       time: new Date().toISOString(),
-      content: await getContentStatus(),
       auth: {
         wechat: appConfig.wechatConfigured,
         email: appConfig.emailAuthConfigured,
         password: true,
         demoLogin: appConfig.allowDemoLogin,
         env: appConfig.nodeEnv
-      },
-      rag: await corpusStats(),
-      llm: await llmStatus()
-    });
+      }
+    };
+    if (query.full === '1') {
+      payload.words = await wordCount();
+      payload.db = getDbPath();
+      payload.content = await getContentStatus();
+      payload.rag = await corpusStats();
+      payload.llm = await llmStatus();
+    }
+    return sendJson(res, 200, payload);
   }
 
   if (pathname === '/api/content/status' && method === 'GET') {

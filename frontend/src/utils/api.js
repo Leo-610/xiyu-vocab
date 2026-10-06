@@ -98,7 +98,7 @@ async function request(path, options = {}) {
 }
 
 export function healthCheck() {
-  return request('/health', { timeout: 20000, retries: 2 })
+  return request('/health', { timeout: 8000, retries: 0 })
 }
 
 export function logout() {
