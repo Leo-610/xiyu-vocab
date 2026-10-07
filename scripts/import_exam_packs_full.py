@@ -16,6 +16,8 @@
   images专业四级15.zip → senses_table_tem4 9.16.xlsx
   images专业四级17.zip → senses_table_tem4 9.26.xlsx
   images专业四级18.7z → senses_table_tem4 10.3.xlsx
+  images专业四级19.zip → senses_table_tem4 10.5.xlsx
+  images专业四级20.zip → senses_table_tem4 10.6.xlsx
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
 
 用法:
@@ -93,6 +95,8 @@ ZIPS = [
     ("tem4_916", _zip("images专业四级15.zip"), "专四"),
     ("tem4_926", _zip("images专业四级17.zip"), "专四"),
     ("tem4_1003", _zip("images专业四级18.7z"), "专四"),
+    ("tem4_1005", _zip("images专业四级19.zip"), "专四"),
+    ("tem4_1006", _zip("images专业四级20.zip"), "专四"),
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
 ]
 
@@ -110,6 +114,8 @@ TEM4_ZIP_LABELS = (
     "tem4_916",
     "tem4_926",
     "tem4_1003",
+    "tem4_1005",
+    "tem4_1006",
 )
 
 def _readable(path: Path) -> bool:
@@ -460,6 +466,11 @@ def build_image_index(staging_dirs: dict[str, Path]) -> dict[str, Path]:
                 ("¿©", "é"),
                 ("¿║", "ú"),
                 ("¿±", "ñ"),
+                ("¿╣", "ü"),
+                ("¿▓", "ú"),
+                ("¿ó", "á"),
+                ("¿¬", "í"),
+                ("¿ª", "é"),
                 ("¿", ""),
             ):
                 raw = raw.replace(a, b)
