@@ -377,12 +377,20 @@ export async function loginPasswordUser(accountOrOpts, passwordMaybe) {
   });
 }
 
+function isGuestNickname(name) {
+  return name === '演示用户' || String(name).startsWith('体验_')
+}
+
 /** @deprecated 演示登录：仅昵称（须已注册） */
 export async function loginUser(nickname = '演示用户') {
   const name = sanitizeNickname(nickname);
   const existing = await findAccountUser(name);
 
   if (!existing) {
+    // 游客体验号首次进入直接建号，避免前端先 404 再注册刷红字
+    if (isGuestNickname(name)) {
+      return await registerUser(name)
+    }
     const err = new Error('账号不存在，请先注册');
     err.code = 'USER_NOT_FOUND';
     throw err;

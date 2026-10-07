@@ -25,6 +25,8 @@ const EMOJI_MAP = {
 let cachedState = null
 let apiOnline = null
 let authConfig = { email: false, password: true, demoLogin: true }
+let authGeneration = 0
+let lastReachableAt = 0
 
 export function getAuthConfig() {
   return authConfig
@@ -56,10 +58,27 @@ export function enrichWord(word) {
   return attachEmoji(word)
 }
 
+function markReachable() {
+  apiOnline = true
+  lastReachableAt = Date.now()
+}
+
+function bumpAuthGeneration() {
+  authGeneration += 1
+}
+
+export function getAuthGeneration() {
+  return authGeneration
+}
+
 export async function checkApiOnline() {
+  if (lastReachableAt && Date.now() - lastReachableAt < 20000) {
+    apiOnline = true
+    return true
+  }
   try {
     const health = await api.healthCheck()
-    apiOnline = true
+    markReachable()
     authConfig = {
       email: Boolean(health?.auth?.email),
       password: health?.auth?.password !== false,
@@ -143,6 +162,8 @@ function applyAuthResponse(res, { guest = false } = {}) {
   api.setToken(res.token)
   cachedState = res.user
   setGuestFlag(guest)
+  markReachable()
+  bumpAuthGeneration()
   if (!guest && res.user?.nickname) {
     saveLastNickname(res.user.nickname)
   }
@@ -158,16 +179,7 @@ function applyAuthResponse(res, { guest = false } = {}) {
 
 async function createGuestSession() {
   const nick = `体验_${getOrCreateGuestId().slice(0, 12)}`
-  let res
-  try {
-    res = await performDemoLogin(nick)
-  } catch {
-    try {
-      res = await performDemoRegister(nick)
-    } catch {
-      res = await performDemoLogin(nick)
-    }
-  }
+  const res = await performDemoLogin(nick)
   return applyAuthResponse(res, { guest: true })
 }
 
@@ -229,21 +241,45 @@ export async function logout() {
   api.clearToken()
   cachedState = null
   setGuestFlag(true)
+  bumpAuthGeneration()
   safeReLaunch('/pages/index/index')
+}
+
+function isUnauthorizedError(err) {
+  return err?.status === 401 || ['UNAUTHORIZED', 'INVALID_TOKEN', 'TOKEN_EXPIRED'].includes(err?.code)
+}
+
+async function restoreLoggedInSession() {
+  try {
+    cachedState = await api.getMe()
+    markReachable()
+    return cachedState
+  } catch (err) {
+    if (isUnauthorizedError(err)) {
+      api.clearToken()
+      cachedState = null
+      return null
+    }
+    return cachedState
+  }
 }
 
 /** 静默游客会话，不跳转登录页（微信审核：先体验再自愿登录） */
 export async function ensureSession() {
+  if (cachedState && api.getToken()) {
+    return cachedState
+  }
   if (apiOnline === false) {
+    if (cachedState) return cachedState
     throw new Error('OFFLINE')
   }
-  if (api.getToken()) {
-    try {
-      cachedState = await api.getMe()
-      return cachedState
-    } catch {
-      api.clearToken()
-      cachedState = null
+  // 游客不要先打 /me：本地 token 失效时微信会打出 401，再走演示登录即可恢复
+  if (api.getToken() && !isGuestSession()) {
+    const state = await restoreLoggedInSession()
+    if (state) return state
+    if (api.getToken()) {
+      if (cachedState) return cachedState
+      throw new Error('网络错误，请稍后重试')
     }
   }
   return createGuestSession()
@@ -269,17 +305,18 @@ export async function requireLogin() {
 }
 
 export async function getUserState(force = false) {
-  if (apiOnline === false) {
-    throw new Error('OFFLINE')
-  }
   if (!force && cachedState) {
     return cachedState
   }
-  if (!api.getToken()) {
-    return ensureSession()
+  if (apiOnline === false) {
+    if (cachedState) return cachedState
+    throw new Error('OFFLINE')
   }
-  cachedState = await api.getMe()
-  return cachedState
+  if (force && api.getToken() && !isGuestSession()) {
+    const state = await restoreLoggedInSession()
+    if (state) return state
+  }
+  return ensureSession()
 }
 
 export function getCachedState() {
