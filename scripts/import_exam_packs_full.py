@@ -18,6 +18,7 @@
   images专业四级18.7z → senses_table_tem4 10.3.xlsx
   images专业四级19.zip → senses_table_tem4 10.5.xlsx
   images专业四级20.zip → senses_table_tem4 10.6.xlsx
+  images专业四级21.zip → senses_table_tem4 10.8.xlsx
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
 
 用法:
@@ -97,6 +98,7 @@ ZIPS = [
     ("tem4_1003", _zip("images专业四级18.7z"), "专四"),
     ("tem4_1005", _zip("images专业四级19.zip"), "专四"),
     ("tem4_1006", _zip("images专业四级20.zip"), "专四"),
+    ("tem4_1008", _zip("images专业四级21.zip"), "专四"),
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
 ]
 
@@ -116,6 +118,7 @@ TEM4_ZIP_LABELS = (
     "tem4_1003",
     "tem4_1005",
     "tem4_1006",
+    "tem4_1008",
 )
 
 def _readable(path: Path) -> bool:
