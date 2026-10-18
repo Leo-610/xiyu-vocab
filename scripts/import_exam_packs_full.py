@@ -20,9 +20,11 @@
   images专业四级20.zip → senses_table_tem4 10.6.xlsx
   images专业四级21.zip → senses_table_tem4 10.8.xlsx
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
+  images专业八级2.zip → senses_table_tem8 10.18.xlsx (+~300 图)
 
 用法:
   python3 scripts/import_exam_packs_full.py
+  python3 scripts/import_exam_packs_full.py --packs tem8_1018
   node scripts/reset-with-exams.mjs
 """
 
@@ -100,6 +102,7 @@ ZIPS = [
     ("tem4_1006", _zip("images专业四级20.zip"), "专四"),
     ("tem4_1008", _zip("images专业四级21.zip"), "专四"),
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
+    ("tem8_1018", _zip("images专业八级2.zip"), "专八"),
 ]
 
 TEM4_ZIP_LABELS = (
@@ -119,6 +122,11 @@ TEM4_ZIP_LABELS = (
     "tem4_1005",
     "tem4_1006",
     "tem4_1008",
+)
+
+TEM8_ZIP_LABELS = (
+    "tem8",
+    "tem8_1018",
 )
 
 def _readable(path: Path) -> bool:
@@ -548,7 +556,26 @@ def write_merged_xlsx(path: Path, rows: list[dict], title: str) -> None:
     wb.save(path)
 
 
-def main() -> None:
+def _parse_pack_filter(argv: list[str]) -> set[str] | None:
+    """--packs a,b 只解压/合并指定 label；缺省则全量。"""
+    for i, arg in enumerate(argv):
+        if arg == "--packs" and i + 1 < len(argv):
+            return {p.strip() for p in argv[i + 1].split(",") if p.strip()}
+        if arg.startswith("--packs="):
+            return {p.strip() for p in arg.split("=", 1)[1].split(",") if p.strip()}
+    return None
+
+
+def main(argv: list[str] | None = None) -> None:
+    argv = list(argv if argv is not None else sys.argv[1:])
+    pack_filter = _parse_pack_filter(argv)
+    global ZIPS
+    if pack_filter:
+        ZIPS = [z for z in ZIPS if z[0] in pack_filter]
+        if not ZIPS:
+            raise SystemExit(f"无匹配压缩包 label: {sorted(pack_filter)}")
+        print(f"[info] 仅处理: {', '.join(z[0] for z in ZIPS)}")
+
     print("=== 1. 解压压缩包 ===")
     staging = extract_zips()
     img_index = build_image_index(staging)
@@ -601,7 +628,7 @@ def main() -> None:
             merge_entry(store, e, "专四")
         print(f"[info] + {label}/{xlsxs[0].name} → {len(store)}")
 
-    # 专八
+    # 专八基线
     if TEM8_WITH_IMG:
         dest8 = CONTENT / "senses_table_tem8_with_images.xlsx"
         if TEM8_WITH_IMG.resolve() != dest8.resolve():
@@ -610,12 +637,24 @@ def main() -> None:
             merge_entry(store, e, "专八")
         print(f"[info] + {TEM8_WITH_IMG.name} → {len(store)}")
 
+    # zip 内专八表（按批次递增覆盖）
+    for label in TEM8_ZIP_LABELS:
+        d = staging.get(label)
+        if not d:
+            continue
+        xlsxs = sorted(d.glob("*.xlsx"))
+        if not xlsxs:
+            continue
+        for e in load_xlsx_rows(xlsxs[0]):
+            merge_entry(store, e, "专八")
+        print(f"[info] + {label}/{xlsxs[0].name} → {len(store)}")
+
     embedded: dict[tuple[str, int], bytes] = {}
     if TEM4_WITH_IMG:
         embedded.update(load_embedded_images(TEM4_WITH_IMG))
     if TEM8_WITH_IMG:
         embedded.update(load_embedded_images(TEM8_WITH_IMG))
-    for label in TEM4_ZIP_LABELS:
+    for label in (*TEM4_ZIP_LABELS, *TEM8_ZIP_LABELS):
         d = staging.get(label)
         if not d:
             continue
@@ -664,21 +703,33 @@ def main() -> None:
 
         dest = dest_dir / image_file
         got = False
+
+        def _place(src_or_bytes) -> None:
+            nonlocal got
+            if isinstance(src_or_bytes, Path):
+                try:
+                    if dest.exists() and src_or_bytes.resolve() == dest.resolve():
+                        got = True
+                        return
+                except OSError:
+                    pass
+                save_jpg(dest, src_or_bytes.read_bytes())
+            else:
+                save_jpg(dest, src_or_bytes)
+            got = True
+
         if key in embedded:
-            save_jpg(dest, embedded[key])
-            got = True
+            _place(embedded[key])
         elif e["image_stem"] in img_index:
-            save_jpg(dest, img_index[e["image_stem"]].read_bytes())
-            got = True
+            _place(img_index[e["image_stem"]])
         else:
             # 宽松：lemma_sense
             alt = f"{slugify(e['lemma'])}_{e['sense']}"
             if alt in img_index:
                 image_file = f"{alt}.jpg"
                 dest = dest_dir / image_file
-                save_jpg(dest, img_index[alt].read_bytes())
                 e["image_stem"] = alt
-                got = True
+                _place(img_index[alt])
         if not got:
             missing_img.append(f"{e['lemma']}#{e['sense']} ({e['image_stem']})")
 
@@ -762,4 +813,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
