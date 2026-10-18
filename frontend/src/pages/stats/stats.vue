@@ -69,6 +69,26 @@
 
       <AppCard>
         <SectionHeader title="学习设置" subtitle="保存到账号，多设备同步" />
+        <view class="daily-block">
+          <view class="daily-head">
+            <text class="daily-icon">📅</text>
+            <view class="daily-copy">
+              <text class="daily-label">每日新词数</text>
+              <text class="daily-desc">看图识词每日配额，完成后仍可听写 / 考试词包加练</text>
+            </view>
+          </view>
+          <view class="daily-chips">
+            <view
+              v-for="n in dailyNewOptions"
+              :key="n"
+              class="daily-chip"
+              :class="{ on: Number(stats.dailyNew) === n, disabled: savingSetting }"
+              @click="setDailyNew(n)"
+            >
+              {{ n }}
+            </view>
+          </view>
+        </view>
         <SettingSwitch
           v-model="settings.soundEnabled"
           icon="🔊"
@@ -139,14 +159,6 @@
         <AppButton v-else block variant="outline" class="logout-btn" @click="handleLogout">退出登录</AppButton>
       </AppCard>
 
-      <AppCard variant="flat">
-        <text class="section-title">升级路线</text>
-        <view v-for="r in roadmap" :key="r.phase" class="road-item">
-          <text class="road-phase">{{ r.phase }}</text>
-          <text class="road-text">{{ r.text }}</text>
-        </view>
-      </AppCard>
-
       <AppButton block variant="outline" @click="resetData">重置演示数据</AppButton>
     </template>
   </view>
@@ -172,6 +184,7 @@ const settings = reactive({
   showIpa: true,
 })
 const savingSetting = ref(false)
+const dailyNewOptions = [5, 10, 15, 20, 30]
 
 const statCards = computed(() => [
   { icon: '📚', value: stats.value.learnedIds?.length || 0, label: '已学单词', cls: '' },
@@ -179,12 +192,6 @@ const statCards = computed(() => [
   { icon: '📕', value: stats.value.mistakes?.length || 0, label: '错题数', cls: 'warn' },
   { icon: '🎯', value: `${stats.value.accuracy || 0}%`, label: '今日正确率', cls: 'ok' },
 ])
-
-const roadmap = [
-  { phase: '二期', text: '✅ SM-2 复习 · 微信小程序 · 词库扩容' },
-  { phase: '三期', text: '✅ RAG 语境例句 · LLM 错题解析' },
-  { phase: '四期', text: '✅ 可视化热力图 · 大创材料推进中' },
-]
 
 onShow(async () => {
   loading.value = true
@@ -218,6 +225,24 @@ async function saveSetting(key, value) {
     uni.showToast({ title: '已保存', icon: 'success', duration: 1200 })
   } catch (e) {
     settings[key] = prev
+    uni.showToast({ title: e.message || '保存失败', icon: 'none' })
+  } finally {
+    savingSetting.value = false
+  }
+}
+
+async function setDailyNew(n) {
+  if (savingSetting.value || Number(stats.value.dailyNew) === n) return
+  savingSetting.value = true
+  const prev = stats.value.dailyNew
+  stats.value = { ...stats.value, dailyNew: n }
+  try {
+    const next = await api.updateSettings({ dailyNew: n })
+    stats.value = await fetchStats()
+    setCachedState(next)
+    uni.showToast({ title: `每日目标已设为 ${n} 词`, icon: 'success', duration: 1400 })
+  } catch (e) {
+    stats.value = { ...stats.value, dailyNew: prev }
     uni.showToast({ title: e.message || '保存失败', icon: 'none' })
   } finally {
     savingSetting.value = false
@@ -392,26 +417,67 @@ function goEditProfile() {
   margin-top: 0;
 }
 
-.road-item {
+.daily-block {
+  margin-bottom: 28rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid $border-light;
+}
+
+.daily-head {
   display: flex;
   gap: 16rpx;
   align-items: flex-start;
-  padding: 14rpx 0;
+  margin-bottom: 20rpx;
 }
 
-.road-phase {
-  background: rgba($primary, 0.08);
-  color: $primary;
-  font-size: 22rpx;
+.daily-icon {
+  font-size: 36rpx;
+  line-height: 1.2;
+}
+
+.daily-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.daily-label {
+  display: block;
+  font-size: 30rpx;
   font-weight: 600;
-  padding: 6rpx 14rpx;
-  border-radius: $radius-sm;
-  flex-shrink: 0;
+  color: $text-primary;
 }
 
-.road-text {
-  font-size: 26rpx;
+.daily-desc {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: $text-muted;
+  line-height: 1.4;
+}
+
+.daily-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.daily-chip {
+  min-width: 88rpx;
+  padding: 14rpx 22rpx;
+  text-align: center;
+  border-radius: $radius-full;
+  background: $bg-muted;
   color: $text-secondary;
-  line-height: 1.5;
+  font-size: 28rpx;
+  font-weight: 600;
+
+  &.on {
+    background: $primary;
+    color: #fff;
+  }
+
+  &.disabled {
+    opacity: 0.6;
+  }
 }
 </style>

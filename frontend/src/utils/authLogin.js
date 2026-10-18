@@ -1,14 +1,26 @@
 import * as api from './api.js'
 import { wxLogin } from './wechatAuth.js'
 
+function peekGuestToken() {
+  try {
+    const token = api.getToken()
+    const isGuest = uni.getStorageSync('auth_is_guest') === true
+    return token && isGuest ? token : ''
+  } catch {
+    return ''
+  }
+}
+
 export async function performWechatLogin() {
+  const guestToken = peekGuestToken()
   const code = await wxLogin()
-  return api.loginWechat(code)
+  return api.loginWechat(code, undefined, guestToken)
 }
 
 /** H5：邮箱/手机号 + 密码登录 */
 export async function performPasswordLogin(account, password) {
-  return api.login({ account, password })
+  const guestToken = peekGuestToken()
+  return api.login({ account, password, guestToken: guestToken || undefined })
 }
 
 /** H5：邮箱/手机号 + 密码注册（手机号须带 bindEmail） */
@@ -33,5 +45,6 @@ export async function performEmailSendOtp(email) {
 
 /** 邮箱验证码：验证登录 */
 export async function performEmailVerifyOtp(email, code) {
-  return api.verifyEmailOtp(email, code)
+  const guestToken = peekGuestToken()
+  return api.verifyEmailOtp(email, code, guestToken)
 }

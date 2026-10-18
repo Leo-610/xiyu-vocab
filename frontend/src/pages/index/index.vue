@@ -88,7 +88,27 @@
           :disabled="!apiOnline || state.todaySession.finished"
           @click="startLearn"
         >
-          {{ state.todaySession.finished ? '✓ 今日已完成' : '开始今日学习 →' }}
+          {{ state.todaySession.finished ? '✓ 今日看图识词已完成' : '开始今日学习 →' }}
+        </AppButton>
+        <text v-if="state.todaySession.finished" class="done-cap-hint">
+          今日配额已满，可继续听写或专四词包；也可在统计页调高每日词数
+        </text>
+        <AppButton
+          v-if="state.todaySession.finished"
+          block
+          class="mt-btn"
+          @click="goDictation"
+        >
+          继续听写练习 →
+        </AppButton>
+        <AppButton
+          v-if="state.todaySession.finished"
+          block
+          variant="outline"
+          class="mt-btn"
+          @click="startExam('tem4')"
+        >
+          专四词包加练
         </AppButton>
         <AppButton
           v-if="state.todaySession.finished"
@@ -97,7 +117,7 @@
           class="mt-btn"
           @click="handleResetToday"
         >
-          重新练习
+          重置今日配额
         </AppButton>
       </view>
 
@@ -176,7 +196,7 @@ import { onShow } from '@dcloudio/uni-app'
 import {
   checkApiOnline, ensureSession, updateTargetLevel,
   resetTodaySession, fetchVocabularyTotal, fetchExamPacks, isApiOnline,
-  isGuestSession, goLoginPage,
+  isGuestSession, goLoginPage, getCachedState, getAuthGeneration,
 } from '../../utils/userService.js'
 
 const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
@@ -196,7 +216,7 @@ const state = ref({
 })
 
 const displayGreet = computed(() => '¡Hola!')
-const isGuest = computed(() => isGuestSession() || !state.value.nickname || state.value.nickname.startsWith('体验_'))
+const isGuest = computed(() => isGuestSession() || String(state.value.nickname || '').startsWith('体验_'))
 
 const vocabSubtitle = computed(() => {
   const total = vocabTotal.value > 0 ? vocabTotal.value : '…'
@@ -211,16 +231,22 @@ const progressPercent = computed(() => {
 
 const HOME_TTL_MS = 45000
 let lastRefreshAt = 0
+let appliedAuthGen = -1
 
 async function refresh({ force = false, silent = false } = {}) {
+  const cached = getCachedState()
+  if (cached?.userId) {
+    const authChanged = appliedAuthGen !== getAuthGeneration()
+    if (authChanged || cached.userId !== state.value.userId) {
+      state.value = cached
+      appliedAuthGen = getAuthGeneration()
+      force = true
+    }
+  }
+
   const now = Date.now()
   const warmed = Boolean(state.value.userId)
   if (!force && lastRefreshAt && now - lastRefreshAt < HOME_TTL_MS && warmed) {
-    try {
-      state.value = await ensureSession()
-    } catch {
-      // keep last frame
-    }
     return
   }
   if (!silent || !warmed) loading.value = true
@@ -228,9 +254,13 @@ async function refresh({ force = false, silent = false } = {}) {
   try {
     const online = await checkApiOnline()
     apiOnline.value = online
-    if (!online) return
+    if (!online) {
+      if (cached?.userId) state.value = cached
+      return
+    }
     const userState = await ensureSession()
     state.value = userState
+    appliedAuthGen = getAuthGeneration()
     const [total, packs] = await Promise.all([
       vocabTotal.value && !force
         ? Promise.resolve(vocabTotal.value)
@@ -243,7 +273,8 @@ async function refresh({ force = false, silent = false } = {}) {
     examPacks.value = packs
     lastRefreshAt = Date.now()
   } catch (e) {
-    uni.showToast({ title: e.message || '加载失败', icon: 'none' })
+    if (cached?.userId) state.value = cached
+    else uni.showToast({ title: e.message || '加载失败', icon: 'none' })
   } finally {
     loading.value = false
   }
@@ -506,6 +537,14 @@ function goProfile() {
 
 .action-area {
   margin: 8rpx 0 32rpx;
+}
+
+.done-cap-hint {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: $text-muted;
+  line-height: 1.45;
 }
 
 .mt-btn {

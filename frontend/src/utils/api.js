@@ -64,13 +64,18 @@ function requestOnce(path, options = {}) {
           return
         }
         if (res.statusCode === 401) {
-          clearToken()
-          const code = res.data?.code
-          if (code === 'TOKEN_EXPIRED') {
-            uni.showToast({ title: '登录已过期，可重新登录同步进度', icon: 'none' })
+          const err = toError(res.data, `请求失败 (${res.statusCode})`)
+          err.status = 401
+          err.code = res.data?.code || 'UNAUTHORIZED'
+          if (getToken() === token) {
+            clearToken()
           }
+          reject(err)
+          return
         }
-        reject(toError(res.data, `请求失败 (${res.statusCode})`))
+        const err = toError(res.data, `请求失败 (${res.statusCode})`)
+        err.status = res.statusCode
+        reject(err)
       },
       fail(err) {
         const tip = isTimeoutError(err)
@@ -98,7 +103,7 @@ async function request(path, options = {}) {
 }
 
 export function healthCheck() {
-  return request('/health', { timeout: 8000, retries: 0 })
+  return request('/health', { timeout: 12000, retries: 1 })
 }
 
 export function logout() {
@@ -118,6 +123,12 @@ export function login(nicknameOrOpts = '演示用户', password) {
   return request('/login', { method: 'POST', data })
 }
 
+export function loginWithGuestToken(payload, guestToken) {
+  const data = { ...(payload || {}) }
+  if (guestToken) data.guestToken = guestToken
+  return request('/login', { method: 'POST', data })
+}
+
 export function register(nicknameOrOpts, password) {
   if (nicknameOrOpts && typeof nicknameOrOpts === 'object') {
     return request('/register', { method: 'POST', data: nicknameOrOpts })
@@ -128,10 +139,12 @@ export function register(nicknameOrOpts, password) {
 }
 
 /** 微信小程序：code 换 session（后端调微信 jscode2session） */
-export function loginWechat(code, nickname) {
+export function loginWechat(code, nickname, guestToken) {
+  const data = { code, nickname }
+  if (guestToken) data.guestToken = guestToken
   return request('/auth/wechat', {
     method: 'POST',
-    data: { code, nickname },
+    data,
     timeout: 20000,
     retries: 1,
   })
@@ -146,10 +159,12 @@ export function sendEmailOtp(email) {
 }
 
 /** 邮箱验证码：验证并登录（首次自动注册） */
-export function verifyEmailOtp(email, code) {
+export function verifyEmailOtp(email, code, guestToken) {
+  const data = { email, code }
+  if (guestToken) data.guestToken = guestToken
   return request('/auth/email/verify', {
     method: 'POST',
-    data: { email, code },
+    data,
   })
 }
 

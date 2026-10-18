@@ -27,13 +27,24 @@
         submit-text="保存并进入"
         @saved="onProfileSaved"
       />
+      <!-- #endif -->
 
-      <template v-else>
-        <text class="panel-title">微信登录</text>
-        <text class="panel-desc">登录后可同步学习进度。也可先不登录，直接体验看图识词、听写与易混词。</text>
+      <!-- #ifdef MP-WEIXIN -->
+      <template v-if="wechatStep !== 'profile' && authMethod === 'wechat'">
+        <text class="panel-title">登录账号</text>
+        <text class="panel-desc">网页注册的邮箱/手机号请用账号密码登录。微信登录是另一套账号，进度不通用。</text>
         <view v-if="error" class="error-msg">{{ error }}</view>
-        <AppButton block :loading="loading" :disabled="!legalAgreed" @click="handleWechatLogin">
+        <AppButton block :loading="loading" @click="handleWechatLogin">
           微信一键登录
+        </AppButton>
+        <AppButton
+          v-if="passwordAuthEnabled"
+          block
+          variant="outline"
+          class="skip-login"
+          @click="authMethod = 'password'"
+        >
+          邮箱 / 手机号登录
         </AppButton>
         <AppButton block variant="outline" class="skip-login" @click="goHome">
           暂不登录，先体验功能
@@ -41,8 +52,7 @@
       </template>
       <!-- #endif -->
 
-      <!-- #ifndef MP-WEIXIN -->
-      <template v-if="passwordAuthEnabled && h5Method === 'password'">
+      <template v-else-if="wechatStep !== 'profile' && passwordAuthEnabled && authMethod === 'password'">
         <view class="mode-tabs">
           <view
             class="mode-tab"
@@ -142,7 +152,7 @@
         <AppButton
           block
           :loading="loading"
-          :disabled="!apiOnline || !legalAgreed || !account.trim() || !password"
+          :disabled="!apiOnline || !account.trim() || !password"
           @click="handlePasswordSubmit"
         >
           {{ authMode === 'login' ? '登录并进入 →' : '注册并开始 →' }}
@@ -154,12 +164,22 @@
           <text class="switch-link">{{ authMode === 'login' ? '去注册' : '去登录' }}</text>
         </view>
 
-        <view v-if="emailAuthEnabled" class="switch-hint" @click="h5Method = 'otp'">
+        <view v-if="emailAuthEnabled" class="switch-hint" @click="authMethod = 'otp'">
           <text class="switch-link">改用邮箱验证码登录</text>
         </view>
+        <!-- #ifdef MP-WEIXIN -->
+        <view class="switch-hint" @click="authMethod = 'wechat'">
+          <text class="switch-link">改用微信登录</text>
+        </view>
+        <!-- #endif -->
+        <!-- #ifndef MP-WEIXIN -->
+        <view class="switch-hint" @click="goHome">
+          <text class="switch-link">暂不登录，先体验</text>
+        </view>
+        <!-- #endif -->
       </template>
 
-      <template v-else-if="emailAuthEnabled && h5Method === 'otp'">
+      <template v-else-if="wechatStep !== 'profile' && emailAuthEnabled && authMethod === 'otp'">
         <template v-if="step === 'email'">
           <text class="panel-title">邮箱验证码登录</text>
           <text class="panel-desc">输入邮箱获取验证码，首次登录将自动创建账号。</text>
@@ -190,13 +210,13 @@
           <AppButton
             block
             :loading="loading"
-            :disabled="!apiOnline || !legalAgreed || !email.trim()"
+            :disabled="!apiOnline || !email.trim()"
             @click="handleSendCode"
           >
             发送验证码
           </AppButton>
 
-          <view v-if="passwordAuthEnabled" class="switch-hint" @click="h5Method = 'password'">
+          <view v-if="passwordAuthEnabled" class="switch-hint" @click="authMethod = 'password'">
             <text class="switch-link">改用账号密码登录</text>
           </view>
         </template>
@@ -230,7 +250,7 @@
           <AppButton
             block
             :loading="loading"
-            :disabled="!apiOnline || !legalAgreed || otpCode.trim().length < 6"
+            :disabled="!apiOnline || otpCode.trim().length < 6"
             @click="handleVerifyCode"
           >
             确认登录
@@ -242,12 +262,11 @@
         </template>
       </template>
 
-      <template v-else>
+      <template v-else-if="wechatStep !== 'profile'">
         <text class="panel-title">登录暂不可用</text>
         <text class="panel-desc">服务未就绪，请稍后重试或联系管理员。</text>
         <view v-if="error" class="error-msg">{{ error }}</view>
       </template>
-      <!-- #endif -->
 
       <view v-if="wechatStep !== 'profile'" class="legal" @click="toggleLegalAgree">
         <view class="legal-check" :class="{ on: legalAgreed }">
@@ -289,7 +308,10 @@ const email = ref('')
 const otpCode = ref('')
 const step = ref('email')
 const authMode = ref('login')
-const h5Method = ref('password')
+const authMethod = ref('password')
+// #ifdef MP-WEIXIN
+authMethod.value = 'wechat'
+// #endif
 const account = ref('')
 const bindEmail = ref('')
 const password = ref('')
@@ -352,10 +374,11 @@ async function probeApiInBackground() {
   const online = await checkApiOnline()
   apiOnline.value = online
   checkedOnline.value = true
+  if (authMethod.value === 'wechat') return
   if (passwordAuthEnabled.value) {
-    h5Method.value = 'password'
+    authMethod.value = 'password'
   } else if (emailAuthEnabled.value) {
-    h5Method.value = 'otp'
+    authMethod.value = 'otp'
   }
 }
 

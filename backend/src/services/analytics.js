@@ -13,17 +13,41 @@ export async function getPilotReport(db) {
   const weekAgo = daysAgo(7);
   const monthAgo = daysAgo(30);
 
-  const usersTotal = (await db.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
+  // 游客（体验_ / demo_体验_）不计入正式用户统计，避免刷爆人数
+  const usersTotal = (await db.prepare(`
+    SELECT COUNT(*) AS c FROM users
+    WHERE NOT (openid LIKE 'demo_体验_%' OR nickname LIKE '体验_%')
+  `).get()).c;
+  const guestUsers = (await db.prepare(`
+    SELECT COUNT(*) AS c FROM users
+    WHERE openid LIKE 'demo_体验_%' OR nickname LIKE '体验_%'
+  `).get()).c;
   const wechatUsers = (await db.prepare(`
-    SELECT COUNT(*) AS c FROM users WHERE openid IS NOT NULL AND openid != ''
+    SELECT COUNT(*) AS c FROM users
+    WHERE NOT (openid LIKE 'demo_体验_%' OR nickname LIKE '体验_%')
+      AND openid IS NOT NULL AND openid != ''
+      AND openid NOT LIKE 'demo_%'
+      AND openid NOT LIKE 'acct_%'
+      AND openid NOT LIKE 'email_%'
+  `).get()).c;
+  const passwordUsers = (await db.prepare(`
+    SELECT COUNT(*) AS c FROM users
+    WHERE NOT (openid LIKE 'demo_体验_%' OR nickname LIKE '体验_%')
+      AND (auth_type = 'password' OR openid LIKE 'acct_%')
   `).get()).c;
   const active7d = (await db.prepare(`
-    SELECT COUNT(DISTINCT user_id) AS c FROM daily_sessions
-    WHERE session_date >= ?
+    SELECT COUNT(DISTINCT ds.user_id) AS c
+    FROM daily_sessions ds
+    JOIN users u ON u.id = ds.user_id
+    WHERE ds.session_date >= ?
+      AND NOT (u.openid LIKE 'demo_体验_%' OR u.nickname LIKE '体验_%')
   `).get(weekAgo)).c;
   const active30d = (await db.prepare(`
-    SELECT COUNT(DISTINCT user_id) AS c FROM daily_sessions
-    WHERE session_date >= ?
+    SELECT COUNT(DISTINCT ds.user_id) AS c
+    FROM daily_sessions ds
+    JOIN users u ON u.id = ds.user_id
+    WHERE ds.session_date >= ?
+      AND NOT (u.openid LIKE 'demo_体验_%' OR u.nickname LIKE '体验_%')
   `).get(monthAgo)).c;
 
   const sessionAgg = await db.prepare(`
@@ -125,12 +149,15 @@ export async function getPilotReport(db) {
     users: {
       total: usersTotal,
       wechat: wechatUsers,
-      demo: usersTotal - wechatUsers,
+      password: passwordUsers,
+      guestsExcluded: guestUsers,
+      demo: Math.max(usersTotal - wechatUsers - passwordUsers, 0),
       activeLast7Days: active7d,
       activeLast30Days: active30d,
       pilotTarget: 30,
       pilotProgress: `${active30d}/30`,
-      byExperimentArm: armUsers
+      byExperimentArm: armUsers,
+      note: 'total/wechat/password 不含游客体验账号；guestsExcluded 为已排除的游客数'
     },
     learning: {
       sessions: sessionAgg.sessions,

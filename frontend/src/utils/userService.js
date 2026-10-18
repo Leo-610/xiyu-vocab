@@ -58,9 +58,12 @@ export function enrichWord(word) {
   return attachEmoji(word)
 }
 
+let healthFailStreak = 0
+
 function markReachable() {
   apiOnline = true
   lastReachableAt = Date.now()
+  healthFailStreak = 0
 }
 
 function bumpAuthGeneration() {
@@ -85,9 +88,13 @@ export async function checkApiOnline() {
       demoLogin: health?.auth?.demoLogin !== false,
     }
   } catch {
-    apiOnline = false
+    // 连续失败才标 offline，避免冷启动/偶发超时误伤
+    healthFailStreak += 1
+    if (healthFailStreak >= 2) {
+      apiOnline = false
+    }
   }
-  return apiOnline
+  return apiOnline === true
 }
 
 export function isApiOnline() {

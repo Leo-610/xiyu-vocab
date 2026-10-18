@@ -9,6 +9,7 @@
         <view class="done-badge">🎉</view>
         <text class="done-title">¡Muy bien!</text>
         <text class="done-sub">{{ doneSubtitle }}</text>
+        <text v-if="!isExamMode" class="done-hint">今日看图识词配额已完成，仍可继续听写或考试词包加练</text>
         <view class="done-stats">
           <view class="done-stat">
             <text class="ds-num">{{ sessionStats.total }}</text>
@@ -23,7 +24,9 @@
             <text class="ds-label">错误</text>
           </view>
         </view>
-        <AppButton block @click="goHome">返回首页</AppButton>
+        <AppButton v-if="!isExamMode" block @click="goDictation">继续听写练习 →</AppButton>
+        <AppButton v-if="!isExamMode" block variant="outline" class="mt-btn" @click="goExamExtra">专四词包加练</AppButton>
+        <AppButton block :variant="isExamMode ? 'primary' : 'outline'" class="mt-btn" @click="goHome">返回首页</AppButton>
         <AppButton block variant="outline" class="mt-btn" @click="goReview">查看错题本</AppButton>
       </AppCard>
     </view>
@@ -326,6 +329,19 @@ function goHome() {
 function goReview() {
   uni.switchTab({ url: '/pages/review/review' })
 }
+
+function goDictation() {
+  uni.navigateTo({ url: '/pages/dictation/dictation' })
+}
+
+function goExamExtra() {
+  uni.setStorageSync('exam_pack', 'tem4')
+  examPackId.value = 'tem4'
+  finished.value = false
+  pack.value = []
+  currentIndex.value = 0
+  initPack()
+}
 </script>
 
 <style lang="scss" scoped>
@@ -586,7 +602,15 @@ function goReview() {
   font-size: 28rpx;
   color: $text-secondary;
   display: block;
-  margin-bottom: 32rpx;
+  margin-bottom: 12rpx;
+}
+
+.done-hint {
+  font-size: 24rpx;
+  color: $text-muted;
+  display: block;
+  margin-bottom: 28rpx;
+  line-height: 1.45;
 }
 
 .done-stats {

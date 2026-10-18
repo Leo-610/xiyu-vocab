@@ -381,6 +381,105 @@ function isGuestNickname(name) {
   return name === '演示用户' || String(name).startsWith('体验_')
 }
 
+/** 设备游客：openid 形如 demo_体验_xxx，或昵称以 体验_ 开头 */
+export function isGuestUser(user) {
+  if (!user) return false
+  const openid = String(user.openid || '')
+  const nickname = String(user.nickname || '')
+  return openid.startsWith('demo_体验_') || nickname.startsWith('体验_')
+}
+
+/**
+ * 将游客进度合并到正式账号，然后删除游客行（避免刷爆统计）。
+ * 合并失败不抛错：正式登录仍应成功。
+ */
+export async function mergeGuestProgressIntoUser(guestUserId, targetUserId) {
+  if (!guestUserId || !targetUserId || guestUserId === targetUserId) return { merged: false }
+
+  const guest = await db.prepare('SELECT * FROM users WHERE id = ?').get(guestUserId)
+  const target = await db.prepare('SELECT * FROM users WHERE id = ?').get(targetUserId)
+  if (!guest || !target || !isGuestUser(guest) || isGuestUser(target)) {
+    return { merged: false }
+  }
+
+  // 进度：保留更强状态，错次取较大值
+  await db.prepare(`
+    INSERT INTO user_word_progress (
+      user_id, word_id, status, ease_factor, interval_days, next_review, wrong_count, last_review
+    )
+    SELECT ?, word_id, status, ease_factor, interval_days, next_review, wrong_count, last_review
+    FROM user_word_progress WHERE user_id = ?
+    ON CONFLICT(user_id, word_id) DO UPDATE SET
+      status = CASE
+        WHEN user_word_progress.status = 'mastered' OR excluded.status = 'mastered' THEN 'mastered'
+        WHEN user_word_progress.status = 'learning' OR excluded.status = 'learning' THEN 'learning'
+        ELSE excluded.status
+      END,
+      wrong_count = MAX(user_word_progress.wrong_count, excluded.wrong_count),
+      ease_factor = MIN(user_word_progress.ease_factor, excluded.ease_factor),
+      interval_days = MAX(user_word_progress.interval_days, excluded.interval_days),
+      next_review = CASE
+        WHEN user_word_progress.next_review IS NULL THEN excluded.next_review
+        WHEN excluded.next_review IS NULL THEN user_word_progress.next_review
+        WHEN excluded.next_review < user_word_progress.next_review THEN excluded.next_review
+        ELSE user_word_progress.next_review
+      END,
+      last_review = CASE
+        WHEN excluded.last_review IS NULL THEN user_word_progress.last_review
+        WHEN user_word_progress.last_review IS NULL THEN excluded.last_review
+        WHEN excluded.last_review > user_word_progress.last_review THEN excluded.last_review
+        ELSE user_word_progress.last_review
+      END
+  `).run(targetUserId, guestUserId)
+
+  await db.prepare(`
+    INSERT INTO mistake_book (user_id, word_id, wrong_at, resolved)
+    SELECT ?, word_id, wrong_at, resolved FROM mistake_book WHERE user_id = ?
+  `).run(targetUserId, guestUserId)
+
+  await db.prepare(`
+    INSERT INTO daily_sessions (
+      user_id, session_date, new_count, review_count, correct_count, wrong_count, finished
+    )
+    SELECT ?, session_date, new_count, review_count, correct_count, wrong_count, finished
+    FROM daily_sessions WHERE user_id = ?
+    ON CONFLICT(user_id, session_date) DO UPDATE SET
+      new_count = daily_sessions.new_count + excluded.new_count,
+      review_count = daily_sessions.review_count + excluded.review_count,
+      correct_count = daily_sessions.correct_count + excluded.correct_count,
+      wrong_count = daily_sessions.wrong_count + excluded.wrong_count,
+      finished = CASE WHEN daily_sessions.finished = 1 OR excluded.finished = 1 THEN 1 ELSE 0 END
+  `).run(targetUserId, guestUserId)
+
+  await db.prepare(`
+    INSERT INTO checkin_log (user_id, checkin_date, words_done)
+    SELECT ?, checkin_date, words_done FROM checkin_log WHERE user_id = ?
+    ON CONFLICT(user_id, checkin_date) DO UPDATE SET
+      words_done = MAX(checkin_log.words_done, excluded.words_done)
+  `).run(targetUserId, guestUserId)
+
+  await db.prepare(`
+    UPDATE study_events SET user_id = ? WHERE user_id = ?
+  `).run(targetUserId, guestUserId)
+
+  // 保留较长连续打卡
+  if ((guest.streak_days || 0) > (target.streak_days || 0)) {
+    await db.prepare(`
+      UPDATE users SET streak_days = ?, last_checkin = COALESCE(?, last_checkin) WHERE id = ?
+    `).run(guest.streak_days, guest.last_checkin, targetUserId)
+  }
+
+  await db.prepare('DELETE FROM users WHERE id = ?').run(guestUserId)
+  return { merged: true, from: guestUserId, to: targetUserId }
+}
+
+export async function resolveGuestUserFromToken(guestToken) {
+  if (!guestToken) return null
+  const guest = await db.prepare('SELECT * FROM users WHERE session_token = ?').get(guestToken)
+  if (!guest || !isGuestUser(guest)) return null
+  return guest
+}
+
 /** @deprecated 演示登录：仅昵称（须已注册） */
 export async function loginUser(nickname = '演示用户') {
   const name = sanitizeNickname(nickname);
@@ -446,27 +545,36 @@ function demoOpenid(nickname) {
   return `demo_${nickname}`;
 }
 
-/** 微信 openid 登录：已存在则刷新 token，否则注册 */
-export async function loginWechatUser(openid, nickname = '微信用户', unionid = null) {
+/** 微信 openid 登录：已存在则刷新 token，否则注册；可选合并游客进度 */
+export async function loginWechatUser(openid, nickname = '微信用户', unionid = null, guestToken = null) {
   const existing = await db.prepare('SELECT * FROM users WHERE openid = ?').get(openid);
+  let user;
 
   if (existing) {
     const nextNickname = nickname && nickname !== '微信用户' ? nickname : existing.nickname;
-    return await issueSession(existing.id, {
+    user = await issueSession(existing.id, {
       nickname: nextNickname || '微信用户',
       unionid: unionid || existing.unionid
     });
+  } else {
+    const token = createSessionToken();
+    const expires = sessionExpiresAt();
+    const loginAt = nowIso();
+    const result = await db.prepare(`
+      INSERT INTO users (openid, unionid, nickname, session_token, streak_days, auth_type, last_login_at, token_expires_at)
+      VALUES (?, ?, ?, ?, 0, 'wechat', ?, ?)
+    `).run(openid, unionid, nickname || '微信用户', token, loginAt, expires);
+    user = await finalizeNewUser(Number(result.lastInsertRowid));
   }
 
-  const token = createSessionToken();
-  const expires = sessionExpiresAt();
-  const loginAt = nowIso();
-  const result = await db.prepare(`
-    INSERT INTO users (openid, unionid, nickname, session_token, streak_days, auth_type, last_login_at, token_expires_at)
-    VALUES (?, ?, ?, ?, 0, 'wechat', ?, ?)
-  `).run(openid, unionid, nickname || '微信用户', token, loginAt, expires);
+  try {
+    const guest = await resolveGuestUserFromToken(guestToken);
+    if (guest) await mergeGuestProgressIntoUser(guest.id, user.id);
+  } catch (err) {
+    console.warn('[auth] merge guest→wechat failed:', err.message);
+  }
 
-  return await finalizeNewUser(Number(result.lastInsertRowid));
+  return await db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
 }
 
 export async function logoutUser(userId) {
@@ -486,23 +594,36 @@ export async function loginEmailUser(email) {
     SELECT * FROM users WHERE email = ? OR openid = ?
   `).get(normalized, openid);
 
+  let user;
   if (existing) {
     if (!existing.email) {
       await db.prepare('UPDATE users SET email = ? WHERE id = ?').run(normalized, existing.id);
     }
-    return await issueSession(existing.id);
+    user = await issueSession(existing.id);
+  } else {
+    const nickname = normalized.split('@')[0].slice(0, 32) || '学习者';
+    const token = createSessionToken();
+    const expires = sessionExpiresAt();
+    const loginAt = nowIso();
+    const result = await db.prepare(`
+      INSERT INTO users (openid, email, nickname, session_token, streak_days, auth_type, last_login_at, token_expires_at)
+      VALUES (?, ?, ?, ?, 0, 'email', ?, ?)
+    `).run(openid, normalized, nickname, token, loginAt, expires);
+    user = await finalizeNewUser(Number(result.lastInsertRowid));
   }
+  return user;
+}
 
-  const nickname = normalized.split('@')[0].slice(0, 32) || '学习者';
-  const token = createSessionToken();
-  const expires = sessionExpiresAt();
-  const loginAt = nowIso();
-  const result = await db.prepare(`
-    INSERT INTO users (openid, email, nickname, session_token, streak_days, auth_type, last_login_at, token_expires_at)
-    VALUES (?, ?, ?, ?, 0, 'email', ?, ?)
-  `).run(openid, normalized, nickname, token, loginAt, expires);
-
-  return await finalizeNewUser(Number(result.lastInsertRowid));
+/** 正式登录后可选合并游客进度 */
+export async function attachGuestProgress(user, guestToken) {
+  if (!user?.id || !guestToken) return user;
+  try {
+    const guest = await resolveGuestUserFromToken(guestToken);
+    if (guest) await mergeGuestProgressIntoUser(guest.id, user.id);
+  } catch (err) {
+    console.warn('[auth] merge guest failed:', err.message);
+  }
+  return await db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);
 }
 
 export function formatAuthMeta(user) {

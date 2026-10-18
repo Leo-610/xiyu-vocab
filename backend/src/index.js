@@ -7,7 +7,7 @@ import db, { getDbPath, getDbBackend, ensureSchema } from './db.js';
 import { getConfig } from './config.js';
 import { runMigrations } from './migrate.js';
 import { seedWords, wordCount } from './seed.js';
-import { authMiddleware, loginUser, registerUser, loginPasswordUser, registerPasswordUser, loginWechatUser, loginEmailUser, logoutUser, formatAuthMeta } from './middleware/auth.js';
+import { authMiddleware, loginUser, registerUser, loginPasswordUser, registerPasswordUser, loginWechatUser, loginEmailUser, logoutUser, formatAuthMeta, attachGuestProgress } from './middleware/auth.js';
 import { code2Session } from './services/wechat.js';
 import { sendEmailLoginOtp, verifyEmailLoginOtp, isValidEmail, normalizeEmail } from './services/emailOtp.js';
 import { checkRateLimit, getClientIp } from './services/rateLimit.js';
@@ -212,11 +212,12 @@ async function handleApi(req, res, pathname, query) {
     // 正式：邮箱/手机号（或旧昵称）+ 密码
     if (password !== undefined && password !== null && String(password).length > 0) {
       try {
-        const user = await loginPasswordUser({
+        let user = await loginPasswordUser({
           account: body.account || null,
           nickname: body.nickname || null,
           password
         });
+        user = await attachGuestProgress(user, body.guestToken);
         return sendJson(res, 200, {
           token: user.session_token,
           user: await buildUserState(db, user.id)
@@ -334,7 +335,8 @@ async function handleApi(req, res, pathname, query) {
       return sendJson(res, 401, { error: '验证码错误或已过期', code: 'INVALID_OTP' });
     }
     try {
-      const user = await loginEmailUser(email);
+      let user = await loginEmailUser(email);
+      user = await attachGuestProgress(user, body.guestToken);
       return sendJson(res, 200, {
         token: user.session_token,
         user: await buildUserState(db, user.id),
@@ -352,7 +354,12 @@ async function handleApi(req, res, pathname, query) {
     }
     try {
       const { openid, unionid } = await code2Session(body.code);
-      const user = await loginWechatUser(openid, body.nickname || '微信用户', unionid);
+      const user = await loginWechatUser(
+        openid,
+        body.nickname || '微信用户',
+        unionid,
+        body.guestToken || null
+      );
       return sendJson(res, 200, {
         token: user.session_token,
         user: await buildUserState(db, user.id),
