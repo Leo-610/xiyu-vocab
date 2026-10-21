@@ -154,6 +154,15 @@ const shakeOptions = ref(false)
 const sessionStats = ref({ total: 0, correct: 0, wrong: 0 })
 const showIpa = ref(true)
 const ragEnabled = ref(false)
+/** 与首页 exam_pack_rev 对齐；每次点击冲刺包都会递增 */
+const lastPackRev = ref(-1)
+let loadGen = 0
+
+function examTitleFor(packId) {
+  if (packId === 'tem8') return '专八高频词包'
+  if (packId === 'tem4') return '专四冲刺词包'
+  return '今日学习'
+}
 
 const wrongChoiceText = computed(() => {
   if (lastCorrect.value || !selectedOpt.value) return ''
@@ -174,23 +183,47 @@ onLoad((options) => {
   if (options?.exam) {
     examPackId.value = options.exam
     uni.setStorageSync('exam_pack', options.exam)
+    uni.setStorageSync('exam_pack_rev', Date.now())
   }
 })
 
+function resetSessionUi() {
+  pack.value = []
+  currentIndex.value = 0
+  shuffledOptions.value = []
+  answered.value = false
+  lastCorrect.value = false
+  selectedOpt.value = null
+  finished.value = false
+  emptyMessage.value = '暂无待学单词'
+  imageError.value = false
+  examPackInfo.value = null
+  sessionStats.value = { total: 0, correct: 0, wrong: 0 }
+}
+
 onShow(async () => {
-  if (pack.value.length || finished.value) return
+  // switchTab 进学习页时组件不销毁；首页每次点击都会更新 exam_pack + exam_pack_rev
+  const wantedPack = String(uni.getStorageSync('exam_pack') || '')
+  const wantedRev = Number(uni.getStorageSync('exam_pack_rev') || 0)
+  const needReload = wantedPack !== examPackId.value || wantedRev !== lastPackRev.value
+
+  if (!needReload && (pack.value.length || finished.value)) {
+    return
+  }
+
+  examPackId.value = wantedPack
+  lastPackRev.value = wantedRev
+  resetSessionUi()
+  uni.setNavigationBarTitle({ title: examTitleFor(wantedPack) })
+
+  const gen = ++loadGen
   loading.value = true
   try {
     const state = await ensureAuth()
-    if (!examPackId.value) {
-      examPackId.value = uni.getStorageSync('exam_pack') || ''
-    }
+    if (gen !== loadGen) return
     showIpa.value = state.settings?.showIpa !== false
     ragEnabled.value = Boolean(state.ragEnabled)
-    if (isExamMode.value) {
-      const title = examPackId.value === 'tem8' ? '专八高频词包' : '专四冲刺词包'
-      uni.setNavigationBarTitle({ title })
-      sessionStats.value = { total: 0, correct: 0, wrong: 0 }
+    if (wantedPack) {
       await initPack()
       return
     }
@@ -201,9 +234,10 @@ onShow(async () => {
     }
     await initPack()
   } catch (e) {
+    if (gen !== loadGen) return
     emptyMessage.value = e.message || '加载失败'
   } finally {
-    loading.value = false
+    if (gen === loadGen) loading.value = false
   }
 })
 
@@ -322,7 +356,9 @@ async function nextWord() {
 
 function goHome() {
   uni.removeStorageSync('exam_pack')
+  uni.setStorageSync('exam_pack_rev', Date.now())
   examPackId.value = ''
+  lastPackRev.value = Number(uni.getStorageSync('exam_pack_rev') || 0)
   uni.switchTab({ url: '/pages/index/index' })
 }
 
@@ -336,10 +372,11 @@ function goDictation() {
 
 function goExamExtra() {
   uni.setStorageSync('exam_pack', 'tem4')
+  uni.setStorageSync('exam_pack_rev', Date.now())
   examPackId.value = 'tem4'
-  finished.value = false
-  pack.value = []
-  currentIndex.value = 0
+  lastPackRev.value = Number(uni.getStorageSync('exam_pack_rev') || 0)
+  resetSessionUi()
+  uni.setNavigationBarTitle({ title: examTitleFor('tem4') })
   initPack()
 }
 </script>

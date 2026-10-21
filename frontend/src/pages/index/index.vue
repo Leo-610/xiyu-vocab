@@ -296,6 +296,7 @@ async function setLevel(lv) {
 
 function startLearn() {
   uni.removeStorageSync('exam_pack')
+  uni.setStorageSync('exam_pack_rev', Date.now())
   uni.switchTab({ url: '/pages/learn/learn' })
 }
 
@@ -321,7 +322,9 @@ function startExam(packId) {
     uni.showToast({ title: '请先连接后端', icon: 'none' })
     return
   }
+  // tab 页不销毁；每次点击都写新 revision，学习页据此强制换包
   uni.setStorageSync('exam_pack', packId)
+  uni.setStorageSync('exam_pack_rev', Date.now())
   uni.switchTab({ url: '/pages/learn/learn' })
 }
 
