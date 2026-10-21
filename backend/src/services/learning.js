@@ -3,6 +3,9 @@ import { resolveAuthType } from '../middleware/auth.js';
 import { checkSpelling } from '../utils/spanish.js';
 import { logStudyEvent, parseUserSettings, getStudySummary } from './studyEvents.js';
 import { getExperimentArm, ragFeaturesEnabled } from './experiment.js';
+import { todayStr, shiftDateStr } from '../utils/dates.js';
+
+export { todayStr, shiftDateStr } from '../utils/dates.js';
 
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
@@ -11,8 +14,37 @@ export function levelMaxIndex(level) {
   return idx >= 0 ? idx : LEVEL_ORDER.length - 1;
 }
 
-export function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+/**
+ * 记当天打卡并维护连续天数。
+ * wordsDone：直接写入当日词数；addWords：在已有基础上累加（至少记 1）。
+ */
+export async function touchCheckin(db, userId, { wordsDone = null, addWords = 0 } = {}) {
+  const user = await db.prepare('SELECT * FROM users WHERE id = ?').get(userId)
+  if (!user) return
+
+  const today = todayStr()
+  let done = wordsDone
+  if (done == null) {
+    const existing = await db.prepare(
+      'SELECT words_done FROM checkin_log WHERE user_id = ? AND checkin_date = ?'
+    ).get(userId, today)
+    done = Math.max((existing?.words_done || 0) + Math.max(Number(addWords) || 0, 0), 1)
+  }
+
+  await db.prepare(`
+    INSERT INTO checkin_log (user_id, checkin_date, words_done)
+    VALUES (?, ?, ?)
+    ON CONFLICT(user_id, checkin_date) DO UPDATE SET
+      words_done = MAX(checkin_log.words_done, excluded.words_done)
+  `).run(userId, today, done)
+
+  if (user.last_checkin !== today) {
+    const yesterday = shiftDateStr(today, -1)
+    const streak = user.last_checkin === yesterday ? (user.streak_days || 0) + 1 : 1
+    await db.prepare(`
+      UPDATE users SET streak_days = ?, last_checkin = ? WHERE id = ?
+    `).run(streak, today, userId)
+  }
 }
 
 export async function getOrCreateDailySession(db, userId) {
@@ -313,6 +345,8 @@ export async function recordDictationAnswer(db, userId, wordId, isCorrect, study
     isCorrect,
     studyMode
   });
+  // 专四/专八/听写不走 finishSession，但仍应记打卡
+  await touchCheckin(db, userId, { addWords: 1 });
   const word = await db.prepare('SELECT * FROM words WHERE id = ?').get(wordId);
   const options = await db.prepare(
     'SELECT option_text, is_correct FROM word_options WHERE word_id = ?'
@@ -380,6 +414,8 @@ export async function recordAnswer(db, userId, wordId, isCorrect, studyMode = 'n
   studyMode === 'exam' ? 'exam' :
   studyMode === 'review' || studyMode === 'mistake' ? 'review' : 'answer';
   await logStudyEvent(db, userId, { wordId, eventType, isCorrect, studyMode });
+  // 答一题即记当天打卡，不必等「完成今日」；连续多天按北京时间累计
+  await touchCheckin(db, userId, { addWords: 1 });
 
   const word = await db.prepare('SELECT * FROM words WHERE id = ?').get(wordId);
   const options = await db.prepare(
@@ -394,28 +430,12 @@ export async function recordAnswer(db, userId, wordId, isCorrect, studyMode = 'n
 }
 
 export async function finishSession(db, userId) {
-  const user = await db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
-  const today = todayStr();
   const session = await getOrCreateDailySession(db, userId);
 
   await db.prepare('UPDATE daily_sessions SET finished = 1 WHERE id = ?').run(session.id);
 
   const wordsDone = session.new_count + session.review_count;
-  await db.prepare(`
-    INSERT INTO checkin_log (user_id, checkin_date, words_done)
-    VALUES (?, ?, ?)
-    ON CONFLICT(user_id, checkin_date) DO UPDATE SET words_done = excluded.words_done
-  `).run(userId, today, wordsDone);
-
-  if (user.last_checkin !== today) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yStr = yesterday.toISOString().slice(0, 10);
-    const streak = user.last_checkin === yStr ? user.streak_days + 1 : 1;
-    await db.prepare(`
-      UPDATE users SET streak_days = ?, last_checkin = ? WHERE id = ?
-    `).run(streak, today, userId);
-  }
+  await touchCheckin(db, userId, { wordsDone: Math.max(wordsDone, 1) });
 
   return await buildUserState(db, userId);
 }
@@ -429,11 +449,9 @@ export async function getCheckinHistory(db, userId, days = 84) {
 
   const map = Object.fromEntries(rows.map((r) => [r.date, r.count]));
   const result = [];
-  const d = new Date();
+  const today = todayStr();
   for (let i = days - 1; i >= 0; i--) {
-    const dt = new Date(d);
-    dt.setDate(dt.getDate() - i);
-    const key = dt.toISOString().slice(0, 10);
+    const key = shiftDateStr(today, -i);
     result.push({ date: key, count: map[key] || 0 });
   }
   return result;

@@ -40,9 +40,8 @@ export async function logStudyEvent(db, userId, {
 }
 
 export async function getStudySummary(db, userId, days = 30) {
-  const since = new Date();
-  since.setDate(since.getDate() - days);
-  const sinceStr = since.toISOString().slice(0, 10);
+  const { todayStr, shiftDateStr } = await import('./learning.js');
+  const sinceStr = shiftDateStr(todayStr(), -days);
 
   const agg = await db.prepare(`
     SELECT

@@ -1,10 +1,8 @@
 import { getContentStatus } from './content.js';
-import { todayStr } from './learning.js';
+import { todayStr, shiftDateStr } from '../utils/dates.js';
 
 function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
+  return shiftDateStr(todayStr(), -n);
 }
 
 /** 院内试用 / 大创中期数据汇总（管理后台导出） */
