@@ -52,7 +52,8 @@
       </template>
       <!-- #endif -->
 
-      <template v-else-if="wechatStep !== 'profile' && passwordAuthEnabled && authMethod === 'password'">
+      <!-- 勿用 v-else-if 跨 #ifdef：H5 构建会剥掉微信分支，导致悬空 else-if 编译崩溃 -->
+      <template v-if="wechatStep !== 'profile' && passwordAuthEnabled && authMethod === 'password'">
         <view class="mode-tabs">
           <view
             class="mode-tab"
@@ -179,7 +180,7 @@
         <!-- #endif -->
       </template>
 
-      <template v-else-if="wechatStep !== 'profile' && emailAuthEnabled && authMethod === 'otp'">
+      <template v-if="wechatStep !== 'profile' && emailAuthEnabled && authMethod === 'otp'">
         <template v-if="step === 'email'">
           <text class="panel-title">邮箱验证码登录</text>
           <text class="panel-desc">输入邮箱获取验证码，首次登录将自动创建账号。</text>
@@ -262,7 +263,7 @@
         </template>
       </template>
 
-      <template v-else-if="wechatStep !== 'profile'">
+      <template v-if="wechatStep !== 'profile' && !passwordAuthEnabled && !emailAuthEnabled && authMethod !== 'wechat'">
         <text class="panel-title">登录暂不可用</text>
         <text class="panel-desc">服务未就绪，请稍后重试或联系管理员。</text>
         <view v-if="error" class="error-msg">{{ error }}</view>
