@@ -216,7 +216,14 @@ const state = ref({
 })
 
 const displayGreet = computed(() => '¡Hola!')
-const isGuest = computed(() => isGuestSession() || String(state.value.nickname || '').startsWith('体验_'))
+const isGuest = computed(() => {
+  // 以服务端下发的 authType 为准，避免 storage 游客标记与正式会话打架
+  const s = state.value || {}
+  if (s.isWechatUser || s.authType === 'wechat' || s.authType === 'password' || s.authType === 'email') {
+    return false
+  }
+  return isGuestSession() || String(s.nickname || '').startsWith('体验_')
+})
 
 const vocabSubtitle = computed(() => {
   const total = vocabTotal.value > 0 ? vocabTotal.value : '…'
@@ -281,8 +288,10 @@ async function refresh({ force = false, silent = false } = {}) {
 }
 
 onShow(() => {
+  const authChanged = appliedAuthGen !== getAuthGeneration()
   const warmed = Boolean(state.value.userId)
-  refresh({ silent: warmed, force: false }).catch(() => {})
+  // 从登录页回来时强制刷新，避免 45s TTL 仍展示游客态
+  refresh({ silent: warmed && !authChanged, force: authChanged }).catch(() => {})
 })
 
 async function setLevel(lv) {

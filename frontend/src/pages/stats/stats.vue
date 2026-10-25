@@ -177,7 +177,13 @@ const COLORS = { A1: '#2A9D8F', A2: '#43AA8B', B1: '#F4A261', B2: '#E76F51', C1:
 
 const loading = ref(true)
 const stats = ref({})
-const isGuest = computed(() => isGuestSession() || String(stats.value.nickname || '').startsWith('体验_'))
+const isGuest = computed(() => {
+  const s = stats.value || {}
+  if (s.isWechatUser || s.authType === 'wechat' || s.authType === 'password' || s.authType === 'email') {
+    return false
+  }
+  return isGuestSession() || String(s.nickname || '').startsWith('体验_')
+})
 const settings = reactive({
   soundEnabled: true,
   vibrationEnabled: true,

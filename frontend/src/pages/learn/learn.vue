@@ -69,8 +69,18 @@
             :conjugation-pending="currentWord.conjugationPending"
             :pos="currentWord.pos"
           />
-          <view v-if="currentWord.tags?.length" class="tags">
-            <text v-for="t in currentWord.tags.slice(0, 3)" :key="t" class="tag">{{ t }}</text>
+          <view v-if="displayTags.length" class="tags">
+            <text v-for="t in displayTags" :key="t" class="tag">{{ t }}</text>
+          </view>
+          <view v-if="currentWord.example_es" class="example-box">
+            <text class="example" user-select>
+              <text
+                v-for="(part, i) in exampleParts"
+                :key="i"
+                :class="{ 'example-hit': part.hit }"
+              >{{ part.text }}</text>
+            </text>
+            <text v-if="answered && currentWord.example_zh" class="example-zh" user-select>{{ currentWord.example_zh }}</text>
           </view>
         </view>
       </AppCard>
@@ -96,10 +106,6 @@
           <text class="fb-title">{{ lastCorrect ? '正确！' : '再想想' }}</text>
         </view>
         <text v-if="!lastCorrect" class="fb-answer" user-select>答案：{{ currentWord.meaning_zh }}</text>
-        <view v-if="currentWord.example_es" class="example-box">
-          <text class="example" user-select>{{ currentWord.example_es }}</text>
-          <text v-if="currentWord.example_zh" class="example-zh" user-select>{{ currentWord.example_zh }}</text>
-        </view>
         <CorpusExamples
           :word-id="currentWord.id"
           :enabled="ragEnabled"
@@ -176,6 +182,39 @@ const doneSubtitle = computed(() => {
 })
 
 const currentWord = computed(() => pack.value[currentIndex.value] || null)
+
+const exampleParts = computed(() => {
+  const sentence = currentWord.value?.example_es || ''
+  const lemma = String(currentWord.value?.lemma || '').trim()
+  if (!sentence) return []
+  if (!lemma) return [{ text: sentence, hit: false }]
+  const lower = sentence.toLowerCase()
+  const key = lemma.toLowerCase()
+  const parts = []
+  let i = 0
+  while (i < sentence.length) {
+    const at = lower.indexOf(key, i)
+    if (at < 0) {
+      parts.push({ text: sentence.slice(i), hit: false })
+      break
+    }
+    if (at > i) parts.push({ text: sentence.slice(i, at), hit: false })
+    parts.push({ text: sentence.slice(at, at + lemma.length), hit: true })
+    i = at + lemma.length
+  }
+  return parts
+})
+
+const displayTags = computed(() => {
+  const word = currentWord.value
+  const tags = Array.isArray(word?.tags) ? word.tags : []
+  const exams = []
+  if (tags.includes('专四')) exams.push('专四')
+  if (tags.includes('专八')) exams.push('专八')
+  const skip = new Set(['义项包', '考试路径', '专四', '专八', word?.level, word?.pos])
+  const rest = tags.filter((t) => t && !skip.has(t))
+  return [...exams, ...rest].slice(0, 3)
+})
 
 const imageSrc = computed(() => resolveMediaUrl(currentWord.value?.image_url))
 
@@ -600,14 +639,19 @@ function goExamExtra() {
   background: $bg-muted;
   border-radius: $radius-md;
   padding: 20rpx 24rpx;
-  margin-bottom: 24rpx;
+  margin: 20rpx 8rpx 0;
+  text-align: center;
 }
 
 .example {
   font-size: 28rpx;
   color: $text-primary;
-  font-style: italic;
+  line-height: 1.6;
   display: block;
+}
+
+.example-hit {
+  font-weight: 700;
 }
 
 .example-zh {

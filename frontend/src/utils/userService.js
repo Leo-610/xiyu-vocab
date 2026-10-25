@@ -108,15 +108,25 @@ export function isLoggedIn() {
 export function isGuestSession() {
   try {
     if (!api.getToken()) return true
-    return uni.getStorageSync(GUEST_FLAG_KEY) === true
+    const flag = uni.getStorageSync(GUEST_FLAG_KEY)
+    // 兼容部分机型把 boolean 存成字符串
+    return flag === true || flag === 'true' || flag === 1
   } catch {
     return true
   }
 }
 
 function setGuestFlag(isGuest) {
-  if (isGuest) uni.setStorageSync(GUEST_FLAG_KEY, true)
-  else uni.removeStorageSync(GUEST_FLAG_KEY)
+  try {
+    if (isGuest) {
+      uni.setStorageSync(GUEST_FLAG_KEY, true)
+    } else {
+      // 显式写 false，避免仅 remove 后个别环境仍读到旧 true
+      uni.setStorageSync(GUEST_FLAG_KEY, false)
+    }
+  } catch {
+    // ignore
+  }
 }
 
 function getOrCreateGuestId() {
@@ -165,7 +175,18 @@ function saveLastAccount(account) {
   }
 }
 
+function isFormalUserState(user) {
+  if (!user) return false
+  if (user.isWechatUser || ['wechat', 'password', 'email'].includes(user.authType)) return true
+  const nick = String(user.nickname || '')
+  return Boolean(nick) && !nick.startsWith('体验_') && nick !== '演示用户'
+}
+
 function applyAuthResponse(res, { guest = false } = {}) {
+  // 迟到的游客登录响应不得覆盖已成功的微信/账号登录（不依赖 guest flag，防竞态）
+  if (guest && isFormalUserState(cachedState)) {
+    return cachedState
+  }
   api.setToken(res.token)
   cachedState = res.user
   setGuestFlag(guest)
@@ -185,8 +206,13 @@ function applyAuthResponse(res, { guest = false } = {}) {
 }
 
 async function createGuestSession() {
+  const genAtStart = authGeneration
   const nick = `体验_${getOrCreateGuestId().slice(0, 12)}`
   const res = await performDemoLogin(nick)
+  // 微信登录等正式会话已完成后，丢弃迟到的游客建号结果
+  if (genAtStart !== authGeneration || isFormalUserState(cachedState)) {
+    return cachedState
+  }
   return applyAuthResponse(res, { guest: true })
 }
 
@@ -273,21 +299,31 @@ async function restoreLoggedInSession() {
 
 /** 静默游客会话，不跳转登录页（微信审核：先体验再自愿登录） */
 export async function ensureSession() {
-  if (cachedState && api.getToken()) {
-    return cachedState
-  }
   if (apiOnline === false) {
     if (cachedState) return cachedState
     throw new Error('OFFLINE')
   }
-  // 游客不要先打 /me：本地 token 失效时微信会打出 401，再走演示登录即可恢复
+
+  // 正式登录优先：勿用内存里过期的游客 cache 挡住微信账号
   if (api.getToken() && !isGuestSession()) {
+    if (isFormalUserState(cachedState)) {
+      return cachedState
+    }
     const state = await restoreLoggedInSession()
-    if (state) return state
+    if (state) {
+      cachedState = state
+      setGuestFlag(false)
+      bumpAuthGeneration()
+      return state
+    }
     if (api.getToken()) {
       if (cachedState) return cachedState
       throw new Error('网络错误，请稍后重试')
     }
+  }
+
+  if (cachedState && api.getToken() && isGuestSession()) {
+    return cachedState
   }
   return createGuestSession()
 }

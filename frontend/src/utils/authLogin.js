@@ -4,7 +4,8 @@ import { wxLogin } from './wechatAuth.js'
 function peekGuestToken() {
   try {
     const token = api.getToken()
-    const isGuest = uni.getStorageSync('auth_is_guest') === true
+    const flag = uni.getStorageSync('auth_is_guest')
+    const isGuest = flag === true || flag === 'true' || flag === 1
     return token && isGuest ? token : ''
   } catch {
     return ''

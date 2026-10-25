@@ -446,10 +446,17 @@ async function handleWechatLogin() {
       }
     }
     const state = await loginWithWechat()
-    goHome()
-    if (state?.needsProfile) {
-      uni.showToast({ title: '已登录，可稍后在统计页完善资料', icon: 'none' })
+    const ok = Boolean(state?.userId) && (
+      state.isWechatUser || state.authType === 'wechat' || !String(state.nickname || '').startsWith('体验_')
+    )
+    if (!ok) {
+      throw new Error('登录未完成，请重试')
     }
+    uni.showToast({
+      title: state?.needsProfile ? '已登录，可稍后完善资料' : '微信登录成功',
+      icon: 'success',
+    })
+    goHome()
   } catch (e) {
     const msg = e.message || '微信登录失败'
     error.value = /超时|timeout/i.test(msg) ? '登录超时，请再点一次重试' : msg
