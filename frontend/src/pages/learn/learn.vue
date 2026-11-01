@@ -80,7 +80,6 @@
                 :class="{ 'example-hit': part.hit }"
               >{{ part.text }}</text>
             </text>
-            <text v-if="answered && currentWord.example_zh" class="example-zh" user-select>{{ currentWord.example_zh }}</text>
           </view>
         </view>
       </AppCard>
@@ -106,6 +105,7 @@
           <text class="fb-title">{{ lastCorrect ? '正确！' : '再想想' }}</text>
         </view>
         <text v-if="!lastCorrect" class="fb-answer" user-select>答案：{{ currentWord.meaning_zh }}</text>
+        <text v-if="currentWord.example_zh" class="example-zh" user-select>{{ currentWord.example_zh }}</text>
         <CorpusExamples
           :word-id="currentWord.id"
           :enabled="ragEnabled"
@@ -659,6 +659,7 @@ function goExamExtra() {
   color: $text-muted;
   display: block;
   margin-top: 8rpx;
+  margin-bottom: 16rpx;
 }
 
 .done-card {

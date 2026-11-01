@@ -21,10 +21,12 @@
   images专业四级21.zip → senses_table_tem4 10.8.xlsx
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
   images专业八级2.zip → senses_table_tem8 10.18.xlsx (+~300 图)
+  images专业八级3.zip → senses_table_tem8 pack3.xlsx (+~457 图；zip 内误标 10.18)
 
 用法:
   python3 scripts/import_exam_packs_full.py
   python3 scripts/import_exam_packs_full.py --packs tem8_1018
+  python3 scripts/import_exam_packs_full.py --packs tem8_p3
   node scripts/reset-with-exams.mjs
 """
 
@@ -64,6 +66,7 @@ WECHAT_ROOT = Path(
     "Data/Documents/xwechat_files/wxid_56yn1iomktsr12_9b4c/msg/file"
 )
 WECHAT_DIRS = (
+    WECHAT_ROOT / "2026-11",
     WECHAT_ROOT / "2026-10",
     WECHAT_ROOT / "2026-09",
     WECHAT_ROOT / "2026-07",
@@ -103,6 +106,7 @@ ZIPS = [
     ("tem4_1008", _zip("images专业四级21.zip"), "专四"),
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
     ("tem8_1018", _zip("images专业八级2.zip"), "专八"),
+    ("tem8_p3", _zip("images专业八级3.zip"), "专八"),
 ]
 
 TEM4_ZIP_LABELS = (
@@ -127,6 +131,7 @@ TEM4_ZIP_LABELS = (
 TEM8_ZIP_LABELS = (
     "tem8",
     "tem8_1018",
+    "tem8_p3",
 )
 
 def _readable(path: Path) -> bool:
@@ -310,6 +315,9 @@ def extract_zips() -> dict[str, Path]:
                 low = name.lower()
                 bn = Path(name).name
                 if low.endswith((".xlsx", ".xls")):
+                    # 专八第 3 包 zip 内误复用 10.18 文件名，归档时改名避免覆盖第 2 包
+                    if label == "tem8_p3" and bn.lower().startswith("senses_table_tem8"):
+                        bn = "senses_table_tem8 pack3.xlsx"
                     (d / bn).write_bytes(data)
                     print(f"[ok] 抽出 Excel {label}/{bn}")
                 elif low.endswith((".png", ".jpg", ".jpeg", ".webp")):
