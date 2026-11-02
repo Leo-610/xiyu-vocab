@@ -22,11 +22,13 @@
   images专业八级1.zip → 59 图（词表用 senses_table_tem8_with_images.xlsx）
   images专业八级2.zip → senses_table_tem8 10.18.xlsx (+~300 图)
   images专业八级3.zip → senses_table_tem8 pack3.xlsx (+~457 图；zip 内误标 10.18)
+  images专业八级4.zip → senses_table_tem8 10.21.xlsx (+~441 图)
 
 用法:
   python3 scripts/import_exam_packs_full.py
   python3 scripts/import_exam_packs_full.py --packs tem8_1018
   python3 scripts/import_exam_packs_full.py --packs tem8_p3
+  python3 scripts/import_exam_packs_full.py --packs tem8_p4
   node scripts/reset-with-exams.mjs
 """
 
@@ -107,6 +109,7 @@ ZIPS = [
     ("tem8", _zip("images专业八级1(1).zip", "images专业八级1.zip"), "专八"),
     ("tem8_1018", _zip("images专业八级2.zip"), "专八"),
     ("tem8_p3", _zip("images专业八级3.zip"), "专八"),
+    ("tem8_p4", _zip("images专业八级4.zip"), "专八"),
 ]
 
 TEM4_ZIP_LABELS = (
@@ -132,6 +135,7 @@ TEM8_ZIP_LABELS = (
     "tem8",
     "tem8_1018",
     "tem8_p3",
+    "tem8_p4",
 )
 
 def _readable(path: Path) -> bool:
