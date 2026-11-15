@@ -23,12 +23,15 @@
   images专业八级2.zip → senses_table_tem8 10.18.xlsx (+~300 图)
   images专业八级3.zip → senses_table_tem8 pack3.xlsx (+~457 图；zip 内误标 10.18)
   images专业八级4.zip → senses_table_tem8 10.21.xlsx (+~441 图)
+  images专业八级6.zip → senses_table_tem8 11.10 pack6.xlsx (+~459 图)
+  images专业八级7.zip → senses_table_tem8 11.10 pack7.xlsx (+~200 图)
 
 用法:
   python3 scripts/import_exam_packs_full.py
   python3 scripts/import_exam_packs_full.py --packs tem8_1018
   python3 scripts/import_exam_packs_full.py --packs tem8_p3
   python3 scripts/import_exam_packs_full.py --packs tem8_p4
+  python3 scripts/import_exam_packs_full.py --packs tem8_p6,tem8_p7
   node scripts/reset-with-exams.mjs
 """
 
@@ -110,6 +113,8 @@ ZIPS = [
     ("tem8_1018", _zip("images专业八级2.zip"), "专八"),
     ("tem8_p3", _zip("images专业八级3.zip"), "专八"),
     ("tem8_p4", _zip("images专业八级4.zip"), "专八"),
+    ("tem8_p6", _zip("images专业八级6.zip"), "专八"),
+    ("tem8_p7", _zip("images专业八级7.zip"), "专八"),
 ]
 
 TEM4_ZIP_LABELS = (
@@ -136,6 +141,8 @@ TEM8_ZIP_LABELS = (
     "tem8_1018",
     "tem8_p3",
     "tem8_p4",
+    "tem8_p6",
+    "tem8_p7",
 )
 
 def _readable(path: Path) -> bool:
@@ -320,8 +327,13 @@ def extract_zips() -> dict[str, Path]:
                 bn = Path(name).name
                 if low.endswith((".xlsx", ".xls")):
                     # 专八第 3 包 zip 内误复用 10.18 文件名，归档时改名避免覆盖第 2 包
-                    if label == "tem8_p3" and bn.lower().startswith("senses_table_tem8"):
-                        bn = "senses_table_tem8 pack3.xlsx"
+                    rename = {
+                        "tem8_p3": "senses_table_tem8 pack3.xlsx",
+                        "tem8_p6": "senses_table_tem8 11.10 pack6.xlsx",
+                        "tem8_p7": "senses_table_tem8 11.10 pack7.xlsx",
+                    }
+                    if label in rename and bn.lower().startswith("senses_table_tem8"):
+                        bn = rename[label]
                     (d / bn).write_bytes(data)
                     print(f"[ok] 抽出 Excel {label}/{bn}")
                 elif low.endswith((".png", ".jpg", ".jpeg", ".webp")):
